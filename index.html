@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.2.0">
+<meta name="flio-version" content="1.4.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{}},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[]},"auth":null}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
 <title>Flio</title>
@@ -50,7 +50,7 @@ const SUPA_URL='https://seicvoktkezadcqgfvik.supabase.co',SUPA_KEY='eyJhbGciOiJI
 const SRC0='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 const $=s=>document.querySelector(s),app=$('#app');
 /* ---------- owner config (defaults; overridden by baked + local settings) ---------- */
-const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{}};
+const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[]};
 const CFG=(()=>{let b={},l={};try{b=JSON.parse(document.getElementById('flio-cfg').textContent)||{}}catch(e){}try{l=JSON.parse(localStorage.getItem('flio_owner_cfg'))||{}}catch(e){}
  const m=Object.assign({},JSON.parse(JSON.stringify(CFG_DEF)),b.cfg||{},l.cfg||{});return m})();
 let seats=ls('lockflip_seats',null)||[{n:'Player 1',t:'h'},{n:'Computer',t:'b'},{n:'Player 3',t:'o'},{n:'Player 4',t:'o'}];
@@ -174,8 +174,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.2.0',UPD_K='flio_update_url',UPD_A='flio_update_auto';
-const CHANGES=[['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.4.1',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const CHANGES=[['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -854,7 +854,11 @@ const CK='flio_city_v1',TW=31,TH=15.5,OX=0,OY=0;
 let GN=6,CW=640,CH=380,cD=1,cDmax=2;
 const CM=[0,1,1.8,3],CUP=[0,0,1.2,2],CVL=[0,1,2.2,4.2],CSZ=[1,2.2,4.5];
 /* name, emoji, cost, income/min, housing, jobs, power (− uses / + makes), residents served, colour */
+/* name -> look: typing a name picks the 3D shape, type and emoji */
+const NAMESHAPE=[[/hospital|clinic|medic|health/i,'hospital','hospital','🏥'],[/school|college|univers|academy/i,'school','school','🏫'],[/airport|airstrip|runway/i,'airport',null,'✈️'],[/park|garden|forest|zoo/i,'park','park','🌳'],[/house|home|villa|cottage/i,'house','house','🏠'],[/apart|flat|condo/i,'apartment','apartment','🏘'],[/shop|store|market|mall|super/i,'shop','shop','🛍'],[/cafe|café|coffee|restaurant|bakery|pizza|diner/i,'cafe','cafe','☕'],[/factory|plant|mill|workshop/i,'factory','factory','🏭'],[/tower|skyscraper|sky/i,'tower','tower','🌆'],[/office|bank|company/i,'office','office','🏢'],[/solar/i,'solar','solar','☀️'],[/power|energy|electric/i,'power','power','⚡'],[/church|temple|mosque|chapel|cathedral/i,'church','school','⛪'],[/stadium|arena|colosseum|gym/i,'stadium','office','🏟'],[/hotel|resort|inn/i,'hotel','apartment','🏨'],[/castle|fort|palace/i,'castle','tower','🏰'],[/museum|library|hall|court|parliament/i,'museum','school','🏛'],[/cinema|theatre|theater|movie|circus/i,'cinema','shop','🎪'],[/police|fire ?station|station/i,'station','hospital','🚒'],[/barn|farm|ranch/i,'barn','house','🌾']];
+function nameLook(n){n=n||'';for(const r of NAMESHAPE)if(r[0].test(n))return{shape:r[1],role:r[2],emoji:r[3]};return null}
 const CT={house:['House','🏠',250,3,4,0,-1,0,'#e8845a'],apartment:['Apartment','🏘',1200,16,20,0,-4,0,'#d9a066'],shop:['Shop','🛍',800,10,0,6,-2,30,'#e0408a'],cafe:['Café','☕',500,6,0,4,-1,20,'#c58a52'],park:['Park','🌳',200,1.5,0,1,0,25,'#3fae5a'],school:['School','🏫',900,5,0,8,-2,40,'#f2b84b'],hospital:['Hospital','🏥',1500,8,0,15,-4,60,'#f4f4f4'],office:['Office','🏢',1800,24,0,25,-4,0,'#5b86d9'],factory:['Factory','🏭',2200,30,0,30,-6,0,'#8a8f98'],tower:['Tower','🌆',5000,75,0,60,-10,0,'#8a6df0'],power:['Power plant','⚡',2500,14,0,10,40,0,'#c9a227'],solar:['Solar farm','☀️',1200,7,0,2,14,0,'#2f7fc9']};
+const CT_BASE=new Set(Object.keys(CT));
 const CRL={house:'res',apartment:'res',shop:'svc',cafe:'svc',park:'svc',school:'svc',hospital:'svc',office:'wrk',factory:'wrk',tower:'wrk',power:'pow',solar:'pow'};
 const CD={res:'Homes bring residents. Rent depends on jobs, happiness (parks, schools, hospitals, shops) and power.',svc:'Serves residents. It only earns when there are enough people, and many of the same type share the customers.',wrk:'Needs workers (60% of residents work). Too few homes and it runs understaffed.',pow:'Powers the city. It only earns for the power the city really uses.'};
 const CHT={house:l=>40+6*l,park:()=>28,cafe:l=>26+4*l,shop:l=>34+4*l,office:l=>60+14*l,tower:l=>110+20*l};
@@ -902,7 +906,7 @@ const cInc=(x,y)=>{const b=cB(x,y);return b?cS(b.t).inc*CM[b.l]*(ECO.eff[y*GN+x]
 const cVal=()=>CITY.g.reduce((s,b)=>s+(b?cS(b.t).cost*CVL[b.l]:0),0);
 const cPop=()=>Math.round(ECO.R);
 const cFmt=s=>{s=Math.round(s);const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return d?d+'d '+h+'h':h?h+'h '+m+'m':m+'m'};
-const cMoney=n=>'$'+Math.floor(n).toLocaleString('en-US');
+const cMoney=n=>{n=Math.floor(n);const a=Math.abs(n),u=[[1e15,'Qa'],[1e12,'T'],[1e9,'B'],[1e6,'M']];for(const [v,x] of u)if(a>=v){const q=n/v,t=(Math.abs(q)>=100?q.toFixed(0):Math.abs(q)>=10?q.toFixed(1):q.toFixed(2)).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');return '$'+t+x}return '$'+n.toLocaleString('en-US')};
 const cHh=b=>(CHT[b.t]||(l=>56+12*l))(b.l);
 function cSave(){if(CITY&&!window.VIS)lset(CK,CITY)}
 /* time-based simulation: income is computed from the clock, so it keeps "running" while the game is closed (up to 3 days) */
@@ -910,6 +914,10 @@ function cTick(){
  if(!CITY)return;cEco();const now=Date.now();let dt=Math.max(0,(now-CITY.t)/1000);CITY.t=now;dt=Math.min(dt,259200);
  const g=ECO.rate*dt/60;CITY.cash+=g;CITY.earned+=g;
  if(dt>40&&g>=1)CAWAY={sec:(CAWAY?CAWAY.sec:0)+dt,g:(CAWAY?CAWAY.g:0)+g};
+}
+function cityStartNow(){
+ if(!CITY){CITY={v:2,n:6,custom:[],name:(String(myName||'My').trim().slice(0,10)||'My')+' City',cash:3000,earned:0,t:Date.now(),g:Array(36).fill(null)};GN=6;cSave()}
+ cityOpen();
 }
 function cityFromBiz(){
  const B=(ONL&&!ONL.host)?BZV:BZ;if(!B)return;
@@ -922,9 +930,9 @@ function cityFromBiz(){
  cityOpen();
 }
 function cityBox(){
- if(!CITY)return '<div class="box"><b>🌆 Your city</b><p class="mut">Finish a 🏪 Business Showdown, then tap <b>Build my city</b>. Your final money becomes a real-time city that keeps earning even while the game is closed.</p></div>';
+ if(!CITY)return '<div class="box"><b>🌆 Your city</b><p class="mut">Finish a 🏪 Business Showdown, then tap <b>Build my city</b>. Your final money becomes a real-time city that keeps earning even while the game is closed.</p><p class="mut">Or skip the game and start now with $3,000:</p><button class="p" onclick="cityStartNow()">🏗 Start my city now</button></div>';
  cTick();
- return '<div class="box"><b>🌆 '+esc(CITY.name)+'</b><p class="mut">💰 '+cMoney(CITY.cash)+' · earning '+cMoney(cRate()*60)+'/hour, even when the game is closed.'+(CAWAY?' While you were away: +'+cMoney(CAWAY.g)+'.':'')+'</p><button class="p" onclick="cityOpen()">Open my city</button></div>';
+ return '<div class="box"><b>🌆 '+esc(CITY.name)+'</b><p class="mut"><span style="display:inline-block;max-width:100%;border:2px solid var(--bd);border-radius:8px;padding:2px 8px;background:var(--card);color:var(--fg);font-weight:800" title="$'+Math.floor(CITY.cash).toLocaleString('en-US')+'">💰 '+cMoney(CITY.cash)+'</span> · earning '+cMoney(cRate()*60)+'/hour, even when the game is closed.'+(CAWAY?' While you were away: +'+cMoney(CAWAY.g)+'.':'')+'</p><button class="p" onclick="cityOpen()">Open my city</button></div>';
 }
 function cityBack(){cStop();if(ONL&&(BZ||BZV)){scr='biz';bizRender()}else setup()}
 function cStop(keep){
@@ -951,7 +959,7 @@ function cityOpen(){
 function cPeds(){const n=Math.min(16,3+Math.floor(cPop()/4));while(peds.length<n)peds.push({t:Math.random(),sp:.003+Math.random()*.003,rev:peds.length%2,col:['#f06292','#4fc3f7','#ffb74d','#aed581','#ba68c8'][peds.length%5]});peds.length=n}
 function cStats(){
  if(!CITY||scr!='city')return;const e=document.getElementById('chud');if(!e)return;const hh=cHour();
- e.innerHTML=`💰 <b>${cMoney(CITY.cash)}</b> · 📈 +${cMoney(cRate())}/min<br><span style="opacity:.8">${esc(CITY.name)} · 🕒 ${String(Math.floor(hh)).padStart(2,'0')}:${String(Math.floor(hh%1*60)).padStart(2,'0')}</span>`;
+ e.style.whiteSpace='nowrap';e.style.width='max-content';e.style.maxWidth='62%';e.title='$'+Math.floor(CITY.cash).toLocaleString('en-US');e.innerHTML=`💰 <b style="font-size:15px">${cMoney(CITY.cash)}</b> · 📈 +${cMoney(cRate())}/min<br><span style="opacity:.8">${esc(CITY.name)} · 🕒 ${String(Math.floor(hh)).padStart(2,'0')}:${String(Math.floor(hh%1*60)).padStart(2,'0')}</span>`;
 }
 const cBar=(p,c)=>`<div style="height:6px;background:rgba(128,128,128,.3);border-radius:3px;overflow:hidden;margin:2px 0 5px"><div style="width:${Math.round(Math.max(0,Math.min(1,p))*100)}%;height:100%;background:${c}"></div></div>`;
 function cPanel(){
@@ -972,8 +980,9 @@ function cExpand(){const n=CITY.n;if(n>=12)return;const c=cLand(n);if(CITY.cash<
  CITY.cash-=c;const m=n+1,g=Array(m*m).fill(null);for(let y=0;y<n;y++)for(let x=0;x<n;x++)g[y*m+x]=CITY.g[y*n+x];CITY.g=g;CITY.n=m;GN=m;cSave();cPanel();cMsg('Land expanded to '+m+'×'+m+'!');cStats();beep('flip')}
 function cCustom(){
  const o=k=>`<option value="${k}">${CT[k][0]}${CRL[k]=='res'?' (homes)':CRL[k]=='wrk'?' (jobs)':''}</option>`;
- $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(92%,430px);max-height:96%;overflow:auto;margin:0"><b>🎨 Design your building</b><p class="mut" style="margin:4px 0 8px">It follows real-world rules of the type you choose. Bigger sizes cost more and give more.</p><div class="row"><input id="kn" placeholder="Name" maxlength="14" value="My building"><input id="kc" type="color" value="#4aa3df" style="flex:none;width:46px;padding:2px"></div><div class="row"><select id="kr" onchange="cCPrev()" style="flex:1">${Object.keys(CT).map(o).join('')}</select><select id="ks" onchange="cCPrev()"><option value="0">Small</option><option value="1">Medium</option><option value="2">Large</option></select><select id="ke">${['🏗','🏰','🏛','🎡','🏨','🏪','🎪','🏟'].map(e=>`<option>${e}</option>`).join('')}</select></div><p class="mut" id="kp"></p><div class="row"><button class="p" onclick="cCMake()">Create</button><button onclick="$('#cmod').innerHTML=''">Cancel</button></div></div></div>`;cCPrev();
+ $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(92%,430px);max-height:96%;overflow:auto;margin:0"><b>🎨 Design your building</b><p class="mut" style="margin:4px 0 8px">It follows real-world rules of the type you choose. Bigger sizes cost more and give more.</p><div class="row"><input id="kn" placeholder="Name e.g. Hospital, Church" maxlength="14" value="My building" oninput="cNameLook()"><input id="kc" type="color" value="#4aa3df" style="flex:none;width:46px;padding:2px"></div><div class="row"><select id="kr" onchange="cCPrev()" style="flex:1">${Object.keys(CT).map(o).join('')}</select><select id="ks" onchange="cCPrev()"><option value="0">Small</option><option value="1">Medium</option><option value="2">Large</option></select><select id="ke">${['🏗','🏥','🏫','⛪','🚒','🌾','🏭','🌆','🏢','🌳','☕','🛍','🏠','🏘','⚡','☀️','🏰','🏛','🎡','🏨','🏪','🎪','🏟'].map(e=>`<option>${e}</option>`).join('')}</select></div><p class="mut" id="kp"></p><div class="row"><button class="p" onclick="cCMake()">Create</button><button onclick="$('#cmod').innerHTML=''">Cancel</button></div></div></div>`;cCPrev();
 }
+function cNameLook(){const l=nameLook($('#kn').value);if(l){if(l.role&&CT[l.role])$('#kr').value=l.role;const e=$('#ke');if(![...e.options].some(o=>o.value==l.emoji)){const o=document.createElement('option');o.textContent=l.emoji;e.add(o)}e.value=l.emoji}cCPrev();const k=$('#kp');if(l)k.textContent='Looks like: '+l.emoji+' '+l.shape+' · '+k.textContent}
 function cCPrev(){const s=cMk($('#kr').value,+$('#ks').value);$('#kp').textContent='Cost '+cMoney(s.cost)+' · up to '+cMoney(s.inc)+'/min'+(s.hs?' · homes '+Math.round(s.hs):'')+(s.jb?' · jobs '+s.jb:'')+(s.pw?' · power '+(s.pw>0?'+':'')+Math.round(s.pw):'')+(s.sv?' · serves '+Math.round(s.sv):'')}
 function cCMake(){
  if(CITY.custom.length>=8)return;const id=Date.now().toString(36)+CITY.custom.length;
@@ -1239,7 +1248,7 @@ const online=c=>c.updated&&now()-Date.parse(c.updated)<12e4;
 const skyline=()=>{const m={};CITY.g.forEach(b=>{if(b){const e=cS(b.t).emoji;m[e]=(m[e]||0)+1}});return Object.keys(m).sort((a,b)=>m[b]-m[a]).slice(0,10).map(e=>e+'×'+m[e]).join(' ')};
 let LAYS='';const layoutStr=()=>JSON.stringify({n:CITY.n,g:CITY.g.map(b=>b?b.t+'|'+(b.l||1):''),cu:CITY.custom||[]});
 async function sync(){if(!CITY||!DB||window.VIS)return;init();try{const a={p_id:CITY.id,p_name:CITY.name,p_lon:CITY.geo[0],p_lat:CITY.geo[1],p_score:myScore(),p_def:Math.round(ECO.df||0),p_happy:+(ECO.H||0).toFixed(2),p_hit:CITY.hit||0};try{await rpc('upsert_city',Object.assign({},a,{p_ap:apLv(),p_bl:skyline()}))}catch(e){await rpc('upsert_city',a)}WC=await rpc('world_cities');lset('flio_wc',WC);WOK=true;try{const L=layoutStr();if(L!=LAYS&&L.length<12000){await rpc('save_layout',{p_id:CITY.id,p_lay:L});LAYS=L}}catch(e){}
- const ev=await rpc('my_events',{p_id:CITY.id});ev.forEach(e=>{if(e.kind=='deal'&&e.from_id){CITY.offers=(CITY.offers||[]).filter(o=>o.id!=e.from_id);CITY.offers.push({id:e.from_id,name:e.from_name,at:now()});CITY.news='🤝 '+e.from_name+' proposes a tourism deal! Accept it in the Tourism deals box.'}else if(e.kind=='deal_ok'&&e.from_id){CITY.deals=CITY.deals||{};CITY.deals[e.from_id]={name:e.from_name,exp:now()+(+e.amt||120)*6e4};CITY.news='🤝 '+e.from_name+' accepted your tourism deal! Tourists now travel between your cities.'}else if(e.kind=='visit'){CITY.cash+=+e.amt;CITY.news='✈️ '+e.from_name+' landed at your airport and paid '+cMoney(e.amt)+' in landing fees!'}else if(e.kind=='help'){CITY.cash+=+e.amt;CITY.dis0*=.5;CITY.news='🤝 '+e.from_name+' sent you '+cMoney(e.amt)+' to rebuild!'}else{const l=Math.min(+e.amt,Math.floor(CITY.cash*.3));CITY.cash-=l;CITY.news='⚔ '+e.from_name+' raided your city and took '+cMoney(l)+'. Build more defence!'}});
+ const ev=await rpc('my_events',{p_id:CITY.id});ev.forEach(e=>{if(e.kind=='deal'&&e.from_id){CITY.offers=(CITY.offers||[]).filter(o=>o.id!=e.from_id);CITY.offers.push({id:e.from_id,name:e.from_name,at:now()});CITY.news='🤝 '+e.from_name+' proposes a tourism deal! Accept it in the Tourism deals box.'}else if(e.kind=='deal_ok'&&e.from_id){CITY.deals=CITY.deals||{};CITY.deals[e.from_id]={name:e.from_name,exp:now()+(+e.amt||120)*6e4};CITY.news='🤝 '+e.from_name+' accepted your tourism deal! Tourists now travel between your cities.'}else if(e.kind=='visit'){CITY.cash+=+e.amt;CITY.news='✈️ '+e.from_name+' landed at your airport and paid '+cMoney(e.amt)+' in landing fees!'}else if(e.kind=='help'){CITY.cash+=+e.amt;if(String(e.from_name).indexOf('🎁')==0){CITY.news=e.from_name+' gifted your city '+cMoney(e.amt)+'!'}else{CITY.dis0*=.5;CITY.news='🤝 '+e.from_name+' sent you '+cMoney(e.amt)+' to rebuild!'}}else{const l=Math.min(+e.amt,Math.floor(CITY.cash*.3));CITY.cash-=l;CITY.news='⚔ '+e.from_name+' raided your city and took '+cMoney(l)+'. Build more defence!'}});
  if(ev.length){cSave();if(scr=='city')cPanel()}}catch(e){WOK=false}}
 function drawMap(all){const c=$('#wm');if(!c)return;const x=c.getContext('2d'),W=560,H=250,P=(o,a)=>[(o+180)/360*W,(90-a)/180*H];x.fillStyle='#1d4e89';x.fillRect(0,0,W,H);x.fillStyle='#3f8f5a';
  LAND.forEach(p=>{x.beginPath();p.forEach((q,i)=>{const a=P(q[0],q[1]);i?x.lineTo(a[0],a[1]):x.moveTo(a[0],a[1])});x.closePath();x.fill()});
@@ -1355,8 +1364,17 @@ const sd=(c,r)=>{const k=c+r;if(MM[k])return MM[k];const w=wt(r),m=new THREE.Mes
 function bx(g,w,h,d,c,x,y,z,r){const s=r?sd(c,r):0,m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),r?[s,s,pm(c),pm(c),s,s]:pm(c));m.position.set(x,y+h/2,z);m.castShadow=m.receiveShadow=true;g.add(m);return m}
 function cy(g,r0,r1,h,c,x,y,z,n){const m=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,n||12),pm(c));m.position.set(x,y+h/2,z);m.castShadow=true;g.add(m);return m}
 function mkB(b){
- const s=cS(b.t),r=s.role,k=b.l,sz=s.size||0,c=s.col,g=new THREE.Group(),H=hgt(b),rw=h=>Math.max(1,Math.round(h*3));
- if(r=='park'){bx(g,.88,.06,.88,'#58b85f',0,0,0);for(let i=0;i<2+k;i++){const a=i*2.4+.5,x=Math.cos(a)*.26,z=Math.sin(a)*.26;cy(g,.03,.04,.22,'#6b4a2b',x,.06,z,6);const f=new THREE.Mesh(new THREE.SphereGeometry(.14+k*.02,10,8),pm(i%2?'#2f9e4f':'#2e7d4f'));f.position.set(x,.38,z);f.castShadow=true;g.add(f)}cy(g,.15,.15,.02,'#5aaae6',.3,.06,.3,16)}
+ const s=cS(b.t),k=b.l,sz=s.size||0,c=s.col,g=new THREE.Group(),H=hgt(b),rw=h=>Math.max(1,Math.round(h*3));
+ const nl=(s.custom||!CT_BASE.has(b.t))?nameLook(s.name):null,r=nl?nl.shape:s.role;
+ if(r=='church'){bx(g,.5,H*.8,.7,c,0,0,0,rw(H*.8));bx(g,.22,H*1.5,.22,c,0,0,.3,rw(H*1.5));const sp=new THREE.Mesh(new THREE.ConeGeometry(.18,.4,4),pm('#8a8f98'));sp.position.set(0,H*1.5+.2,.3);sp.rotation.y=Math.PI/4;sp.castShadow=true;g.add(sp);bx(g,.03,.14,.03,'#ffd400',0,H*1.5+.4,.3)}
+ else if(r=='stadium'){const o=cy(g,.44,.38,.24+.04*k,c,0,0,0,24);cy(g,.3,.3,.26+.04*k,'#58b85f',0,0,0,24)}
+ else if(r=='hotel'){bx(g,.5,H*1.2,.5,c,0,0,0,rw(H*1.2));bx(g,.8,H*.5,.7,c,0,0,0,rw(H*.5));bx(g,.3,.06,.1,'#e53935',0,H*1.2,0)}
+ else if(r=='castle'){bx(g,.7,H*.6,.7,c,0,0,0,rw(H*.6));[[-.3,-.3],[.3,-.3],[-.3,.3],[.3,.3]].forEach(q=>{cy(g,.1,.1,H*.6+.2,c,q[0],0,q[1],10);const cn=new THREE.Mesh(new THREE.ConeGeometry(.13,.2,10),pm('#c8442f'));cn.position.set(q[0],H*.6+.3,q[1]);cn.castShadow=true;g.add(cn)});bx(g,.14,.2,.02,'#4a2f1b',0,0,.36)}
+ else if(r=='museum'){bx(g,.8,.06,.7,'#cfd4da',0,0,0);for(let i=0;i<5;i++)cy(g,.04,.04,H*.7,'#f2eee6',-.32+i*.16,.06,.25,8);bx(g,.86,.07,.5,c,0,H*.7+.06,.2);const pd=new THREE.Mesh(new THREE.ConeGeometry(.5,.2,3),pm(c));pd.rotation.z=Math.PI/2;pd.rotation.y=Math.PI/2;pd.position.set(0,H*.7+.2,.2);g.add(pd)}
+ else if(r=='cinema'){bx(g,.8,H*.7,.7,c,0,0,0,rw(H*.7));bx(g,.6,.12,.05,'#ffd400',0,H*.7*.6,.37);bx(g,.84,.05,.74,'#444444',0,H*.7,0)}
+ else if(r=='station'){bx(g,.8,H*.7,.7,c,0,0,0,rw(H*.7));bx(g,.56,H*.5,.4,'#e53935',0,0,.4);bx(g,.84,.05,.74,'#444444',0,H*.7,0);bx(g,.1,.1,.1,'#4aa3df',-.2,H*.7+.05,0);bx(g,.1,.1,.1,'#e53935',.2,H*.7+.05,0)}
+ else if(r=='barn'){bx(g,.7,H*.6,.6,'#b5382b',0,0,0,rw(H*.6));const rf=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.62,3),pm('#7a2a20'));rf.rotation.x=Math.PI/2;rf.rotation.z=Math.PI/2;rf.position.set(0,H*.6+.12,0);rf.castShadow=true;g.add(rf);cy(g,.08,.08,.45,'#cfd4da',.28,0,-.2,10)}
+ else if(r=='park'){bx(g,.88,.06,.88,'#58b85f',0,0,0);for(let i=0;i<2+k;i++){const a=i*2.4+.5,x=Math.cos(a)*.26,z=Math.sin(a)*.26;cy(g,.03,.04,.22,'#6b4a2b',x,.06,z,6);const f=new THREE.Mesh(new THREE.SphereGeometry(.14+k*.02,10,8),pm(i%2?'#2f9e4f':'#2e7d4f'));f.position.set(x,.38,z);f.castShadow=true;g.add(f)}cy(g,.15,.15,.02,'#5aaae6',.3,.06,.3,16)}
  else if(r=='house'){bx(g,.6,H,.6,s.custom?c:'#f1dcb8',0,0,0,rw(H));const f=new THREE.Mesh(new THREE.ConeGeometry(.55,.38,4),pm('#c8442f'));f.rotation.y=Math.PI/4;f.position.y=H+.19;f.castShadow=true;g.add(f)}
  else if(r=='airport'){bx(g,.98,.015,.24,'#3a3d44',0,0,-.28);for(let i=0;i<5;i++)bx(g,.1,.018,.02,'#ffffff',-.4+i*.2,0,-.28);bx(g,.4,.1+.04*k,.16,c,-.28,0,.3,rw(.12));cy(g,.04,.05,.35+.05*k,'#cfd4da',-.02,0,.38,10);bx(g,.12,.07,.12,'#8fd0ff',-.02,.35+.05*k,.38);cy(g,.11,.11,.012,'#444444',.3,0,.28,16);bx(g,.07,.016,.02,'#ffffff',.3,.012,.28)}
  else if(r=='solar'){bx(g,.88,.05,.88,'#555a63',0,0,0);for(let i=0;i<2;i++)for(let j=0;j<2;j++)bx(g,.38,.03,.38,c,(i-.5)*.44,.14,(j-.5)*.44).rotation.x=-.5}
@@ -1593,6 +1611,7 @@ function ownCss(){
  e.textContent=(L?':root{'+L+'}':'')+(D?'@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){'+D+'}}:root[data-theme="dark"]{'+D+'}':'');
 }
 function applyCfg(){
+ (CFG.nb||[]).forEach(b=>{try{CT[b.k]=[b.n,b.e,+b.cost,+b.inc,+b.hs,+b.jb,+b.pw,+b.sv,b.col];CRL[b.k]=b.role||'svc'}catch(e){}});
  Object.keys(CFG.ct||{}).forEach(k=>{if(CT[k]&&Array.isArray(CFG.ct[k]))CT[k]=CFG.ct[k].slice()});
  [['csz',CSZ],['cup',CUP],['cvl',CVL]].forEach(([k,arr])=>{if(Array.isArray(CFG[k])&&CFG[k].length==arr.length)CFG[k].forEach((v,i)=>arr[i]=+v)});
  try{Object.keys(CFG.vt||{}).forEach(k=>{if(VT[k])Object.assign(VT[k],CFG.vt[k])})}catch(e){}
@@ -1602,7 +1621,17 @@ function applyCfg(){
  document.title='Flio';ownCss();
 }
 
-applyCfg();
+/* ---------- core: runs for everyone (new buildings + mods) ---------- */
+const CT_ORIG=new Set(Object.keys(CT));
+const FL=window.FL={boxes:[],errs:[],box(f){this.boxes.push(f)},
+ paint(){const a=document.getElementById('app');if(!a||scr!='setup')return;a.querySelectorAll('.flmod').forEach(x=>x.remove());
+  let ref=document.getElementById('updbn');if(!ref||ref.parentNode!=a)ref=null;
+  this.boxes.forEach(f=>{try{const h=typeof f=='function'?f():f;if(!h)return;const d=document.createElement('div');d.className='box flmod';d.innerHTML=h;
+   if(ref){a.insertBefore(d,ref.nextSibling)}else{a.insertBefore(d,a.firstChild)}ref=d}catch(e){FL.errs.push('box: '+e.message)}})}};
+{const s0=setup;setup=function(){const r=s0.apply(this,arguments);try{FL.paint()}catch(e){}return r}}
+function runMods(){if(location.hash=='#safe')return;(CFG.mods||[]).forEach(m=>{if(m&&m.on!==false&&m.code){try{(0,eval)(m.code)}catch(e){FL.errs.push((m.n||'mod')+': '+e.message)}}});try{FL.paint()}catch(e){}}
+
+applyCfg();runMods();
 
 
 </script></body></html>
