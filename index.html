@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.4.1">
+<meta name="flio-version" content="1.5.2">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[]},"auth":null}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -57,6 +57,9 @@ let seats=ls('lockflip_seats',null)||[{n:'Player 1',t:'h'},{n:'Computer',t:'b'},
 let P=[],locker=0,trap=null,turn=0,phase='setup',res=null,round=0,gid=0,V=null;
 let ONL=null,scr='setup',DB=null,UID=null,WORLD=null,scored='',err='',SEC=null,myName=ls('lockflip_name','');
 const PID=Math.random().toString(36).slice(2,9);
+let NAMELOCK=ls('flio_namelock',null),NERR='',NNAME='';
+const TOK=(()=>{let t=ls('flio_tok',null);if(!t||String(t).length<8){t=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);lset('flio_tok',t)}return t})();
+if(NAMELOCK)myName=NAMELOCK;
 const LK='lockflip_lb';
 let PW=ls('lockflip_pw',1),LOG=[],trapKnown=false,pwUsed=false,MT=ls('lockflip_mt',75),MATCH=null,DAILY=null,PREV=null,DLB=ls('lockflip_dlb',null),DFAIL=false,DERR='',SND=ls('lockflip_snd',1),AC=null;
 const DK='lockflip_daily',SK='lockflip_streak';
@@ -129,14 +132,14 @@ function dailyBox(){
  const d=dayStr(),dn=ls(DK,null),done=dn&&dn.day==d,sn=streakNow();
  return '<div class="box"><b>📅 Daily challenge</b> <span class="mut">'+d+'</span><p class="mut">Same trap, same cards and same rivals for everyone today. One try a day.'+(sn>1?' 🔥 '+sn+' day streak!':'')+'</p>'+
  (done?'<p style="margin:0 0 8px"><b>Your score today: '+dn.score+' pts</b> <span class="mut">(#'+dn.rank+' of 4)</span></p><div class="row"><button class="p" onclick="showDaily()">Today’s leaderboard</button><button onclick="shareDaily()">Share</button></div>'
- :'<div class="row"><input id="dn" placeholder="Your name" maxlength="14" value="'+esc(myName)+'"></div><button class="p" onclick="startDaily()">Play today’s challenge</button>')+
+ :''+(NAMELOCK?'<p class="mut" style="margin:0 0 8px">Playing as <b>'+esc(NAMELOCK)+'</b></p>':'<p class="mut">Choose your player name above first.</p>')+'<button class="p" onclick="startDaily()"'+(NAMELOCK?'':' disabled')+'>Play today’s challenge</button>')+
  '</div>';
 }
 function startDaily(){
  const d=dayStr(),dn=ls(DK,null);
  if(dn&&dn.day==d)return showDaily();
- const el=$('#dn'),nm=((el&&el.value)||'').trim().slice(0,14);
- if(!nm){err='Type your name to play the daily challenge.';return setup()}
+ const nm=NAMELOCK||'';
+ if(!nm){err='Choose your player name first (top of the page).';return setup()}
  saveName(nm);
  DAILY={day:d,r:mulberry(hashStr('lockflip-'+d)),ord:null,name:nm};
  ONL=null;V=null;PREV=null;scored='';gid++;scr='game';
@@ -174,8 +177,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.4.1',UPD_K='flio_update_url',UPD_A='flio_update_auto';
-const CHANGES=[['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.5.2',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const CHANGES=[['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -238,16 +241,17 @@ function importSave(inp){
 function setup(){
  scr='setup';phase='setup';DAILY=null;
  if(myName&&(!seats[0].n||/^Player \d$/i.test(seats[0].n)))seats[0].n=myName;
- app.innerHTML=(err?`<div class="box">${esc(err)}</div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+cityBox()+dailyBox()+
+ if(NAMELOCK&&seats[0].t=='h')seats[0].n=NAMELOCK;
+ app.innerHTML=(err?`<div class="box">${esc(err)}</div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+dailyBox()+
  '<div class="box"><b>🎯 Game options</b><div class="row" style="margin-top:8px"><span style="flex:1">Match length</span><select onchange="MT=+this.value;lset(\'lockflip_mt\',MT)">'+[[0,'Endless']].concat(CFG.matchOpts.map(n=>[n,'First to '+n])).map(o=>'<option value="'+o[0]+'"'+(MT==o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div><div class="row"><span style="flex:1">⚡ Power cards</span><select onchange="PW=+this.value;lset(\'lockflip_pw\',PW)"><option value="1"'+(PW?' selected':'')+'>On</option><option value="0"'+(PW?'':' selected')+'>Off</option></select></div><p class="mut">For the games below. The daily challenge never uses power cards.</p></div>'+
- '<div class="box"><b>🌐 Casual online</b><p class="mut">Each player uses their own phone. One creates a table and shares the 4-digit code.</p><div class="row"><input id="on" placeholder="Your name" maxlength="14" value="'+esc(myName)+'"></div><div class="row"><button class="p" onclick="goOnline(true)">Create table</button><input id="oc" placeholder="Code" inputmode="numeric" maxlength="6" style="max-width:90px"><button onclick="goOnline(false)">Join</button></div><button class="p" style="width:100%" onclick="randomMatch()">🎲 Random match (play people worldwide)</button></div>'+
+ '<div class="box"><b>🌐 Casual online</b><p class="mut">Each player uses their own phone. One creates a table and shares the 4-digit code.</p><div class="row"><input id="on" placeholder="Your name" maxlength="14" value="'+esc(NAMELOCK||myName)+'"'+(NAMELOCK?' readonly':'')+'></div><div class="row"><button class="p" onclick="goOnline(true)">Create table</button><input id="oc" placeholder="Code" inputmode="numeric" maxlength="6" style="max-width:90px"><button onclick="goOnline(false)">Join</button></div><button class="p" style="width:100%" onclick="randomMatch()">🎲 Random match (play people worldwide)</button></div>'+
  '<div class="box"><b>Same device (pass &amp; play)</b><div style="height:8px"></div>'+
  seats.map((s,i)=>`<div class="row"><input id="n${i}" value="${esc(s.n)}" maxlength="14"><select id="t${i}"><option value="h"${s.t=='h'?' selected':''}>Human</option><option value="b"${s.t=='b'?' selected':''}>Computer</option><option value="o"${s.t=='o'?' selected':''}>Empty</option></select></div>`).join('')+
  '<button class="p" onclick="start()">Start game</button><p class="mut" id="err"></p></div>'+
  '<div class="box"><b>How to play</b><p class="mut">Everyone has cards 0–9, face down. The Locker secretly picks a trap number. Take turns flipping one of your cards to add its value. Flip the trap and the round ends and your round score is 0. Rank bonus: +5, +3, +1. The Locker gets +3 if the trap catches someone. Totals carry over between rounds until someone reaches the match target.</p><p class="mut"><b>🏪 Business Showdown:</b> after any round, the host (or the single device) taps Run a business, online or pass &amp; play. Your total score becomes starting cash. Over 6 quarters you type in your own price, marketing and quality spend, staff count and loan amount, and compete with every player for customers. Random events, taxes and interest apply. Highest net worth wins.</p><p class="mut"><b>⚡ Power cards:</b> everyone gets 2 each round. Use one before you flip, once per turn. ⏭ Skip passes your turn. ✖2 Double counts your next flip twice. 🛡 Shield saves you from one trap hit. ❄️ Freeze makes the next player lose a turn.</p></div>'+updBox()+board()+setupBox();
  err='';
 }
-function saveName(nm){myName=nm;lset('lockflip_name',nm)}
+function saveName(nm){if(NAMELOCK&&nm!==NAMELOCK)nm=NAMELOCK;myName=nm;lset('lockflip_name',nm)}
 function start(){
  seats=seats.map((s,i)=>({n:$('#n'+i).value.trim()||'Player '+(i+1),t:$('#t'+i).value}));
  lset('lockflip_seats',seats);if(seats[0].t=='h'&&!/^Player \d$/i.test(seats[0].n))saveName(seats[0].n);
@@ -257,7 +261,7 @@ function start(){
 }
 /* ---------- online ---------- */
 async function goOnline(host){
- const nm=($('#on').value.trim()||'Player').slice(0,14);saveName(nm);DAILY=null;
+ if(!NAMELOCK){err='Choose your player name first (top of the page).';return setup()}const nm=NAMELOCK;saveName(nm);DAILY=null;
  const code=host?String(Math.floor(1000+Math.random()*9000)):$('#oc').value.trim();
  if(!code){err='Enter the 4-digit table code first.';return setup()}
  if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
@@ -338,14 +342,15 @@ function pickTrap(n){
 function beginPlay(){phase='play';pwUsed=false;turn=(locker+1)%P.length;sync();botCheck()}
 function canMove(i){return P[i].cards.some(c=>!c.o&&!(i==locker&&c.v==trap))}
 function nextTurn(){
- let k=turn,g=0;
+ let k=turn,g=0,ok=false;
  while(g++<60){
   k=(k+1)%P.length;
   if(!canMove(k))continue;
   if(P[k].frz){P[k].frz=false;plog(P[k].name+' is frozen and loses a turn ❄️');continue}
-  break;
+  ok=true;break;
  }
  turn=k;pwUsed=false;
+ if(!ok&&phase=='play'&&!P.some((q,i)=>canMove(i)))endRound(); /* nobody has a card left to flip: end the round instead of freezing */
 }
 function flip(pi,ci){
  if(phase!='play')return;
@@ -368,6 +373,7 @@ function botCheck(){
   if(isL)pick=opts.sort((a,b)=>b.c.v-a.c.v)[0];
   else if(DAILY){const o=DAILY.ord[t];pick=opts.sort((a,b)=>o.indexOf(a.c.v)-o.indexOf(b.c.v))[0]}
   else pick=opts[Math.floor(Math.random()*opts.length)];
+  if(!pick){nextTurn();sync();return}
   flip(t,pick.i);
  },CFG.botMs);
 }
@@ -598,7 +604,37 @@ create or replace function public.my_daily_rank(p_day text,p_name text) returns 
  select r.rank,r.score from (select name,score,row_number() over(order by score desc,created asc) as rank from public.daily_scores where day=p_day) r where r.name=left(trim(coalesce(p_name,'')),14) $$;
 create or replace function public.my_biz_rank(p_name text) returns table(rank bigint,wins integer,best integer) language sql security definer set search_path=public as $$
  select r.rank,r.wins,r.best from (select name,wins,best,row_number() over(order by wins desc,best desc,name) as rank from public.biz_scores) r where r.name=left(trim(coalesce(p_name,'')),14) $$;
-grant execute on function public.my_world_rank(text), public.my_daily_rank(text,text), public.my_biz_rank(text) to anon, authenticated;`;
+grant execute on function public.my_world_rank(text), public.my_daily_rank(text,text), public.my_biz_rank(text) to anon, authenticated;
+
+-- Unique player names (one name per device token, case-insensitive) and player search
+create table if not exists public.player_names(name_lc text primary key,name text not null,token text not null,created timestamptz not null default now());
+alter table public.player_names enable row level security;
+create or replace function public.claim_name(p_name text,p_token text) returns text language plpgsql security definer set search_path=public as $$
+declare n text; t text;
+begin
+ n:=left(trim(coalesce(p_name,'')),14);
+ if length(n)<2 or length(coalesce(p_token,''))<8 then raise exception 'bad name'; end if;
+ select token into t from public.player_names where name_lc=lower(n);
+ if t is null then
+  begin
+   insert into public.player_names(name_lc,name,token) values(lower(n),n,p_token);
+   return 'ok';
+  exception when unique_violation then return 'taken';
+  end;
+ end if;
+ if t=p_token then return 'ok'; end if;
+ return 'taken';
+end $$;
+grant execute on function public.claim_name(text,text) to anon, authenticated;
+alter table public.cities add column if not exists oname text not null default '';
+create or replace function public.set_city_owner(p_id text,p_owner text) returns void language sql security definer set search_path=public as $$
+ update public.cities set oname=left(coalesce(p_owner,''),14) where id=p_id $$;
+create or replace function public.find_players(p_q text) returns table(id text,name text,oname text,score bigint,updated timestamptz) language sql security definer set search_path=public as $$
+ with q as (select lower(replace(replace(trim(coalesce(p_q,'')),'%',''),'_','')) as s)
+ select c.id,c.name,c.oname,c.score,c.updated from public.cities c,q
+ where length(q.s)>=2 and (lower(c.oname) like '%'||q.s||'%' or lower(c.name) like '%'||q.s||'%')
+ order by (lower(c.oname)=q.s) desc, c.score desc limit 10 $$;
+grant execute on function public.set_city_owner(text,text), public.find_players(text) to anon, authenticated;`;
 let WERR='';
 function setupBox(){
  if(!SUPA_URL||!SUPA_KEY)return '';
@@ -632,7 +668,7 @@ async function flushQueue(){
  }finally{flushing=false}
 }
 function submitScore(n,pts){
- if(!SUPA_URL||!SUPA_KEY||/^Player \d$/i.test(n)||/^Computer/i.test(n))return;
+ if(!SUPA_URL||!SUPA_KEY||/^Player \d$/i.test(n)||/^Computer/i.test(n)||!NAMELOCK||n!==NAMELOCK)return;
  const q=ls(QK,[]);q.push({n:String(n).slice(0,14),p:pts});lset(QK,q.slice(-200));
  flushQueue().then(loadWorld);
 }
@@ -644,7 +680,7 @@ function onOver(){
  saveLb(db);
  if(V.mw!=null)beep('win');
 }
-if(SUPA_URL&&SUPA_KEY){DB=true;WORLD=ls(WK,null);const refreshAll=()=>flushQueue().then(()=>{loadWorld();loadDaily();loadBizWorld()});refreshAll();addEventListener('online',refreshAll);setInterval(()=>{if(!document.hidden)refreshAll()},30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshAll()})}
+if(SUPA_URL&&SUPA_KEY){DB=true;WORLD=ls(WK,null);const refreshAll=()=>flushQueue().then(()=>{verifyName();loadWorld();loadDaily();loadBizWorld()});refreshAll();addEventListener('online',refreshAll);setInterval(()=>{if(!document.hidden)refreshAll()},30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshAll()})}
 /* ---------- business showdown ---------- */
 let BZ=null,BZV=null,BZID=0,bzScored=0;
 const BWK='lockflip_bworld';let BWORLD=ls(BWK,null),BWFAIL=false,BWERR='';
@@ -655,7 +691,7 @@ function bizWorldBox(){
 }
 function paintBiz(){const e=document.getElementById('bwbox');if(e)e.outerHTML=bizWorldBox()}
 function submitBiz(n,f,w){
- if(!SUPA_URL||!SUPA_KEY||/^Player \d$/i.test(n)||/^Computer/i.test(n))return;
+ if(!SUPA_URL||!SUPA_KEY||/^Player \d$/i.test(n)||/^Computer/i.test(n)||!NAMELOCK||n!==NAMELOCK)return;
  const q=ls(QK,[]);q.push({n:String(n).slice(0,14),p:f,w:w?1:0,x:1});lset(QK,q.slice(-200));
  flushQueue().then(loadBizWorld);
 }
@@ -857,11 +893,11 @@ const CM=[0,1,1.8,3],CUP=[0,0,1.2,2],CVL=[0,1,2.2,4.2],CSZ=[1,2.2,4.5];
 /* name -> look: typing a name picks the 3D shape, type and emoji */
 const NAMESHAPE=[[/hospital|clinic|medic|health/i,'hospital','hospital','🏥'],[/school|college|univers|academy/i,'school','school','🏫'],[/airport|airstrip|runway/i,'airport',null,'✈️'],[/park|garden|forest|zoo/i,'park','park','🌳'],[/house|home|villa|cottage/i,'house','house','🏠'],[/apart|flat|condo/i,'apartment','apartment','🏘'],[/shop|store|market|mall|super/i,'shop','shop','🛍'],[/cafe|café|coffee|restaurant|bakery|pizza|diner/i,'cafe','cafe','☕'],[/factory|plant|mill|workshop/i,'factory','factory','🏭'],[/tower|skyscraper|sky/i,'tower','tower','🌆'],[/office|bank|company/i,'office','office','🏢'],[/solar/i,'solar','solar','☀️'],[/power|energy|electric/i,'power','power','⚡'],[/church|temple|mosque|chapel|cathedral/i,'church','school','⛪'],[/stadium|arena|colosseum|gym/i,'stadium','office','🏟'],[/hotel|resort|inn/i,'hotel','apartment','🏨'],[/castle|fort|palace/i,'castle','tower','🏰'],[/museum|library|hall|court|parliament/i,'museum','school','🏛'],[/cinema|theatre|theater|movie|circus/i,'cinema','shop','🎪'],[/police|fire ?station|station/i,'station','hospital','🚒'],[/barn|farm|ranch/i,'barn','house','🌾']];
 function nameLook(n){n=n||'';for(const r of NAMESHAPE)if(r[0].test(n))return{shape:r[1],role:r[2],emoji:r[3]};return null}
-const CT={house:['House','🏠',250,3,4,0,-1,0,'#e8845a'],apartment:['Apartment','🏘',1200,16,20,0,-4,0,'#d9a066'],shop:['Shop','🛍',800,10,0,6,-2,30,'#e0408a'],cafe:['Café','☕',500,6,0,4,-1,20,'#c58a52'],park:['Park','🌳',200,1.5,0,1,0,25,'#3fae5a'],school:['School','🏫',900,5,0,8,-2,40,'#f2b84b'],hospital:['Hospital','🏥',1500,8,0,15,-4,60,'#f4f4f4'],office:['Office','🏢',1800,24,0,25,-4,0,'#5b86d9'],factory:['Factory','🏭',2200,30,0,30,-6,0,'#8a8f98'],tower:['Tower','🌆',5000,75,0,60,-10,0,'#8a6df0'],power:['Power plant','⚡',2500,14,0,10,40,0,'#c9a227'],solar:['Solar farm','☀️',1200,7,0,2,14,0,'#2f7fc9']};
+const CT={house:['House','🏠',250,3,4,0,-1,0,'#e8845a'],apartment:['Apartment','🏘',1200,16,20,0,-4,0,'#d9a066'],shop:['Shop','🛍',800,10,0,6,-2,30,'#e0408a'],cafe:['Café','☕',500,6,0,4,-1,20,'#c58a52'],park:['Park','🌳',200,1.5,0,1,0,25,'#3fae5a'],school:['School','🏫',900,5,0,8,-2,40,'#f2b84b'],hospital:['Hospital','🏥',1500,8,0,15,-4,60,'#f4f4f4'],office:['Office','🏢',1800,24,0,25,-4,0,'#5b86d9'],factory:['Factory','🏭',2200,30,0,30,-6,0,'#8a8f98'],tower:['Tower','🌆',5000,75,0,60,-10,0,'#8a6df0'],power:['Power plant','⚡',2500,14,0,10,40,0,'#c9a227'],solar:['Solar farm','☀️',1200,7,0,2,14,0,'#2f7fc9'],road:['Road','🛣',60,0,0,0,0,0,'#4a4e57']};
 const CT_BASE=new Set(Object.keys(CT));
-const CRL={house:'res',apartment:'res',shop:'svc',cafe:'svc',park:'svc',school:'svc',hospital:'svc',office:'wrk',factory:'wrk',tower:'wrk',power:'pow',solar:'pow'};
+const CRL={house:'res',apartment:'res',shop:'svc',cafe:'svc',park:'svc',school:'svc',hospital:'svc',office:'wrk',factory:'wrk',tower:'wrk',power:'pow',solar:'pow',road:'rd'};
 const CD={res:'Homes bring residents. Rent depends on jobs, happiness (parks, schools, hospitals, shops) and power.',svc:'Serves residents. It only earns when there are enough people, and many of the same type share the customers.',wrk:'Needs workers (60% of residents work). Too few homes and it runs understaffed.',pow:'Powers the city. It only earns for the power the city really uses.'};
-const CHT={house:l=>40+6*l,park:()=>28,cafe:l=>26+4*l,shop:l=>34+4*l,office:l=>60+14*l,tower:l=>110+20*l};
+const CHT={house:l=>40+6*l,park:()=>28,cafe:l=>26+4*l,shop:l=>34+4*l,office:l=>60+14*l,tower:l=>110+20*l,road:()=>2};
 let CITY=ls(CK,null),CAWAY=null,CSEL=null,CTYPE='house',cAnim=0,cCan=null,cX=null,cWarp=0,cWT=12,cPops=[],cPT=0,cLt=0,bzCity=-1,cars=[],peds=[],cClouds=[],cam={s:1,tx:0,ty:0},ECO={rate:0,eff:[],msg:[],warn:[],R:0,J:0,W:0,pwS:0,pwD:0,hp:0,emp:0};
 function cNorm(){if(!CITY)return;if(!CITY.g||CITY.g.length<25){CITY=null;return}CITY.n=CITY.n||Math.round(Math.sqrt(CITY.g.length));CITY.custom=CITY.custom||[];GN=CITY.n}
 cNorm();
@@ -876,7 +912,7 @@ function cS(t){
 function cEco(){
  if(!CITY)return ECO;
  const E={R:0,J:0,pwS:0,pwD:0,pol:0,cap:{},eff:[],msg:[],warn:[],rate:0},L=[];
- CITY.g.forEach((b,i)=>{if(!b)return;const s=cS(b.t),m=CM[b.l];L.push([i,b,s,m]);E.R+=s.hs*m;E.J+=s.jb*m;if(s.pw>0)E.pwS+=s.pw*m;else E.pwD-=s.pw*m;if(s.role=='factory'||s.role=='power')E.pol+=m;if(CRL[s.role]=='svc')E.cap[s.role]=(E.cap[s.role]||0)+s.sv*m});
+ CITY.g.forEach((b,i)=>{if(!b)return;const s=cS(b.t),m=CM[b.l];L.push([i,b,s,m]);E.R+=s.hs*m;E.J+=s.jb*m;if(s.pw>0)E.pwS+=s.pw*m*(s.role=='solar'?cSolar():1);else E.pwD-=s.pw*m*cDemand();if(s.role=='factory'||s.role=='power')E.pol+=m;if(CRL[s.role]=='svc')E.cap[s.role]=(E.cap[s.role]||0)+s.sv*m});
  E.W=E.R*.6;E.emp=E.W>0?Math.min(1,E.J/E.W):0;E.stf=E.J>0?Math.min(1,E.W/E.J):0;
  E.pf=E.pwD>0?Math.max(.15,Math.min(1,E.pwS/E.pwD)):1;
  const Rs=E.R*(.4+.6*E.emp),cov=r=>E.R>0?Math.min(1,(E.cap[r]||0)/E.R):0;
@@ -902,7 +938,7 @@ function cEco(){
  ECO=E;return E;
 }
 const cRate=()=>ECO.rate;
-const cInc=(x,y)=>{const b=cB(x,y);return b?cS(b.t).inc*CM[b.l]*(ECO.eff[y*GN+x]||0):0};
+const cInc=(x,y)=>{const b=cB(x,y);return b?cS(b.t).inc*CM[b.l]*(ECO.eff[y*GN+x]||0)*(ECO.act&&ECO.act[y*GN+x]!=null?ECO.act[y*GN+x]:1):0};
 const cVal=()=>CITY.g.reduce((s,b)=>s+(b?cS(b.t).cost*CVL[b.l]:0),0);
 const cPop=()=>Math.round(ECO.R);
 const cFmt=s=>{s=Math.round(s);const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return d?d+'d '+h+'h':h?h+'h '+m+'m':m+'m'};
@@ -912,7 +948,7 @@ function cSave(){if(CITY&&!window.VIS)lset(CK,CITY)}
 /* time-based simulation: income is computed from the clock, so it keeps "running" while the game is closed (up to 3 days) */
 function cTick(){
  if(!CITY)return;cEco();const now=Date.now();let dt=Math.max(0,(now-CITY.t)/1000);CITY.t=now;dt=Math.min(dt,259200);
- const g=ECO.rate*dt/60;CITY.cash+=g;CITY.earned+=g;
+ const g=cAvgRate(dt)*dt/60;CITY.cash+=g;CITY.earned+=g;
  if(dt>40&&g>=1)CAWAY={sec:(CAWAY?CAWAY.sec:0)+dt,g:(CAWAY?CAWAY.g:0)+g};
 }
 function cityStartNow(){
@@ -950,37 +986,37 @@ function cityOpen(){
  if(!CITY)return;cStop(1);scr='city';cTick();
  const o=document.createElement('div');o.id='cfs';o.style.cssText='position:fixed;inset:0;z-index:50;background:var(--bg);overflow:hidden';
  const bt='style="padding:4px 9px;font-size:13px"';
- o.innerHTML=`<style>#cpn .box{padding:8px;margin-bottom:6px;border-radius:10px}#cpn button{padding:6px 8px;font-size:12px}#cpn .row{margin-bottom:4px}</style><div id="cin"><div id="cvw" style="flex:1;min-width:0;position:relative;border:2px solid var(--bd);border-radius:12px;overflow:hidden"><canvas id="cc" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block"></canvas><div id="chud" style="position:absolute;top:6px;left:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:10px;padding:5px 9px;font-size:13px;line-height:1.35;pointer-events:none"></div><div style="position:absolute;top:6px;right:6px;display:flex;gap:5px"><button ${bt} onclick="cWarp=!cWarp;cWT=new Date().getHours()" title="Day/night preview">🌓</button><button ${bt} onclick="cStop();randomMatch()" title="Random match">🎲</button><button ${bt} onclick="cityBack()">✕ Back</button></div></div><div id="cpn" style="width:min(42%,340px);overflow-y:auto;font-size:13px"></div><div id="cmod"></div></div>`;
+ o.innerHTML=`<style>#cpn .box{padding:8px;margin-bottom:6px;border-radius:10px}#cpn button{padding:6px 8px;font-size:12px}#cpn .row{margin-bottom:4px}</style><div id="cin"><div id="cvw" style="flex:1;min-width:0;position:relative;border:2px solid var(--bd);border-radius:12px;overflow:hidden"><canvas id="cc" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block"></canvas><div id="chud" style="position:absolute;top:6px;left:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:10px;padding:5px 9px;font-size:13px;line-height:1.35;pointer-events:none"></div><div id="cchip" style="position:absolute;left:8px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;border-radius:10px;padding:4px 9px;font-size:12px;pointer-events:none;display:none"></div><div id="ctoast" style="position:absolute;left:50%;top:44px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;border-radius:10px;padding:5px 10px;font-size:12px;pointer-events:none;display:none;max-width:80%;text-align:center"></div><div style="position:absolute;top:6px;right:6px;display:flex;gap:5px"><button ${bt} onclick="cTogPanel()" title="Build &amp; city menu">🏗 Menu</button><button ${bt} onclick="cStop();randomMatch()" title="Random match">🎲</button><button ${bt} onclick="cityBack()">✕ Back</button></div></div><div id="cpn" style="display:none;position:absolute;top:44px;right:6px;bottom:6px;width:min(66%,340px);overflow-y:auto;font-size:13px;z-index:4;background:var(--bg);border:2px solid var(--bd);border-radius:12px;padding:6px;box-sizing:border-box"></div><div id="cmod"></div></div>`;
  document.body.appendChild(o);cCan=$('#cc');cX=cCan.getContext('2d');cLayout();
  cCan.onpointerdown=cTap;cFS();
  if(!cars.length){const cl=['#e53935','#fdd835','#1e88e5','#f5f5f5','#43a047','#ff7043','#8e24aa','#00acc1'];cars=cl.map((col,i)=>({t:i/8,sp:.01+.003*(i%3),o:i%2?.46:.62,rev:i%2,col}));cClouds=[0,1,2,3].map(i=>({x:i*150,y:.08+i*.05,s:.8+i*.15,v:6+i*3}))}
- cPeds();cPanel();cStats();cLt=0;cAnim=requestAnimationFrame(cLoop);
+ CPO=CAWAY?1:0;cPeds();cPanel();cStats();cLt=0;cAnim=requestAnimationFrame(cLoop);
 }
 function cPeds(){const n=Math.min(16,3+Math.floor(cPop()/4));while(peds.length<n)peds.push({t:Math.random(),sp:.003+Math.random()*.003,rev:peds.length%2,col:['#f06292','#4fc3f7','#ffb74d','#aed581','#ba68c8'][peds.length%5]});peds.length=n}
 function cStats(){
  if(!CITY||scr!='city')return;const e=document.getElementById('chud');if(!e)return;const hh=cHour();
- e.style.whiteSpace='nowrap';e.style.width='max-content';e.style.maxWidth='62%';e.title='$'+Math.floor(CITY.cash).toLocaleString('en-US');e.innerHTML=`💰 <b style="font-size:15px">${cMoney(CITY.cash)}</b> · 📈 +${cMoney(cRate())}/min<br><span style="opacity:.8">${esc(CITY.name)} · 🕒 ${String(Math.floor(hh)).padStart(2,'0')}:${String(Math.floor(hh%1*60)).padStart(2,'0')}</span>`;
+ e.style.whiteSpace='nowrap';e.style.width='max-content';e.style.maxWidth='62%';e.title='$'+Math.floor(CITY.cash).toLocaleString('en-US');e.innerHTML=`💰 <b style="font-size:15px">${cMoney(CITY.cash)}</b> · 📈 ${cRate()<0?'−':'+'}${cMoney(Math.abs(cRate()))}/min<br><span style="opacity:.8">${esc(CITY.name)} · ${hh>=6&&hh<18?'☀️':'🌙'} ${String(Math.floor(hh)).padStart(2,'0')}:${String(Math.floor(hh%1*60)).padStart(2,'0')} local</span>`;
 }
 const cBar=(p,c)=>`<div style="height:6px;background:rgba(128,128,128,.3);border-radius:3px;overflow:hidden;margin:2px 0 5px"><div style="width:${Math.round(Math.max(0,Math.min(1,p))*100)}%;height:100%;background:${c}"></div></div>`;
 function cPanel(){
  const pn=document.getElementById('cpn');if(!pn)return;cEco();const E=ECO,cl=v=>v>=.75?'var(--ok)':v>=.45?'#e6a100':'var(--ac)';
- let h=CAWAY?`<div class="box"><b>🌙 Welcome back!</b><p class="mut" style="margin:4px 0">In the ${cFmt(CAWAY.sec)} you were away, your city earned <b style="color:var(--ok)">+${cMoney(CAWAY.g)}</b>.</p><button class="p" onclick="CAWAY=null;cPanel()">Nice!</button></div>`:'';
+ let h='<div class="row"><b style="flex:1">🏙 City menu</b><button onclick="cTogPanel(0);cChip()">✕ Close</button></div>';h+=CAWAY?`<div class="box"><b>🌙 Welcome back!</b><p class="mut" style="margin:4px 0">In the ${cFmt(CAWAY.sec)} you were away, your city earned <b style="color:var(--ok)">+${cMoney(CAWAY.g)}</b>.</p><button class="p" onclick="CAWAY=null;cPanel()">Nice!</button></div>`:'';
  const ids=[...Object.keys(CT),...CITY.custom.map(d=>'c:'+d.id)],cs=cS(CTYPE);
- h+=`<div class="box"><b>🏗 Build</b> <span class="mut">pick one, then tap an empty plot</span><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px">`+ids.map(id=>{const s=cS(id);return `<button onclick="CTYPE='${id}';CSEL=null;cPanel()" style="padding:3px 1px;font-size:10.5px;line-height:1.2;${CTYPE==id?'border-color:var(--ac);box-shadow:0 0 0 2px var(--ac);':''}${CITY.cash<s.cost?'opacity:.55':''}"><span style="font-size:19px">${s.emoji}</span><br>${esc(s.name)}<br>${cMoney(s.cost)}</button>`}).join('')+`</div><div class="mut" style="margin-top:6px"><b>${cs.emoji} ${esc(cs.name)}</b>: up to ${cMoney(cs.inc)}/min${cs.hs?' · homes '+Math.round(cs.hs):''}${cs.jb?' · jobs '+Math.round(cs.jb):''}${cs.pw?' · power '+(cs.pw>0?'+':'')+Math.round(cs.pw):''}${cs.sv?' · serves '+Math.round(cs.sv)+' people':''}<br>${CD[CRL[cs.role]]}</div>`+(CITY.custom.length<8?'<button style="width:100%;margin-top:6px" onclick="cCustom()">🎨 Design your own building</button>':'')+`<p class="mut" id="cmsg" style="margin:6px 0 0"></p></div>`;
+ h+=`<div class="box"><b>🏗 Build</b> <span class="mut">pick one, then tap an empty plot</span><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px">`+ids.map(id=>{const s=cS(id);return `<button onclick="CTYPE='${id}';CSEL=null;cTogPanel(0);cPanel();cMsg('Selected '+cS('${id}').name+'. Tap an empty plot.')" style="padding:3px 1px;font-size:10.5px;line-height:1.2;${CTYPE==id?'border-color:var(--ac);box-shadow:0 0 0 2px var(--ac);':''}${CITY.cash<s.cost?'opacity:.55':''}"><span style="font-size:19px">${s.emoji}</span><br>${esc(s.name)}<br>${cMoney(s.cost)}</button>`}).join('')+`</div><div class="mut" style="margin-top:6px"><b>${cs.emoji} ${esc(cs.name)}</b>: up to ${cMoney(cs.inc)}/min${cs.hs?' · homes '+Math.round(cs.hs):''}${cs.jb?' · jobs '+Math.round(cs.jb):''}${cs.pw?' · power '+(cs.pw>0?'+':'')+Math.round(cs.pw):''}${cs.sv?' · serves '+Math.round(cs.sv)+' people':''}<br>${CD[CRL[cs.role]]}</div>`+(CITY.custom.length<8?'<button style="width:100%;margin-top:6px" onclick="cCustom()">🎨 Design your own building</button>':'')+`<p class="mut" id="cmsg" style="margin:6px 0 0"></p></div>`;
  const s=CSEL&&cB(CSEL.x,CSEL.y);
  if(!s)h+='<div class="box mut">Tap a building to see how well it earns, upgrade or sell it.</div>';
  else{const sp=cS(s.t),i=CSEL.y*GN+CSEL.x,ef=E.eff[i]||0,up=s.l<3?sp.cost*CUP[s.l+1]:0;
-  h+=`<div class="box"><b>${sp.emoji} ${esc(sp.name)} · level ${s.l}/3</b><div style="margin:4px 0">Efficiency <b style="color:${cl(ef)}">${Math.round(ef*100)}%</b> · earns ${cMoney(sp.inc*CM[s.l]*ef)}/min <span class="mut">(max ${cMoney(sp.inc*CM[s.l])})</span></div>${cBar(ef,cl(ef))}<div class="mut">${esc(E.msg[i]||'Working well.')}</div><div class="row" style="margin-top:6px">${s.l<3?`<button class="p" onclick="cUp()">⬆ Upgrade ${cMoney(up)}</button>`:'<span class="mut">Max level</span>'}<button onclick="cSell()">Sell +${cMoney(sp.cost*CVL[s.l]/2)}</button></div></div>`}
+  h+=`<div class="box"><b>${sp.emoji} ${esc(sp.name)} · level ${s.l}/3</b><div style="margin:4px 0">Efficiency <b style="color:${cl(ef)}">${Math.round(ef*100)}%</b> · earns ${cMoney(sp.inc*CM[s.l]*ef*(E.act&&E.act[i]!=null?E.act[i]:1))}/min <span class="mut">(max ${cMoney(sp.inc*CM[s.l])})</span></div>${cBar(ef,cl(ef))}<div class="mut">${esc(E.msg[i]||'Working well.')}</div><div class="row" style="margin-top:6px">${s.l<3&&sp.role!='road'?`<button class="p" onclick="cUp()">⬆ Upgrade ${cMoney(up)}</button>`:'<span class="mut">Max level</span>'}<button onclick="cSell()">Sell +${cMoney(sp.cost*CVL[s.l]/2)}</button></div></div>`}
  h+=`<div class="box"><b>📊 City health</b><div class="mut">👥 ${Math.round(E.R)} residents · 💼 ${Math.round(E.J)} jobs for ${Math.round(E.W)} workers</div><div style="margin-top:4px">💼 Employment ${Math.round(E.emp*100)}%</div>${cBar(E.emp,cl(E.emp))}<div>⚡ Power ${Math.round(E.pwS)} / ${Math.round(E.pwD)} used</div>${cBar(E.pwD>0?E.pwS/E.pwD:1,cl(E.pwD>0?E.pwS/E.pwD:1))}<div>😊 Happiness ${Math.round(E.hp*100)}%</div>${cBar(E.hp,cl(E.hp))}`+(E.warn.length?E.warn.slice(0,4).map(w=>'<div class="mut" style="margin-top:3px">'+esc(w)+'</div>').join(''):'<div class="mut">✅ Your city is balanced.</div>')+'</div>';
  h+=`<div class="box"><b>🗺 Land ${GN}×${GN}</b> <span class="mut">(${GN*GN} plots)</span>`+(GN<12?`<button class="p" style="width:100%;margin-top:6px" onclick="cExpand()">Buy land → ${GN+1}×${GN+1} for ${cMoney(cLand(GN))}</button>`:'<div class="mut">Maximum size reached.</div>')+`</div><div class="mut" style="padding:0 4px 8px">Your city keeps earning while the game is closed (up to 3 days).</div>`;
- const keep=pn.scrollTop;pn.innerHTML=h;pn.scrollTop=keep;
+ const keep=pn.scrollTop;pn.innerHTML=h;pn.scrollTop=keep;pn.style.display=CPO?'block':'none';cChip();
 }
 const cLand=n=>60*(n+1)*(n+1);
 function cExpand(){const n=CITY.n;if(n>=12)return;const c=cLand(n);if(CITY.cash<c){cMsg('Land costs '+cMoney(c)+'; you have '+cMoney(CITY.cash)+'.');return}
  CITY.cash-=c;const m=n+1,g=Array(m*m).fill(null);for(let y=0;y<n;y++)for(let x=0;x<n;x++)g[y*m+x]=CITY.g[y*n+x];CITY.g=g;CITY.n=m;GN=m;cSave();cPanel();cMsg('Land expanded to '+m+'×'+m+'!');cStats();beep('flip')}
 function cCustom(){
  const o=k=>`<option value="${k}">${CT[k][0]}${CRL[k]=='res'?' (homes)':CRL[k]=='wrk'?' (jobs)':''}</option>`;
- $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(92%,430px);max-height:96%;overflow:auto;margin:0"><b>🎨 Design your building</b><p class="mut" style="margin:4px 0 8px">It follows real-world rules of the type you choose. Bigger sizes cost more and give more.</p><div class="row"><input id="kn" placeholder="Name e.g. Hospital, Church" maxlength="14" value="My building" oninput="cNameLook()"><input id="kc" type="color" value="#4aa3df" style="flex:none;width:46px;padding:2px"></div><div class="row"><select id="kr" onchange="cCPrev()" style="flex:1">${Object.keys(CT).map(o).join('')}</select><select id="ks" onchange="cCPrev()"><option value="0">Small</option><option value="1">Medium</option><option value="2">Large</option></select><select id="ke">${['🏗','🏥','🏫','⛪','🚒','🌾','🏭','🌆','🏢','🌳','☕','🛍','🏠','🏘','⚡','☀️','🏰','🏛','🎡','🏨','🏪','🎪','🏟'].map(e=>`<option>${e}</option>`).join('')}</select></div><p class="mut" id="kp"></p><div class="row"><button class="p" onclick="cCMake()">Create</button><button onclick="$('#cmod').innerHTML=''">Cancel</button></div></div></div>`;cCPrev();
+ $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(92%,430px);max-height:96%;overflow:auto;margin:0"><b>🎨 Design your building</b><p class="mut" style="margin:4px 0 8px">It follows real-world rules of the type you choose. Bigger sizes cost more and give more.</p><div class="row"><input id="kn" placeholder="Name e.g. Hospital, Church" maxlength="14" value="My building" oninput="cNameLook()"><input id="kc" type="color" value="#4aa3df" style="flex:none;width:46px;padding:2px"></div><div class="row"><select id="kr" onchange="cCPrev()" style="flex:1">${Object.keys(CT).filter(k=>k!='road').map(o).join('')}</select><select id="ks" onchange="cCPrev()"><option value="0">Small</option><option value="1">Medium</option><option value="2">Large</option></select><select id="ke">${['🏗','🏥','🏫','⛪','🚒','🌾','🏭','🌆','🏢','🌳','☕','🛍','🏠','🏘','⚡','☀️','🏰','🏛','🎡','🏨','🏪','🎪','🏟'].map(e=>`<option>${e}</option>`).join('')}</select></div><p class="mut" id="kp"></p><div class="row"><button class="p" onclick="cCMake()">Create</button><button onclick="$('#cmod').innerHTML=''">Cancel</button></div></div></div>`;cCPrev();
 }
 function cNameLook(){const l=nameLook($('#kn').value);if(l){if(l.role&&CT[l.role])$('#kr').value=l.role;const e=$('#ke');if(![...e.options].some(o=>o.value==l.emoji)){const o=document.createElement('option');o.textContent=l.emoji;e.add(o)}e.value=l.emoji}cCPrev();const k=$('#kp');if(l)k.textContent='Looks like: '+l.emoji+' '+l.shape+' · '+k.textContent}
 function cCPrev(){const s=cMk($('#kr').value,+$('#ks').value);$('#kp').textContent='Cost '+cMoney(s.cost)+' · up to '+cMoney(s.inc)+'/min'+(s.hs?' · homes '+Math.round(s.hs):'')+(s.jb?' · jobs '+s.jb:'')+(s.pw?' · power '+(s.pw>0?'+':'')+Math.round(s.pw):'')+(s.sv?' · serves '+Math.round(s.sv):'')}
@@ -989,7 +1025,10 @@ function cCMake(){
  CITY.custom.push({id,name:($('#kn').value.trim()||'My building').slice(0,14),role:$('#kr').value,size:+$('#ks').value,col:$('#kc').value,emoji:$('#ke').value});
  CTYPE='c:'+id;$('#cmod').innerHTML='';cSave();cPanel();cMsg('Created! Tap an empty plot to build it.');
 }
-function cMsg(m){const e=document.getElementById('cmsg');if(e)e.textContent=m}
+let CPO=0,cTT=0;
+function cTogPanel(v){CPO=v===undefined?!CPO:!!v;const p=document.getElementById('cpn');if(p)p.style.display=CPO?'block':'none';cChip()}
+function cChip(){const e=document.getElementById('cchip');if(!e||!CITY)return;const s=cS(CTYPE);e.style.display=CPO?'none':'block';e.textContent='🏗 '+s.emoji+' '+s.name+' · '+cMoney(s.cost)+' — tap an empty plot'}
+function cMsg(m){const e=document.getElementById('cmsg');if(e)e.textContent=m;const t=document.getElementById('ctoast');if(t&&m){t.textContent=m;t.style.display='block';clearTimeout(cTT);cTT=setTimeout(()=>{t.style.display='none'},2800)}}
 function cHit(sx,sy){
  const wx=(sx-cam.tx)/cam.s,wy=(sy-cam.ty)/cam.s;
  for(let d=2*GN-2;d>=0;d--)for(let x=0;x<GN;x++){const y=d-x;if(y<0||y>=GN)continue;const b=cB(x,y);if(!b)continue;const p=cP(x+.5,y+.5);if(Math.abs(wx-p[0])<TW*.8&&wy<p[1]+TH&&wy>p[1]-cHh(b)-TH)return[x,y]}
@@ -998,7 +1037,7 @@ function cHit(sx,sy){
 }
 function cTap(e){
  const h=cHit(e.offsetX,e.offsetY);if(!h)return;
- const [x,y]=h;if(cB(x,y)){CSEL={x,y};cMsg('');return cPanel()}
+ const [x,y]=h;if(cB(x,y)){CSEL={x,y};cMsg('');cTogPanel(1);return cPanel()}
  CSEL=null;cBuild(x,y);
 }
 function cBuild(x,y,type){
@@ -1009,7 +1048,12 @@ function cBuild(x,y,type){
 function cUp(){const s=cB(CSEL.x,CSEL.y);if(!s||s.l>=3)return;const c=cS(s.t).cost*CUP[s.l+1];if(CITY.cash<c){cMsg('Need '+cMoney(c)+' to upgrade.');return}CITY.cash-=c;s.l++;cSave();cPeds();cPanel();cMsg('Upgraded to level '+s.l+'!');cStats();beep('flip')}
 function cSell(){const s=cB(CSEL.x,CSEL.y);if(!s)return;CITY.cash+=cS(s.t).cost*CVL[s.l]/2;CITY.g[CSEL.y*GN+CSEL.x]=null;CSEL=null;cSave();cPeds();cPanel();cStats()}
 /* ---- rendering (landscape canvas, zoom fits the whole land) ---- */
-const cHour=()=>{const d=new Date();return cWarp?cWT%24:d.getHours()+d.getMinutes()/60+d.getSeconds()/3600};
+/* World time: the hour is the real solar time at the city's longitude. Players cannot change it. */
+const wHour=(lon,ms)=>{const u=(ms/36e5)%24;return(((u+lon/15)%24)+24)%24};
+let HOV=null;
+const cHour=()=>{if(HOV!=null)return HOV;const lon=(CITY&&CITY.geo)?CITY.geo[0]:-new Date().getTimezoneOffset()/4;return wHour(lon,Date.now())};
+const lt0=h=>Math.max(0,Math.min(1,Math.sin((h-6)/12*Math.PI)*1.5+.35));
+const cSolar=()=>lt0(cHour()),cDemand=()=>1+.3*(1-lt0(cHour()));
 const cMix=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t);
 const cRGB=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
 const cSh=(h,k)=>'rgb('+(Array.isArray(h)?h:cRGB(h)).map(v=>Math.max(0,Math.min(255,v*k))|0).join(',')+')';
@@ -1103,7 +1147,7 @@ function cGen(c,x,y,b,sp,L,N,t){
  return top;
 }
 function cDrawB(c,x,y,b,L,N,t){
- const sp=cS(b.t);let top;
+ const sp=cS(b.t);let top;if(sp.role=='road')return cRoad(c,x,y,L,N,t);
  if(!sp.custom&&['house','park','cafe','shop','office','tower'].includes(b.t))top=cBld(c,x,y,b,L,N,t);
  else if(sp.custom&&sp.role=='park')top=cBld(c,x,y,{t:'park',l:b.l},L,N,t);
  else top=cGen(c,x,y,b,sp,L,N,t);
@@ -1129,11 +1173,11 @@ function cDraw(t,dt){
  const q4=(a,b)=>[cP(a,a),cP(b,a),cP(b,b),cP(a,b)],sl=(a,b,th,col)=>{const q=q4(a,b);poly(c,[q[3],q[2],[q[2][0],q[2][1]+th],[q[3][0],q[3][1]+th]],cSh(col,.72*L));poly(c,[q[2],q[1],[q[1][0],q[1][1]+th],[q[2][0],q[2][1]+th]],cSh(col,.5*L));poly(c,q,cSh(col,L))};
  sl(-.78,n+.78,12,'#4b4f5c');poly(c,q4(-.3,n+.3),cSh('#c9ccd3',L));
  c.strokeStyle='rgba(255,255,255,.55)';c.lineWidth=1.2;c.setLineDash([6,6]);const rg=q4(-.54,n+.54);c.beginPath();rg.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.stroke();c.setLineDash([]);
- for(let y=0;y<n;y++)for(let x=0;x<n;x++){const a=cP(x,y),b=cP(x+1,y),d=cP(x+1,y+1),e=cP(x,y+1);poly(c,[a,b,d,e],cSh((x+y)%2?'#68bf6e':'#5fb566',L));
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){const a=cP(x,y),b=cP(x+1,y),d=cP(x+1,y+1),e=cP(x,y+1);poly(c,[a,b,d,e],cSh(cTileCol(x,y),L));
   if(CSEL&&CSEL.x==x&&CSEL.y==y){c.strokeStyle='#ffd400';c.lineWidth=2.5;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.stroke()}}
  const E=[];
- for(let y=0;y<n;y++)for(let x=0;x<n;x++){const b=cB(x,y),i=y*n+x;if(b)E.push([x+y+1,()=>{const tp=cDrawB(c,x,y,b,L,N,t);if((ECO.eff[i]||0)<.5){const px=tp[0]+14,py=tp[1]-4,pl=1+.12*Math.sin(t*5);c.fillStyle='#e53935';c.beginPath();c.arc(px,py,7*pl,0,7);c.fill();c.fillStyle='#fff';c.font='bold 10px system-ui';c.textAlign='center';c.fillText('!',px,py+3.5)}}])}
- cars.forEach(v=>{v.t=(v.t+v.sp*dt)%1;const p=ringPt(v.t,v.o,v.rev),q=ringPt(v.t+.002,v.o,v.rev);E.push([p[0]+p[1],()=>cCar(c,p,q,v.col,L,N)])});
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){const b=cB(x,y),i=y*n+x;if(!b){const tk=landAt(x,y);if(tk)E.push([x+y+1,()=>cTerr(c,x,y,tk,L,N,t)])}if(b)E.push([x+y+1,()=>{const tp=cDrawB(c,x,y,b,L,N,t);if((ECO.eff[i]||0)<.5){const px=tp[0]+14,py=tp[1]-4,pl=1+.12*Math.sin(t*5);c.fillStyle='#e53935';c.beginPath();c.arc(px,py,7*pl,0,7);c.fill();c.fillStyle='#fff';c.font='bold 10px system-ui';c.textAlign='center';c.fillText('!',px,py+3.5)}}])}
+ cars.forEach(v=>{v.t=(v.t+v.sp*dt)%1;const p=ringPt(v.t,v.o,v.rev),q=ringPt(v.t+.002,v.o,v.rev);E.push([p[0]+p[1],()=>cCar(c,p,q,v.col,L,N)])});rvStep(dt);RV.forEach(v=>{const o=rvPos(v);E.push([o.p[0]+o.p[1]+.5,()=>cCar(c,o.p,o.q,v.col,L,N)])});
  peds.forEach((v,i)=>{v.t=(v.t+v.sp*dt)%1;const p=ringPt(v.t,.15,v.rev);E.push([p[0]+p[1],()=>cPed(c,p,v.col,L,t,i)])});
  E.sort((a,b)=>a[0]-b[0]).forEach(e=>e[1]());
  cPT-=dt;if(cPT<=0){cPT=1.8;const bs=[];for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(cB(x,y)&&cInc(x,y)>0)bs.push([x,y]);if(bs.length){const q=bs[Math.floor(Math.random()*bs.length)],p=cP(q[0]+.5,q[1]+.5);cPops.push({x:p[0],y:p[1]-cHh(cB(q[0],q[1]))-8,a:1,v:cInc(q[0],q[1])*4/60})}}
@@ -1185,7 +1229,7 @@ function rmWatch(){clearInterval(rmIv);rmIv=setInterval(()=>{
  else if(n>=2&&idle>(n>=4?2:7))startOnline();
 },1000)}
 async function randomMatch(){
- const tok=++rmTok,el=$('#on'),nm=((el&&el.value.trim())||myName||'Player').slice(0,14);saveName(nm);DAILY=null;cStop();
+ if(!NAMELOCK){cStop();err='Choose your player name first (top of the page).';return setup()}const tok=++rmTok,nm=NAMELOCK;saveName(nm);DAILY=null;cStop();
  try{ONL&&ONL.R.leave()}catch(e){}ONL=null;clearInterval(rmIv);
  if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
  scr='match';
@@ -1199,11 +1243,146 @@ async function randomMatch(){
  err='Couldn’t set up a random match. Please try again.';setup();
 }
 
+/* ===== Flio 1.5: unique names, natural landscape, roads, world time ===== */
+CD.rd='Roads link your buildings. A building that is not on the edge of the land and has no road next to it works at only 75%. Roads must connect to the edge of the land.';
+function nameBox(){
+ if(NAMELOCK)return '<div class="box"><b>👤 Player name: '+esc(NAMELOCK)+' 🔒</b><p class="mut" style="margin:4px 0 0">Your name is unique worldwide and can’t be changed. Export your save to keep it if you change device.'+(ls('flio_nameok',0)?'':' It will be verified with the server once the game owner has run the updated setup.')+'</p></div>';
+ return '<div class="box"><b>👤 Choose your player name</b><p class="mut">Pick it once. It is unique worldwide and can’t be changed later. If another player already has it, you’ll be asked to choose a different one.</p>'+(NERR?'<p style="color:var(--ac);margin:6px 0">'+esc(NERR)+'</p>':'')+'<div class="row"><input id="pn" placeholder="Your name" maxlength="14" value="'+esc(NNAME||(/^Player \d$/i.test(myName)?'':myName))+'"><button class="p" id="pnb" onclick="claimName()">Claim name</button></div></div>';
+}
+async function claimName(){
+ const el=document.getElementById('pn'),nm=String((el&&el.value)||'').trim().replace(/\s+/g,' ').slice(0,14);NNAME=nm;
+ if(nm.length<2){NERR='Pick a name with at least 2 characters.';return setup()}
+ if(/^(player \d*|computer.*|owner|admin|flio)$/i.test(nm)){NERR='That name is reserved. Please choose another.';return setup()}
+ const b=document.getElementById('pnb');if(b){b.disabled=true;b.textContent='Checking…'}
+ let r='ok';
+ if(DB){try{r=await rpc('claim_name',{p_name:nm,p_token:TOK});r=Array.isArray(r)?r[0]:r}
+  catch(e){if(setupErr(e&&e.message))r='pending';else{NERR='Couldn’t check the name. Connect to the internet and try again.';return setup()}}}
+ if(r=='taken'){NERR='“'+nm+'” is already taken by another player. Please choose a different name.';return setup()}
+ if(r!='ok'&&r!='pending'){NERR='Couldn’t claim that name. Try another.';return setup()}
+ NAMELOCK=nm;NERR='';NNAME='';lset('flio_namelock',nm);lset('flio_nameok',r=='ok'?1:0);saveName(nm);
+ MYL.w=MYL.d=MYL.b=0;setup();if(DB)loadMyRanks();
+}
+async function verifyName(){
+ if(!NAMELOCK||ls('flio_nameok',0))return;
+ try{let r=await rpc('claim_name',{p_name:NAMELOCK,p_token:TOK});r=Array.isArray(r)?r[0]:r;
+  if(r=='ok')lset('flio_nameok',1);
+  else if(r=='taken'){const old=NAMELOCK;NAMELOCK=null;try{localStorage.removeItem('flio_namelock')}catch(e){}NERR='The name “'+old+'” belongs to another player, so please choose a new one.';NNAME='';if(scr=='setup')setup()}
+ }catch(e){}
+}
+/* ---- natural landscape: lakes, mountains and forests, fixed by the city id ---- */
+const landRnd=(s,x,y)=>{let h=(s^Math.imul(x+101,374761393)^Math.imul(y+211,668265263))>>>0;h=Math.imul(h^(h>>>13),1274126177)>>>0;return((h^(h>>>16))>>>0)/4294967296};
+function landNoise(s,x,y){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=landRnd(s,xi,yi),b=landRnd(s,xi+1,yi),c=landRnd(s,xi,yi+1),d=landRnd(s,xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}
+let LF={s:null,F:null};
+function landFeat(s){
+ if(LF.s===s)return LF.F;
+ const r=mulberry(s>>>0),cs=shufR([[.8,.8],[5.2,.8],[.8,5.2],[5.2,5.2]],r),F=[];
+ F.push({k:'w',x:cs[0][0]+(r()-.5),y:cs[0][1]+(r()-.5),r:1.15+r()*.35});
+ F.push({k:'m',x:cs[1][0]+(r()-.5),y:cs[1][1]+(r()-.5),r:1.1+r()*.35});
+ for(let i=0;i<8;i++){const a=i%4<2;F.push({k:i%2?'m':'w',x:a?6+r()*7:r()*13,y:a?r()*13:6+r()*7,r:1.1+r()*1.1})}
+ LF={s,F};return F}
+const landSeed=()=>hashStr('flio-land-'+String((CITY&&CITY.id)||'x').replace(/^visit-/,''));
+function landGen(x,y){
+ const s=landSeed(),F=landFeat(s),nz=landNoise(s+7,x*.9,y*.9)-.5;let w=false;
+ for(const f of F){const d=Math.hypot(x+.5-f.x,y+.5-f.y)+nz*1.1;if(d<f.r){if(f.k=='m')return 'm';w=true}}
+ if(w)return 'w';
+ return landNoise(s+31,x*.55,y*.55)>.64&&landRnd(s,x,y)>.25?'f':''}
+function landEns(){
+ if(!CITY||!CITY.id||window.VIS||String(CITY.id).startsWith('visit-'))return null;
+ const n=GN,old=CITY.tr,on=old?Math.round(Math.sqrt(old.length)):0;
+ if(old&&on==n&&old.length==n*n)return old;
+ const a=new Array(n*n);
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++)a[y*n+x]=(old&&old.length==on*on&&x<on&&y<on)?old[y*on+x]:(cB(x,y)?'':landGen(x,y));
+ CITY.tr=a;cSave();return a}
+function landAt(x,y){
+ if(!CITY||x<0||y<0||x>=GN||y>=GN)return '';
+ if(window.VIS||String(CITY.id||'').startsWith('visit-'))return cB(x,y)?'':landGen(x,y);
+ const a=landEns();return a?(a[y*GN+x]||''):''}
+const landBlocked=(x,y)=>{const k=landAt(x,y);return k=='w'||k=='m'};
+function cTileCol(x,y){const k=landAt(x,y);return k=='w'?((x+y)%2?'#3f93d6':'#3a8bcc'):k=='m'?'#7d8573':k=='f'?((x+y)%2?'#4c9a56':'#47914f'):((x+y)%2?'#68bf6e':'#5fb566')}
+function cTerr(c,x,y,k,L,N,t){
+ const q=cP(x+.5,y+.5),s=landSeed();
+ if(k=='w'){
+  const a=cP(x,y),b=cP(x+1,y),d=cP(x+1,y+1),e=cP(x,y+1);
+  c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=1;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.stroke();
+  c.strokeStyle='rgba(255,255,255,'+(.35*L)+')';c.lineWidth=1.4;
+  for(let i=0;i<2;i++){const ph=(t*.8+i*.5+landRnd(s,x,y+i))%1,wx=q[0]-8+i*10+Math.sin(ph*6.28)*3;c.beginPath();c.ellipse(wx,q[1]+(i?3:-3),7*(.5+ph),2.4*(.5+ph),0,0,Math.PI);c.stroke()}
+  if(N>.3){c.fillStyle='rgba(255,255,220,'+(.25*N)+')';c.beginPath();c.ellipse(q[0],q[1],10,4,0,0,7);c.fill()}
+  return}
+ if(k=='m'){
+  const h=34+landRnd(s+3,x,y)*22,w=TW*.95;
+  const pk=(cx,cy,ph,pw)=>{poly(c,[[cx-pw,cy],[cx,cy-ph],[cx,cy]],cSh('#8a8f86',.8*L));poly(c,[[cx,cy],[cx,cy-ph],[cx+pw,cy]],cSh('#aeb3a9',.95*L));const sh=ph*.32;poly(c,[[cx-pw*.32,cy-ph+sh],[cx,cy-ph],[cx,cy-ph+sh*.8]],'rgba(240,244,248,'+(.5+.4*L)+')');poly(c,[[cx,cy-ph+sh*.8],[cx,cy-ph],[cx+pw*.32,cy-ph+sh]],'rgba(255,255,255,'+(.7*L+.2)+')')};
+  c.fillStyle='rgba(0,0,0,.16)';c.beginPath();c.ellipse(q[0]+4,q[1]+3,w*.8,TH*.7,0,0,7);c.fill();
+  pk(q[0]-9,q[1]+4,h*.7,w*.55);pk(q[0]+6,q[1]+6,h,w*.7);
+  return}
+ for(let i=0;i<4;i++){const px=q[0]+(landRnd(s+i,x,y)-.5)*TW*1.1,py=q[1]+(landRnd(s+9+i,x,y)-.5)*TH*.9,hh=11+landRnd(s+20+i,x,y)*6,sw=Math.sin(t*1.4+i+x)*.8;
+  c.fillStyle=cSh('#5b3d22',L);c.fillRect(px-1,py-2,2,3);
+  poly(c,[[px-5,py-2],[px+sw,py-hh],[px+5,py-2]],cSh(i%2?'#2f8a4d':'#2a7a45',L*1.05));poly(c,[[px-4,py-6],[px+sw,py-hh-2+4],[px+4,py-6]],cSh('#3a9a58',L))}
+}
+function cRoad(c,x,y,L,N,t){
+ const a=cP(x,y),b=cP(x+1,y),d=cP(x+1,y+1),e=cP(x,y+1),q=cP(x+.5,y+.5);
+ poly(c,[a,b,d,e],cSh('#4a4e57',L));
+ c.strokeStyle='rgba(210,214,222,'+(.5*L)+')';c.lineWidth=1.2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.stroke();
+ const isR=(xx,yy)=>{if(xx<0||yy<0||xx>=GN||yy>=GN)return true;const bb=cB(xx,yy);return !!bb&&cS(bb.t).role=='road'};
+ c.strokeStyle='rgba(255,255,255,'+(.55+.35*L)+')';c.lineWidth=1.6;c.setLineDash([4,4]);let any=false;
+ [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{if(isR(x+dx,y+dy)){const m=cP(x+.5+dx*.5,y+.5+dy*.5);c.beginPath();c.moveTo(q[0],q[1]);c.lineTo(m[0],m[1]);c.stroke();any=true}});
+ c.setLineDash([]);
+ if(!any){c.fillStyle='rgba(255,255,255,.8)';c.fillRect(q[0]-3,q[1]-1,6,2)}
+ return [q[0],q[1]-3]}
+/* ---- time of day changes how busy each building is ---- */
+function actM(role,h){
+ const x=((h%24)+24)%24,band=(a,b)=>x>=a&&x<b;
+ switch(role){
+  case 'shop':return band(8,21)?1:(band(6,8)||band(21,23))?.5:.2;
+  case 'cafe':return band(6,23)?1:.25;
+  case 'office':return band(8,18)?1:(band(6,8)||band(18,21))?.5:.2;
+  case 'tower':return .5+.5*actM('office',x);
+  case 'factory':return band(6,22)?1:.8;
+  case 'school':return band(7,16)?1:.15;
+  case 'park':return band(6,20)?1:band(20,22)?.5:.2;
+  case 'solar':return lt0(x);
+  default:return 1}
+}
+/* while the game was closed, income follows the real day/night cycle hour by hour */
+/* ---- traffic on the road tiles you build ---- */
+let RV=[],RVD=[];
+const RVC=['#e53935','#fdd835','#1e88e5','#f5f5f5','#43a047','#ff7043','#8e24aa','#00acc1'],RVT=['car','car','sport','bus','truck','bike','amb','car'];
+const rvRoad=(x,y)=>{if(x<0||y<0||x>=GN||y>=GN)return false;const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
+const rvNb=(x,y)=>[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>rvRoad(x+d[0],y+d[1]));
+function rvStep(dt){
+ if(!CITY)return;dt=Math.min(dt,.1);
+ const tiles=[];for(let y=0;y<GN;y++)for(let x=0;x<GN;x++)if(rvRoad(x,y)&&rvNb(x,y).length)tiles.push([x,y]);
+ const want=tiles.length>1?Math.min(14,Math.ceil(tiles.length/2)):0;
+ RV.forEach(v=>{if(!rvRoad(v.x,v.y))v.bad=1});
+ RVD.push(...RV.filter(v=>v.bad));RV=RV.filter(v=>!v.bad);
+ while(RV.length>want)RVD.push(RV.pop());
+ for(let a=0;RV.length<want&&a<30;a++){const t=tiles[Math.floor(Math.random()*tiles.length)],n=rvNb(t[0],t[1]),d=n[Math.floor(Math.random()*n.length)],i=RV.length,vt=RVT[Math.floor(Math.random()*RVT.length)];
+  RV.push({x:t[0],y:t[1],dx:d[0],dy:d[1],p:Math.random(),sp:(vt=='bus'||vt=='truck'?.55:vt=='sport'?1.1:.8)+Math.random()*.25,col:RVC[i%RVC.length],vt})}
+ RV.forEach(v=>{v.p+=v.sp*dt;
+  while(v.p>=1&&!v.bad){v.p-=1;v.x+=v.dx;v.y+=v.dy;
+   const n=rvNb(v.x,v.y);if(!rvRoad(v.x,v.y)||!n.length){v.bad=1;break}
+   const fw=n.find(d=>d[0]==v.dx&&d[1]==v.dy),nb=n.filter(d=>!(d[0]==-v.dx&&d[1]==-v.dy)),d=(fw&&Math.random()<.65)?fw:(nb.length?nb[Math.floor(Math.random()*nb.length)]:n[0]);
+   v.dx=d[0];v.dy=d[1]}});
+ RVD.push(...RV.filter(v=>v.bad));RV=RV.filter(v=>!v.bad)}
+function rvPos(v){const fx=v.x+.5+v.dx*v.p-v.dy*.14,fy=v.y+.5+v.dy*v.p+v.dx*.14;return{p:[fx,fy],q:[fx+v.dx*.05,fy+v.dy*.05]}}
+function cAvgRate(dt){
+ if(dt<300||!CITY)return ECO.rate;
+ const n=Math.min(48,Math.max(4,Math.round(dt/1800))),t1=Date.now(),t0=t1-dt*1000,lon=CITY.geo?CITY.geo[0]:-new Date().getTimezoneOffset()/4;let s=0;
+ try{for(let i=0;i<n;i++){HOV=wHour(lon,t0+(i+.5)/n*(t1-t0));s+=cEco().rate}}finally{HOV=null}
+ cEco();return s/n}
+function dnIcon(lon){const h=wHour(+lon||0,Date.now());return h>=6&&h<18?'☀️':'🌙'}
+function nightShade(x,W,H){
+ const now=Date.now(),d=new Date(now),doy=Math.floor((now-Date.UTC(d.getUTCFullYear(),0,0))/864e5),rad=Math.PI/180,
+  dec=-23.44*rad*Math.cos(2*Math.PI/365*(doy+10)),sl=(12-(now/36e5)%24)*15;
+ for(let py=0;py<H;py+=4)for(let px=0;px<W;px+=4){
+  const lon=(px+2)/W*360-180,lat=90-(py+2)/H*180,s=Math.sin(lat*rad)*Math.sin(dec)+Math.cos(lat*rad)*Math.cos(dec)*Math.cos((lon-sl)*rad);
+  if(s<0){x.fillStyle='rgba(5,8,40,'+Math.min(.55,.25+(-s)*1.2)+')';x.fillRect(px,py,4,4)}}
+}
+
 /* ===== Flio City+ : waste, resources, upkeep, defence, disasters, happiness, world map & ranking ===== */
 (()=>{
 const ADD={recycle:['Recycling plant','♻️',1400,6,0,8,-3,0,'#2e9e6b'],water:['Water works','💧',1100,5,0,6,-2,0,'#2f9fd8'],defense:['Defence grid','🛡',2000,2,0,5,-3,0,'#607d8b']};
 for(const k in ADD){CT[k]=ADD[k];CRL[k]='svc'}
-const WX={house:1,apartment:4,shop:2,cafe:1.5,park:0,school:2,hospital:4,office:3,factory:8,tower:8,power:5,solar:0,water:0,defense:1,recycle:1};
+const WX={house:1,apartment:4,shop:2,cafe:1.5,park:0,school:2,hospital:4,office:3,factory:8,tower:8,power:5,solar:0,water:0,defense:1,recycle:1,road:0};
 const need=c=>Math.max(1,Math.ceil(c/30)),face=h=>h>=.8?'😄':h>=.6?'🙂':h>=.4?'😐':h>=.2?'😟':'😡',now=()=>Date.now(),pc=v=>Math.round(v*100)+'%',zs=s=>s.size?CSZ[s.size]:1;
 const DIS=[['🌍','Earthquake',0],['🌊','Flood',0],['🔥','Wildfire',0],['🌪','Tornado',0],['💥','Industrial explosion',1],['⚡','Grid blackout',1],['💻','Cyberattack',1]];
 const LAND=[[[-168,66],[-125,50],[-122,32],[-97,18],[-82,9],[-80,27],[-60,47],[-95,72]],[[-80,10],[-60,10],[-35,-6],[-52,-33],[-70,-55],[-75,-20]],[[-10,36],[-9,55],[30,70],[110,74],[180,68],[145,45],[122,22],[105,8],[80,8],[58,24],[35,32],[10,40]],[[-17,21],[-5,36],[32,31],[51,12],[40,-15],[20,-35],[12,-10],[-10,5]],[[114,-22],[130,-12],[152,-12],[153,-28],[140,-38],[115,-34]]];
@@ -1240,21 +1419,21 @@ let WOK=null,WC=ls('flio_wc',[]),pol=0,LAST='';
 const NPC=['Neo Tokyo','Aurora Bay','Casablanca','Nordheim','Rio Verde','Sundara','Port Meridian','Kestrel','Lagos Prime','Silverfall','Andes Gate','Harbor One'],AN=[[139,35],[-123,49],[-7,33],[10,60],[-43,-23],[77,28],[3,43],[-3,56],[3,6],[-110,45],[-70,-33],[103,1]];
 const hot=c=>c.hit&&now()-c.hit<216e5;
 function world(){const ep=Math.floor(now()/216e5),dy=Math.max(0,(now()-1767200000000)/864e5);
- const np=NPC.map((n,i)=>{const h=hashStr(n+ep),base=(6000+hashStr(n)%24000)*(1+dy*.004),sev=h%6==0?.2+(h>>3)%50/100:0;return{id:'npc'+i,name:n,lon:AN[i][0],lat:AN[i][1],score:Math.round(base*(1-sev)+(CITY.helped[n]||0)*.6),def:Math.round(base/400),happy:.8-sev*.8,hit:sev?now():0,npc:1}});
+ const np=[]; /* AI cities removed: only real players appear */
  const me={id:CITY.id,name:CITY.name,lon:CITY.geo[0],lat:CITY.geo[1],score:myScore(),def:Math.round(ECO.df||0),happy:ECO.H||0,hit:CITY.hit,me:1};
  return[...WC.filter(c=>c.id!=CITY.id),...np,me].sort((a,b)=>b.score-a.score)}
 const apLv=()=>{let l=0;CITY.g.forEach(b=>{if(b&&cS(b.t).role=='airport')l=Math.max(l,b.l||1)});return l};
 const online=c=>c.updated&&now()-Date.parse(c.updated)<12e4;
 const skyline=()=>{const m={};CITY.g.forEach(b=>{if(b){const e=cS(b.t).emoji;m[e]=(m[e]||0)+1}});return Object.keys(m).sort((a,b)=>m[b]-m[a]).slice(0,10).map(e=>e+'×'+m[e]).join(' ')};
 let LAYS='';const layoutStr=()=>JSON.stringify({n:CITY.n,g:CITY.g.map(b=>b?b.t+'|'+(b.l||1):''),cu:CITY.custom||[]});
-async function sync(){if(!CITY||!DB||window.VIS)return;init();try{const a={p_id:CITY.id,p_name:CITY.name,p_lon:CITY.geo[0],p_lat:CITY.geo[1],p_score:myScore(),p_def:Math.round(ECO.df||0),p_happy:+(ECO.H||0).toFixed(2),p_hit:CITY.hit||0};try{await rpc('upsert_city',Object.assign({},a,{p_ap:apLv(),p_bl:skyline()}))}catch(e){await rpc('upsert_city',a)}WC=await rpc('world_cities');lset('flio_wc',WC);WOK=true;try{const L=layoutStr();if(L!=LAYS&&L.length<12000){await rpc('save_layout',{p_id:CITY.id,p_lay:L});LAYS=L}}catch(e){}
+async function sync(){if(!CITY||!DB||window.VIS)return;init();try{const a={p_id:CITY.id,p_name:CITY.name,p_lon:CITY.geo[0],p_lat:CITY.geo[1],p_score:myScore(),p_def:Math.round(ECO.df||0),p_happy:+(ECO.H||0).toFixed(2),p_hit:CITY.hit||0};try{await rpc('upsert_city',Object.assign({},a,{p_ap:apLv(),p_bl:skyline()}))}catch(e){await rpc('upsert_city',a)}WC=await rpc('world_cities');lset('flio_wc',WC);WOK=true;try{if(NAMELOCK&&CITY.on!==NAMELOCK){await rpc('set_city_owner',{p_id:CITY.id,p_owner:NAMELOCK});CITY.on=NAMELOCK}}catch(e){}try{const L=layoutStr();if(L!=LAYS&&L.length<12000){await rpc('save_layout',{p_id:CITY.id,p_lay:L});LAYS=L}}catch(e){}
  const ev=await rpc('my_events',{p_id:CITY.id});ev.forEach(e=>{if(e.kind=='deal'&&e.from_id){CITY.offers=(CITY.offers||[]).filter(o=>o.id!=e.from_id);CITY.offers.push({id:e.from_id,name:e.from_name,at:now()});CITY.news='🤝 '+e.from_name+' proposes a tourism deal! Accept it in the Tourism deals box.'}else if(e.kind=='deal_ok'&&e.from_id){CITY.deals=CITY.deals||{};CITY.deals[e.from_id]={name:e.from_name,exp:now()+(+e.amt||120)*6e4};CITY.news='🤝 '+e.from_name+' accepted your tourism deal! Tourists now travel between your cities.'}else if(e.kind=='visit'){CITY.cash+=+e.amt;CITY.news='✈️ '+e.from_name+' landed at your airport and paid '+cMoney(e.amt)+' in landing fees!'}else if(e.kind=='help'){CITY.cash+=+e.amt;if(String(e.from_name).indexOf('🎁')==0){CITY.news=e.from_name+' gifted your city '+cMoney(e.amt)+'!'}else{CITY.dis0*=.5;CITY.news='🤝 '+e.from_name+' sent you '+cMoney(e.amt)+' to rebuild!'}}else{const l=Math.min(+e.amt,Math.floor(CITY.cash*.3));CITY.cash-=l;CITY.news='⚔ '+e.from_name+' raided your city and took '+cMoney(l)+'. Build more defence!'}});
  if(ev.length){cSave();if(scr=='city')cPanel()}}catch(e){WOK=false}}
 function drawMap(all){const c=$('#wm');if(!c)return;const x=c.getContext('2d'),W=560,H=250,P=(o,a)=>[(o+180)/360*W,(90-a)/180*H];x.fillStyle='#1d4e89';x.fillRect(0,0,W,H);x.fillStyle='#3f8f5a';
  LAND.forEach(p=>{x.beginPath();p.forEach((q,i)=>{const a=P(q[0],q[1]);i?x.lineTo(a[0],a[1]):x.moveTo(a[0],a[1])});x.closePath();x.fill()});
- all.forEach(t=>{const a=P(t.lon,t.lat);x.beginPath();x.arc(a[0],a[1],t.me?7:4.5,0,7);x.fillStyle=t.me?'#ff4fa3':hot(t)?'#ff3b30':t.npc?'#e8e8e8':'#2dff8a';x.fill();x.strokeStyle='#000';x.lineWidth=1.2;x.stroke();if(t.me){x.fillStyle='#fff';x.font='bold 11px system-ui';x.fillText(t.name,a[0]+9,a[1]+4)}})}
+ nightShade(x,W,H);all.forEach(t=>{const a=P(t.lon,t.lat);x.beginPath();x.arc(a[0],a[1],t.me?7:4.5,0,7);x.fillStyle=t.me?'#ff4fa3':hot(t)?'#ff3b30':t.npc?'#e8e8e8':'#2dff8a';x.fill();x.strokeStyle='#000';x.lineWidth=1.2;x.stroke();if(t.me){x.fillStyle='#fff';x.font='bold 11px system-ui';x.fillText(t.name,a[0]+9,a[1]+4)}})}
 window.W_open=function(){if(!CITY)return;const all=world(),r=all.findIndex(c=>c.me)+1,top=all.slice(0,15);if(r>15)top.push(all[r-1]);
- $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas><p class="mut" style="margin:4px 0">🟣 you · 🟢 players · ⚪ AI cities · 🔴 struck by disaster. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Live players need the one-time database setup; AI cities shown meanwhile. <button style="padding:3px 8px" onclick="W_sql()">Copy SQL &amp; open Supabase</button>':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
+ $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas><p class="mut" style="margin:4px 0">🟣 you · 🟢 players · 🔴 struck by disaster · shaded area = night right now. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Live players need the one-time database setup. <button style="padding:3px 8px" onclick="W_sql()">Copy SQL &amp; open Supabase</button>':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${dnIcon(c.lon)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button> <button style="padding:3px 6px" onclick="W_send('${c.id}')" title="Send money">💸</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. 💸 Send any amount ($10–$100,000) to any real player. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
 window.W_atk=id=>{const c=world().find(x=>x.id==id),E=ECO;if(!c)return;const f=m=>{LAST=m;W_open()};
  if(E.df<=0)return f('You need a 🛡 Defence grid to attack.');if(now()<(CITY.cd[id]||0))return f('Your forces are recovering (5 min cooldown).');
  if(CITY.cash<300||CITY.mat<10)return f('An attack costs $300 and 10 🧱.');
@@ -1265,6 +1444,15 @@ window.W_help=id=>{const c=world().find(x=>x.id==id);if(!c)return;const f=m=>{LA
  if(!hot(c))return f(c.name+' is not struck by a disaster right now.');if(CITY.cash<500)return f('Helping costs $500.');
  CITY.cash-=500;CITY.karma=(CITY.karma||0)+300;if(c.npc)CITY.helped[c.name]=(CITY.helped[c.name]||0)+500;else rpc('city_event',{p_to:c.id,p_kind:'help',p_amt:500,p_from:CITY.name}).catch(()=>{});
  cSave();cPanel();cStats();f('🤝 You sent $500 to '+c.name+'. Your reputation grows (+300 score).')};
+window.W_send=async id=>{const c=world().find(x=>x.id==id)||FOUND.find(x=>x.id==id);if(!c||c.me||c.id==CITY.id||c.npc)return;const f=m=>{LAST=m;W_open()};
+ const v=prompt('Send money to '+c.name+'.\nYou have '+cMoney(CITY.cash)+'. Amount ($10 – $100,000):','500');if(v===null)return;
+ const amt=Math.floor(+String(v).replace(/[^0-9.]/g,''));
+ if(!(amt>=10)||amt>100000)return f('Enter an amount from $10 to $100,000.');
+ if(CITY.cash<amt)return f('Not enough cash. You have '+cMoney(CITY.cash)+'.');
+ CITY.cash-=amt;cSave();cStats();
+ try{await rpc('city_event',{p_to:c.id,p_kind:'help',p_amt:amt,p_from:'🎁 '+CITY.name});f('💸 You sent '+cMoney(amt)+' to '+c.name+'. They get it within about 30 seconds of having the game open.')}
+ catch(e){CITY.cash+=amt;cSave();cStats();f('Could not send (check your internet). Your money was returned.')}
+ cPanel()};
 let VW=0;
 const dealRate=id=>{const c=WC.find(x=>x.id==id);return 2+Math.min(30,((c&&+c.score)||0)/3000)};
 const dealPay=t0=>{const D=CITY.deals;if(!D)return;for(const k in D){const v=D[k],e=Math.max(0,Math.min(CITY.t,v.exp)-t0)/1000;if(e>0){const g=dealRate(k)*e/60;CITY.cash+=g;CITY.earned+=g}if(v.exp<now()-864e5)delete D[k]}};
@@ -1320,6 +1508,62 @@ const oU=cUp;cUp=function(){const b=cB(CSEL.x,CSEL.y);if(!b||b.l>=3)return;const
 const oT=cTick;cTick=function(){if(!CITY||window.VIS)return;const t0=CITY.t;oT();init();dealPay(t0);const dt=Math.min(259200,Math.max(0,(CITY.t-t0)/1000));CITY.mat=Math.min(1000,CITY.mat+(ECO.mr||0)*dt/60);if(CITY.cash<0)CITY.cash=0;if(now()>CITY.nd)disaster();if(now()-pol>3e4){pol=now();sync()}};
 window.W_sync=sync;
 window.W_sql=()=>{const ref=SUPA_URL.replace('https://','').split('.')[0];(navigator.clipboard?navigator.clipboard.writeText(WSQL):Promise.reject()).then(()=>{LAST='SQL copied. Paste it in the editor and press Run, then reopen this screen.';W_open()}).catch(()=>{LAST='Copy failed: use Show setup steps on the home screen.';W_open()});window.open('https://supabase.com/dashboard/project/'+ref+'/sql/new','_blank','noopener')};
+/* ---- Flio 1.5 city rules: roads, scenery and time of day ---- */
+const oE2=cEco;
+cEco=function(){
+ const E=oE2();if(!CITY)return E;
+ const n=GN,h=cHour(),act=[],rd=new Array(n*n).fill(false),q=[];E.act=act;
+ const isR=(x,y)=>{const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x==0||y==0||x==n-1||y==n-1)&&isR(x,y)){rd[y*n+x]=true;q.push([x,y])}
+ while(q.length){const [x,y]=q.pop();[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const a=x+dx,b=y+dy;if(a>=0&&b>=0&&a<n&&b<n&&!rd[b*n+a]&&isR(a,b)){rd[b*n+a]=true;q.push([a,b])}})}
+ const up0=E.up||0,k0=.8+.4*(E.H||0);let d=0,nr=0,nc=0;
+ CITY.g.forEach((b,i)=>{if(!b)return;const s=cS(b.t),m=CM[b.l],x=i%n,y=Math.floor(i/n);
+  if(s.role=='road'){nr++;E.eff[i]=1;act[i]=1;E.msg[i]=rd[i]?'Connected to the road network.':'Not linked to the edge of the land yet, so it serves nobody.';return}
+  const ef0=E.eff[i]||0,a=actM(s.role,h),conn=x==0||y==0||x==n-1||y==n-1||[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>rd[(y+dy)*n+x+dx]);
+  act[i]=a;const ef=conn?ef0:ef0*.75;E.eff[i]=ef;
+  if(!conn){nc++;E.msg[i]='🛣 No road access: connect it to the road network or build it on the edge of the land (works at 75%). '+(E.msg[i]||'')}
+  else if(s.role=='solar'&&a<.3)E.msg[i]='🌙 No sunlight: solar panels make no power at night. '+(E.msg[i]||'');
+  else if(a<.6)E.msg[i]=(a<.3?'🌙 Closed or almost empty at this hour. ':'🌆 Quiet at this hour. ')+(E.msg[i]||'');
+  d+=s.inc*m*(ef*a-ef0)});
+ let lw=0,lm=0,lf=0;const tr=landEns();if(tr)tr.forEach(k=>{if(k=='w')lw++;else if(k=='m')lm++;else if(k=='f')lf++});
+ const sb=Math.min(.12,lw*.012+lm*.01+lf*.006);E.scn={w:lw,m:lm,f:lf,b:sb};
+ if(E.R>0)E.H=Math.min(1,(E.H||0)+sb);
+ E.rate=((E.rate+up0)/k0+d)*(.8+.4*(E.H||0))-up0;
+ if(nc)E.warn.unshift('🛣 '+nc+' building(s) have no road access and work at 75%: build roads.');
+ return E};
+const oB2=cBuild;
+cBuild=function(x,y,t){
+ const k=landAt(x,y);
+ if(k=='w'&&!cB(x,y)){cMsg('💧 That is a lake: you can’t build on water.');return false}
+ if(k=='m'&&!cB(x,y)){cMsg('⛰ That is a mountain: too steep to build on.');return false}
+ if(k=='f'&&!cB(x,y)&&CITY.cash<cS(t||CTYPE).cost+40){cMsg('🌲 Clearing the forest costs $40 extra.');return false}
+ const ok=oB2(x,y,t);
+ if(ok&&k=='f'){CITY.cash-=40;const a=landEns();if(a)a[y*GN+x]='';cSave();cStats();cMsg('Cleared the forest (−$40) and built.')}
+ return ok};
+const oU2=cUp;
+cUp=function(){const b=CSEL&&cB(CSEL.x,CSEL.y);if(b&&cS(b.t).role=='road'){cMsg('Roads can’t be upgraded.');return}oU2()};
+const oP3=cPanel;
+cPanel=function(){
+ oP3();const pn=document.getElementById('cpn');if(!pn||!CITY)return;
+ const E=ECO,h=cHour(),lt=lt0(h),hh=Math.floor(h),mm=Math.floor(h%1*60),sc=E.scn||{w:0,m:0,f:0,b:0},nr=CITY.g.filter(b=>b&&cS(b.t).role=='road').length;
+ pn.insertAdjacentHTML('beforeend','<div class="box"><b>'+(lt>.6?'☀️ Day':lt>.12?'🌆 Dusk / dawn':'🌙 Night')+' · '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+' local time</b><div class="mut" style="margin-top:4px">World time at your city’s location (longitude '+Math.round(CITY.geo?CITY.geo[0]:0)+'°). Nobody can change it. Shops, cafés and offices slow down at night, factories keep running, solar farms make no power in the dark (now '+pc(lt)+') and the city uses '+Math.round((cDemand()-1)*100)+'% more electricity for lighting.</div></div><div class="box"><b>🏞 Land &amp; roads</b><div class="mut" style="margin-top:4px">'+sc.w+' lake tiles · '+sc.m+' mountain tiles · '+sc.f+' forest tiles (nature adds +'+Math.round(sc.b*100)+'% happiness). You can’t build on lakes or mountains and forest costs $40 extra to clear. '+nr+' road tile'+(nr==1?'':'s')+': a building with no road access works at 75%.</div></div>')};
+/* ---- find a player by name and send money ---- */
+let FOUND=[],FQ='',FMSG='';
+const oWO=window.W_open;
+const paintF=()=>{const e=document.getElementById('wf');if(!e)return;
+ e.innerHTML=(FMSG?'<p class="mut" style="margin:6px 0 0">'+esc(FMSG)+'</p>':'')+FOUND.map(c=>{const me=CITY&&c.id==CITY.id,on=c.updated&&Date.now()-Date.parse(c.updated)<12e4;
+  return '<div class="row" style="margin:6px 0 0"><span style="flex:1;font-size:14px"><b>'+esc(c.oname||c.name)+'</b>'+(c.oname?' <span class="mut">· '+esc(c.name)+'</span>':'')+(on?' 🟢':'')+'<br><span class="mut">Score '+Math.round(+c.score||0).toLocaleString()+'</span></span>'+(me?'<span class="mut">(you)</span>':'<button class="p" data-id="'+esc(c.id)+'" onclick="W_send(this.dataset.id)">💸 Send</button>')+'</div>'}).join('')};
+window.W_open=function(){
+ oWO();const cv=document.getElementById('wm');if(!cv)return;
+ cv.insertAdjacentHTML('afterend','<div class="box" style="margin:8px 0"><b>🔎 Find a player &amp; send money</b><div class="row" style="margin-top:6px"><input id="wq" placeholder="Player name" maxlength="14" value="'+esc(FQ)+'" onkeydown="if(event.key==\'Enter\')W_find()"><button class="p" onclick="W_find()">Search</button></div><div id="wf"></div></div>');paintF()};
+window.W_find=async()=>{
+ const el=document.getElementById('wq'),q=String((el&&el.value)||'').trim();FQ=q;
+ if(q.length<2){FOUND=[];FMSG='Type at least 2 letters of the player’s name.';return paintF()}
+ FOUND=[];FMSG='Searching…';paintF();
+ try{FOUND=(await rpc('find_players',{p_q:q}))||[];FMSG=FOUND.length?'':'No player found with that name.'}
+ catch(e){const ql=q.toLowerCase();FOUND=WC.filter(c=>String(c.name||'').toLowerCase().includes(ql)||String(c.oname||'').toLowerCase().includes(ql)).slice(0,10);
+  FMSG=FOUND.length?'':(setupErr(e&&e.message)?'Search needs the updated setup (game owner: Show setup steps on the home screen). Only recently active cities can be found for now.':'Search failed. Check your connection.')}
+ paintF()};
 if(CITY)setTimeout(sync,2500);
 })();
 
@@ -1354,7 +1598,7 @@ cDrawB=function(c,x,y,b,L,N,t){
 
 /* ===== Flio true-3D city (Three.js): drag to orbit, pinch/scroll to zoom, real lights + shadows. Falls back to the 2D view if Three.js can't load ===== */
 (()=>{
-const HT={factory:k=>22+4*k,school:k=>22+4*k,hospital:k=>30+6*k,apartment:k=>44+12*k,power:k=>14+4*k,solar:()=>10};
+const HT={factory:k=>22+4*k,school:k=>22+4*k,hospital:k=>30+6*k,apartment:k=>44+12*k,power:k=>14+4*k,solar:()=>10,road:()=>.8};
 const hgt=b=>{const s=cS(b.t),r=s.role,k=b.l;return((HT[r]||(()=>cHh({t:r,l:k})))(k)+(s.size||0)*8)/38};
 let M3=ls('flio_3d',1)?1:0,R,S,CA,root,tg,bg,sel,sun,moon,dl,hl,stars,rc,lastN=0,sig='',w0=0,h0=0,d0=0,pt=0,C3=[],PP3=[],cl3=[],pops=[];
 const view={az:.78,el:.62,dist:0},EM=[],WT={},MM={},TM={},col=h=>new THREE.Color(h);
@@ -1363,10 +1607,21 @@ const pm=c=>TM[c]||(TM[c]=new THREE.MeshLambertMaterial({color:col(c).lerp(col('
 const sd=(c,r)=>{const k=c+r;if(MM[k])return MM[k];const w=wt(r),m=new THREE.MeshLambertMaterial({color:col(c),map:w.m,emissive:0xffffff,emissiveMap:w.e,emissiveIntensity:0});EM.push(m);return MM[k]=m};
 function bx(g,w,h,d,c,x,y,z,r){const s=r?sd(c,r):0,m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),r?[s,s,pm(c),pm(c),s,s]:pm(c));m.position.set(x,y+h/2,z);m.castShadow=m.receiveShadow=true;g.add(m);return m}
 function cy(g,r0,r1,h,c,x,y,z,n){const m=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,n||12),pm(c));m.position.set(x,y+h/2,z);m.castShadow=true;g.add(m);return m}
-function mkB(b){
+function roadG(g,gx,gy){
+ const n=GN,isR=(x,y)=>{if(x<0||y<0||x>=n||y>=n)return true;const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
+ bx(g,1,.03,1,'#4a4e57',0,0,0);let any=0;
+ [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dz])=>{if(!isR(gx+dx,gy+dz))return;any=1;for(let i=0;i<3;i++){const o=.12+i*.15;bx(g,dx?.08:.025,.006,dx?.025:.08,'#ffffff',dx*o,.03,dz*o)}});
+ if(!any)bx(g,.1,.006,.025,'#ffffff',0,.03,0)}
+let WMAT=null;
+const tileMat3=(x,y)=>{const k=landAt(x,y);if(k=='w')return WMAT||(WMAT=new THREE.MeshPhongMaterial({color:0x3b8fd6,shininess:90,specular:0x99ccff}));return pm(k=='m'?'#7d8573':k=='f'?'#4c9a56':((x+y)%2?'#68bf6e':'#5fb566'))};
+function addTerr3(x,y){const k=landAt(x,y);if(!k||k=='w')return;const s=landSeed(),g=new THREE.Group();
+ if(k=='m'){[[0,0,.9+landRnd(s+3,x,y)*.8,.5],[.18,-.14,.55+landRnd(s+4,x,y)*.4,.32]].forEach(p=>{const h=p[2],r=p[3],c1=new THREE.Mesh(new THREE.ConeGeometry(r,h,7),pm('#7b7f78'));c1.position.set(p[0],h/2,p[1]);c1.castShadow=c1.receiveShadow=true;g.add(c1);const hc=h*.36,sc=new THREE.Mesh(new THREE.ConeGeometry(r*.36,hc,7),pm('#f4f6f8'));sc.position.set(p[0],h-hc/2,p[1]);g.add(sc)})}
+ else{for(let i=0;i<4;i++){const px=(landRnd(s+i,x,y)-.5)*.7,pz=(landRnd(s+9+i,x,y)-.5)*.7,h=.28+landRnd(s+20+i,x,y)*.2,tr=new THREE.Mesh(new THREE.CylinderGeometry(.02,.03,.12,6),pm('#5b3d22'));tr.position.set(px,.06,pz);g.add(tr);[[.16,h],[.12,h*.75]].forEach((q,j)=>{const c1=new THREE.Mesh(new THREE.ConeGeometry(q[0],q[1],8),pm(i%2?'#2f8a4d':'#2a7a45'));c1.position.set(px,.1+q[1]/2+j*.12,pz);c1.castShadow=true;g.add(c1)})}}
+ g.position.set(x+.5,.015,y+.5);g.userData.cell=[x,y];tg.add(g)}
+function mkB(b,gx,gy){
  const s=cS(b.t),k=b.l,sz=s.size||0,c=s.col,g=new THREE.Group(),H=hgt(b),rw=h=>Math.max(1,Math.round(h*3));
  const nl=(s.custom||!CT_BASE.has(b.t))?nameLook(s.name):null,r=nl?nl.shape:s.role;
- if(r=='church'){bx(g,.5,H*.8,.7,c,0,0,0,rw(H*.8));bx(g,.22,H*1.5,.22,c,0,0,.3,rw(H*1.5));const sp=new THREE.Mesh(new THREE.ConeGeometry(.18,.4,4),pm('#8a8f98'));sp.position.set(0,H*1.5+.2,.3);sp.rotation.y=Math.PI/4;sp.castShadow=true;g.add(sp);bx(g,.03,.14,.03,'#ffd400',0,H*1.5+.4,.3)}
+ if(s.role=='road'){roadG(g,gx,gy)}else if(r=='church'){bx(g,.5,H*.8,.7,c,0,0,0,rw(H*.8));bx(g,.22,H*1.5,.22,c,0,0,.3,rw(H*1.5));const sp=new THREE.Mesh(new THREE.ConeGeometry(.18,.4,4),pm('#8a8f98'));sp.position.set(0,H*1.5+.2,.3);sp.rotation.y=Math.PI/4;sp.castShadow=true;g.add(sp);bx(g,.03,.14,.03,'#ffd400',0,H*1.5+.4,.3)}
  else if(r=='stadium'){const o=cy(g,.44,.38,.24+.04*k,c,0,0,0,24);cy(g,.3,.3,.26+.04*k,'#58b85f',0,0,0,24)}
  else if(r=='hotel'){bx(g,.5,H*1.2,.5,c,0,0,0,rw(H*1.2));bx(g,.8,H*.5,.7,c,0,0,0,rw(H*.5));bx(g,.3,.06,.1,'#e53935',0,H*1.2,0)}
  else if(r=='castle'){bx(g,.7,H*.6,.7,c,0,0,0,rw(H*.6));[[-.3,-.3],[.3,-.3],[-.3,.3],[.3,.3]].forEach(q=>{cy(g,.1,.1,H*.6+.2,c,q[0],0,q[1],10);const cn=new THREE.Mesh(new THREE.ConeGeometry(.13,.2,10),pm('#c8442f'));cn.position.set(q[0],H*.6+.3,q[1]);cn.castShadow=true;g.add(cn)});bx(g,.14,.2,.02,'#4a2f1b',0,0,.36)}
@@ -1396,8 +1651,8 @@ function build3(){
  for(let q=0;q<4;q++)for(let i=0;i<=Math.floor((n+1.2)/.5);i++){const u=-.6+i*.5,hz=q%2==0,f=q==0||q==3?-.54:n+.54;bx(tg,hz?.22:.03,.01,hz?.03:.22,'#ffffff',hz?u:f,0,hz?f:u)}
  const rd=new THREE.Mesh(new THREE.PlaneGeometry(n+.6,n+.6).rotateX(-Math.PI/2),pm('#c9ccd3'));rd.position.set(n/2,.005,n/2);rd.receiveShadow=true;tg.add(rd);
  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-  const t=new THREE.Mesh(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),pm((x+y)%2?'#68bf6e':'#5fb566'));t.position.set(x+.5,.015,y+.5);t.receiveShadow=true;t.userData.cell=[x,y];tg.add(t);
-  const b=cB(x,y);if(!b)continue;if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b);g.position.set(x+.5,.015,y+.5);g.userData.cell=[x,y];bg.add(g)}
+  const t=new THREE.Mesh(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),tileMat3(x,y));t.position.set(x+.5,.015,y+.5);t.receiveShadow=true;t.userData.cell=[x,y];tg.add(t);
+  const b=cB(x,y);if(!b){addTerr3(x,y);continue}if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(x+.5,.015,y+.5);g.userData.cell=[x,y];bg.add(g)}
  acD=1;occ=CITY.g.map(b=>b?b.t:null);fl.scale.set(n+1.6,1,n+1.6);fl.position.x=fl.position.z=n/2;
  const q=dl.shadow.camera,e=n*.75+2;q.left=q.bottom=-e;q.right=q.top=e;q.near=1;q.far=110;q.updateProjectionMatrix();
 }
@@ -1438,6 +1693,9 @@ function mkV(v){const T=VT[v.vt],g=new THREE.Group(),L=T.L,W=T.W,c=v.vt=='amb'?'
    if(v.vt=='amb')B(L*.5,.02,W*1.03,0xe53935,0,.08,0)}
   [[.33,.5],[.33,-.5],[-.33,.5],[-.33,-.5]].forEach(q=>wl(L*q[0],W*q[1]))}
  if(v.vt!='bike'){B(.015,.02,.02,'#fff2b0',L/2,.06,W*.3);B(.015,.02,.02,'#fff2b0',L/2,.06,-W*.3)}return g}
+function rv3(dt){rvStep(dt);
+ RVD.forEach(v=>{if(v.m){root.remove(v.m);v.m=null}});RVD.length=0;
+ RV.forEach(v=>{if(!v.m||!v.m.parent){v.m=mkV(v);root.add(v.m)}const o=rvPos(v);v.m.position.set(o.p[0],.045,o.p[1]);v.m.rotation.set(0,-Math.atan2(o.q[1]-o.p[1],o.q[0]-o.p[0]),0)})}
 function vsync(){while(C3.length<cars.length){const i=C3.length,v=cars[i];v.vt=v.vt||VK[i%VK.length];const m=mkV(v);root.add(m);C3.push(m)}}
 function carStep(v,i,dt){const m=C3[i];
  if(i==drv){phys(v,m,dt);return}
@@ -1451,7 +1709,7 @@ function phys(v,m,dt){dt=Math.min(dt,.05);const T=VT[v.vt],n=GN,gr=v.sx>=0&&v.sx
  let w=sv/(T.L*.75)*Math.tan(v.sd);const lat=Math.abs(sv*w),G=T.gr*(ctl.h?.35:1);if(lat>G)w*=G/lat;
  v.sh+=w*dt;v.sx+=Math.cos(v.sh)*sv*dt;v.sz+=Math.sin(v.sh)*sv*dt;
  const r=T.W*.8+.04,x0=Math.floor(v.sx),z0=Math.floor(v.sz);
- for(let y=z0-1;y<=z0+1;y++)for(let x=x0-1;x<=x0+1;x++){const b=cB(x,y);if(!b||['park','airport'].includes(cS(b.t).role))continue;
+ for(let y=z0-1;y<=z0+1;y++)for(let x=x0-1;x<=x0+1;x++){const b=cB(x,y);if(b?['park','airport','road'].includes(cS(b.t).role):!landBlocked(x,y))continue;
   const dx=v.sx-x-.5,dz=v.sz-y-.5,nx=Math.max(-.4,Math.min(.4,dx)),nz=Math.max(-.4,Math.min(.4,dz)),ex=dx-nx,ez=dz-nz,d=Math.hypot(ex,ez);
   if(d<r){if(d>1e-6){v.sx+=ex/d*(r-d);v.sz+=ez/d*(r-d)}else if(Math.abs(dx)>Math.abs(dz))v.sx+=Math.sign(dx)*(.4+r-Math.abs(dx));else v.sz+=Math.sign(dz)*(.4+r-Math.abs(dz));if(Math.abs(sv)>.2)sv*=-.3}}
  const lim=n+.7;if(v.sx<-.7||v.sx>lim||v.sz<-.7||v.sz>lim){v.sx=Math.max(-.7,Math.min(lim,v.sx));v.sz=Math.max(-.7,Math.min(lim,v.sz));sv*=.5}
@@ -1500,7 +1758,7 @@ function mkA(ty){const g=new THREE.Group();g.rotation.order='YZX';
  else if(ty=='jet'){C(.055,.6,'#fafafa',0,.09,0);[1,-1].forEach(s=>{B(.18,.012,.26,'#e6e9ee',-.02,.08,s*.17).rotation.y=-s*.5;C(.03,.12,'#9aa0a8',.0,.05,s*.17)});B(.1,.14,.012,'#2a6fd6',-.27,.17,0);B(.07,.01,.22,'#e6e9ee',-.27,.1,0);B(.05,.03,.07,'#223',.27,.11,0)}
  else{B(.2,.09,.1,'#d33',0,.1,0);B(.22,.03,.03,'#aaaaaa',-.18,.11,0);B(.01,.06,.06,'#333',-.29,.12,0);[1,-1].forEach(s=>B(.2,.01,.015,'#222',0,.03,s*.05));g.userData={sp:B(.4,.008,.03,'#333',0,.17,0),ax:'y'}}
  return g}
-function hitB(x,z,y,r){const x0=Math.floor(x),z0=Math.floor(z);for(let j=z0-1;j<=z0+1;j++)for(let i=x0-1;i<=x0+1;i++){const b=cB(i,j);if(!b)continue;const q=cS(b.t).role;if(q=='park'||q=='airport')continue;if(Math.abs(x-i-.5)<.4+r&&Math.abs(z-j-.5)<.4+r&&y<hgt(b)+.03)return 1}return 0}
+function hitB(x,z,y,r){const x0=Math.floor(x),z0=Math.floor(z);for(let j=z0-1;j<=z0+1;j++)for(let i=x0-1;i<=x0+1;i++){const b=cB(i,j);if(!b){if(landAt(i,j)=='m'&&Math.abs(x-i-.5)<.42+r&&Math.abs(z-j-.5)<.42+r&&y<.85)return 1;continue}const q=cS(b.t).role;if(q=='park'||q=='airport'||q=='road')continue;if(Math.abs(x-i-.5)<.4+r&&Math.abs(z-j-.5)<.4+r&&y<hgt(b)+.03)return 1}return 0}
 function asyncA(){acD=0;if(!apc){A3.forEach(a=>root.remove(a.m));A3=[];if(ad>=0){ad=-1;cam2=null;ui(0)}return}
  const L=['prop','heli','jet'].slice(0,Math.max(1,apc.l)),H={prop:[-.28,-.28],jet:[.22,-.28],heli:[.3,.28]};
  A3.forEach(a=>{if(!a.vis&&!L.includes(a.ty))root.remove(a.m)});A3=A3.filter(a=>a.vis||L.includes(a.ty));
@@ -1527,7 +1785,7 @@ function visitStart(L,c,ty){
  if(window.VIS||!R||!M3||!CITY)return 0;
  HOME=CITY;
  const g=L.g.map(q=>{if(!q)return null;const w=q.split('|');return{t:w[0],l:Math.max(1,Math.min(3,+w[1]||1))}});
- CITY=Object.assign({},HOME,{n:L.n,g,custom:L.cu,name:c.name,id:'visit-'+c.id,cash:0,news:''});
+ CITY=Object.assign({},HOME,{n:L.n,g,custom:L.cu,name:c.name,id:'visit-'+c.id,cash:0,news:'',geo:[+c.lon||0,+c.lat||0],tr:null});
  GN=L.n;CSEL=null;drv=-1;ad=-1;cam2=null;cz=1;
  window.VIS={id:c.id,name:c.name,ty,st:'init',air:0};
  sig='';A3.forEach(a=>root.remove(a.m));A3=[];apc=null;acD=1;view.dist=GN*1.5+6;ui(0);return 1}
@@ -1552,14 +1810,14 @@ function tap3(x,y){
  if(drv<0&&ad<0){let bi=-1,bd=28;C3.forEach((m,i)=>{const p=pj(m.position.x,.1,m.position.z);if(p){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i}}});if(bi>=0)return enter(bi)}
  rc=rc||new THREE.Raycaster();rc.setFromCamera({x:x/CW*2-1,y:-y/CH*2+1},CA);
  const h=rc.intersectObjects([tg,bg],true)[0];if(!h)return;let o=h.object;while(o&&!o.userData.cell)o=o.parent;if(!o)return;
- const [gx,gy]=o.userData.cell;if(cB(gx,gy)){CSEL={x:gx,y:gy};cMsg('');return cPanel()}CSEL=null;cBuild(gx,gy);
+ const [gx,gy]=o.userData.cell;if(cB(gx,gy)){CSEL={x:gx,y:gy};cMsg('');cTogPanel(1);return cPanel()}CSEL=null;cBuild(gx,gy);
 }
 function draw3(t,dt){
  const c=cX;if(!c||!CITY||!R)return;if(cWarp)cWT=(cWT+dt*.9)%24;
  const h=cHour(),lt=Math.max(0,Math.min(1,Math.sin((h-6)/12*Math.PI)*1.5+.35)),N=1-lt,ps=(h-6)/12,up=ps>=0&&ps<=1,pn=((h+6)%24)/12;
  if(w0!=CW||h0!=CH||d0!=cD){w0=CW;h0=CH;d0=cD;R.setPixelRatio(cD);R.setSize(CW,CH,false);CA.aspect=CW/CH;CA.updateProjectionMatrix()}
  if(CITY.hit&&CITY.hit!=lh){lh=CITY.hit;if(Date.now()-CITY.hit<2e4)fxStart(t)}
- const sg=GN+'|'+CITY.g.map(b=>b?b.t+b.l:'-').join()+CITY.custom.map(d=>d.id+d.col+d.size).join();if(sg!=sig){sig=sg;build3()}
+ const sg=(landAt(0,0),GN)+'|'+CITY.g.map(b=>b?b.t+b.l:'-').join()+CITY.custom.map(d=>d.id+d.col+d.size).join()+'|'+(window.VIS?'v':(CITY.tr?CITY.tr.join(''):''));if(sg!=sig){sig=sg;build3()}
  const tp=cMix([10,14,46],[88,165,232],lt),bt=cMix([42,30,92],[252,228,186],lt),sk=col('rgb('+tp.map(Math.round)+')').lerp(col('rgb('+bt.map(Math.round)+')'),.5);
  S.background=sk;S.fog.color.copy(sk);
  sun.position.set(-Math.cos(ps*Math.PI)*34,Math.sin(ps*Math.PI)*30,14);moon.position.set(-Math.cos(pn*Math.PI)*34,Math.sin(pn*Math.PI)*28,14);
@@ -1569,7 +1827,7 @@ function draw3(t,dt){
  if(drv>=0)chase(dt);else if(ad>=0)chaseA(dt);else{view.el=Math.max(.12,Math.min(1.5,view.el));view.dist=Math.max(3,Math.min(GN*4+12,view.dist));const ce=Math.cos(view.el);
  CA.position.set(Math.sin(view.az)*ce*view.dist,Math.sin(view.el)*view.dist+.4,Math.cos(view.az)*ce*view.dist);CA.lookAt(0,.4,0)}fxStep(t,dt);
  if(CSEL&&cB(CSEL.x,CSEL.y)){sel.visible=true;sel.position.set(CSEL.x+.5,.03,CSEL.y+.5);const p=1+.04*Math.sin(t*5);sel.scale.set(p,1,p)}else sel.visible=false;
- vsync();cars.forEach((v,i)=>carStep(v,i,dt));if(acD)asyncA();A3.forEach((a,i)=>acStep(a,i,t,dt));if(window.VIS)visTick(t);
+ vsync();cars.forEach((v,i)=>carStep(v,i,dt));rv3(dt);if(acD)asyncA();A3.forEach((a,i)=>acStep(a,i,t,dt));if(window.VIS)visTick(t);
  while(PP3.length<peds.length){const m=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,.09,6),new THREE.MeshLambertMaterial());root.add(m);PP3.push(m)}
  while(PP3.length>peds.length)root.remove(PP3.pop());
  peds.forEach((v,i)=>{v.t=(v.t+v.sp*dt)%1;const p=ringPt(v.t,.15,v.rev),m=PP3[i];m.material.color.set(v.col);m.position.set(p[0],.06+Math.abs(Math.sin(t*8+i))*.012,p[1])});
@@ -1594,7 +1852,7 @@ cityOpen=function(){oOpen();init3();const v=document.getElementById('cvw');if(!v
  v.lastElementChild.insertAdjacentHTML('afterbegin',`<button ${bt} onclick="W3.tog()" title="3D / 2D">🧊</button><button ${bt} onclick="W3.rst()" title="Reset view">⟲</button><button ${bt} onclick="W3.z(.8)" title="Zoom in">＋</button><button ${bt} onclick="W3.z(1.25)" title="Zoom out">－</button>`);
  if(R&&M3){v.insertAdjacentHTML('beforeend','<div id="h3" style="position:absolute;left:8px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:3px 8px;font-size:11px;pointer-events:none">Drag: rotate · Pinch / scroll: zoom · Tap a vehicle to drive it · Tap a plot to build</div>');setTimeout(()=>{const e=document.getElementById('h3');if(e)e.remove()},7000)}};
 const oSt=cStop;
-cStop=function(k){if(window.VIS)visitEnd('abort');oSt(k);if(R){try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}R=null}sig='';lastN=0;w0=h0=d0=0;drv=-1;ad=-1;A3=[];apc=null;cam2=null;FX=null;ui(0);C3=[];PP3=[];cl3=[];pops=[]};
+cStop=function(k){if(window.VIS)visitEnd('abort');oSt(k);if(R){try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}R=null}sig='';lastN=0;w0=h0=d0=0;drv=-1;ad=-1;A3=[];apc=null;cam2=null;FX=null;ui(0);C3=[];PP3=[];cl3=[];pops=[];RV.length=0;RVD.length=0};
 window.W3={ok(){return !!(R&&M3&&window.THREE)},visit:visitStart,visitEnd,tog(){if(!window.THREE||!R){cMsg('3D needs an internet connection: Three.js could not load.');return}M3=M3?0:1;lset('flio_3d',M3)},rst(){view.az=.78;view.el=.62;view.dist=GN*1.5+6},z(f){if(drv>=0||ad>=0)cz=Math.max(.5,Math.min(3,cz*f));else view.dist*=f},leave};
 })();
 
