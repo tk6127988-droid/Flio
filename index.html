@@ -1726,6 +1726,7 @@ window.W_find=async()=>{
 if(CITY)setTimeout(sync,2500);
 /* ===== Flio 1.7: treasure hunt, daily quests + streak, achievements ===== */
 function tres(x,y){if(!CITY||!CITY.wild||window.VIS)return 0;const N=GN,ux=((x%N)+N)%N,uy=((y%N)+N)%N;if(landAt(ux,uy)!=''||cB(ux,uy)||(CITY.tf&&CITY.tf[uy*N+ux]))return 0;return landRnd(hashStr('tr'+CITY.seed),ux,uy)<.012?1:0}
+window.tres=tres;
 const oBt=cBuild;cBuild=function(x,y,t){if(CITY&&CITY.wild&&tres(x,y)){const N=GN,ux=((x%N)+N)%N,uy=((y%N)+N)%N,r=landRnd(hashStr('tv'+CITY.seed),ux,uy),$=Math.round(150+r*450),m=5+Math.floor(r*20);CITY.tf=CITY.tf||{};CITY.tf[uy*N+ux]=1;CITY.cash+=$;CITY.mat=Math.min(1000,(CITY.mat||0)+m);const q=QS();q.tt=(q.tt||0)+1;q.tot=(q.tot||0)+1;cSave();cStats();cPanel();cMsg('💎 Treasure found! +'+cMoney($)+' and +'+m+' 🧱');beep('win');return true}return oBt(x,y,t)};
 const QS=()=>{CITY.q=CITY.q||{d:'',st:0,c:{},a:{},tt:0,tot:0,b0:0};return CITY.q};
 const qN=()=>CITY.g.filter(b=>b).length,qR=r=>CITY.g.filter(b=>b&&cS(b.t).role==r).length;
