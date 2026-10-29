@@ -119,13 +119,8 @@ const shufR=(a,r)=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));
 const dayStr=()=>new Date().toISOString().slice(0,10);
 const yest=d=>new Date(Date.parse(d+'T00:00:00Z')-864e5).toISOString().slice(0,10);
 function streakNow(){const st=ls(SK,{last:'',n:0});return(st.last==dayStr()||st.last==yest(dayStr()))?st.n:0}
-function dlbBody(){
- if(!DB)return '';
- const d=dayStr(),rk=rankLine(MYR.d,r=>Number(r.score)+' pts today','d');
- if(!DLB||DLB.day!=d)return '<p class="mut">'+(DFAIL?(/schema cache|could not find|does not exist/i.test(DERR)?'The daily leaderboard is loading.':'Today’s leaderboard is unavailable offline.'):'Loading today’s leaderboard…')+'</p>';
- return rk+(DLB.rows.length?'<table>'+DLB.rows.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name)}</td><td>${Number(v.score)||0} pts</td></tr>`).join('')+'</table>':'<p class="mut">No scores today yet. Be the first!</p>');
-}
-function paintDaily(){const e=document.getElementById('dlb');if(e)e.innerHTML=dlbBody()}
+function dlbBody(){return DB?rkBlock('d'):''}
+function paintDaily(){const e=document.getElementById('dlb');if(!e)return;if(document.getElementById('rkbd'))rkPaint('d');else e.innerHTML=dlbBody()}
 async function loadDaily(){
  const d=dayStr();
  try{DLB={day:d,rows:await rpc('daily_leaderboard',{p_day:d})};lset('lockflip_dlb',DLB);DFAIL=false}catch(e){DFAIL=true;DERR=String(e&&e.message||'')}
@@ -414,6 +409,43 @@ const meRow=n=>n&&myName&&n==String(myName).trim().slice(0,14)?' style="font-wei
 const MYL={w:0,d:0,b:0},MYE={w:0,d:0,b:0};
 const cleanName=()=>String(myName||'').trim().slice(0,14);
 const setupErr=m=>/schema cache|could not find|does not exist/i.test(String(m||''));
+/* ---- ranking lists: always shown automatically + search bar ---- */
+const SQ={w:'',d:'',b:''},SR={w:null,d:null,b:null},PEND={w:0,d:0,b:0},STM={};
+const RK={
+ w:{fn:'search_world',args:q=>({p_q:q}),list:()=>typeof WORLD!='undefined'?WORLD:null,fail:()=>[WFAIL,WERR],ld:'World ranking is loading.',off:'World ranking is unavailable right now. Connect to the internet to load it.',empty:'No world scores yet. Be the first!',head:'',row:v=>'<td>'+(Number(v.total)||0)+' pts</td><td class="mut">'+(Number(v.games)||0)+' rounds</td>',txt:r=>Number(r.total)+' pts · '+Number(r.games)+' rounds'},
+ d:{fn:'search_daily',args:q=>({p_day:dayStr(),p_q:q}),list:()=>(typeof DLB!='undefined'&&DLB&&DLB.day==dayStr())?DLB.rows:null,fail:()=>[DFAIL,DERR],ld:'The daily leaderboard is loading.',off:'Today’s leaderboard is unavailable offline.',empty:'No scores today yet. Be the first!',head:'',row:v=>'<td>'+(Number(v.score)||0)+' pts</td>',txt:r=>Number(r.score)+' pts today'},
+ b:{fn:'search_biz',args:q=>({p_q:q}),list:()=>typeof BWORLD!='undefined'?BWORLD:null,fail:()=>[BWFAIL,BWERR],ld:'Business ranking is loading.',off:'Business ranking is unavailable right now.',empty:'No business scores yet. Be the first!',head:'<tr><th>#</th><th>Name</th><th>Wins</th><th>Best net worth</th></tr>',row:v=>'<td>'+(Number(v.wins)||0)+'</td><td>$'+(Number(v.best)||0)+'</td>',txt:r=>Number(r.wins)+' wins · best $'+Number(r.best)}
+};
+function rkRank(k){try{return DB?rankLine(MYR[k],RK[k].txt,k):''}catch(e){return ''}}
+function rkBody(k){
+ try{
+  const c=RK[k];if(!DB)return '<p class="mut">World ranking isn’t set up yet.</p>';
+  const L=c.list();
+  if(!Array.isArray(L)){const f=c.fail();return '<p class="mut">'+(f[0]?(setupErr(f[1])?c.ld:c.off):'Loading…')+'</p>'}
+  const q=SQ[k].trim().toLowerCase();
+  let rows=L.filter(v=>v).map((v,i)=>Object.assign({},v,{rank:i+1}));
+  if(q){
+   const loc=rows.filter(v=>String(v.name||'').toLowerCase().includes(q)),rem=(SR[k]&&SR[k].q==q)?SR[k].rows:[],seen=new Set(loc.map(v=>v.name));
+   rows=loc.concat(rem.filter(v=>v&&v.name&&!seen.has(v.name))).sort((a,b)=>(Number(a.rank)||0)-(Number(b.rank)||0));
+   if(!rows.length)return '<p class="mut">'+(PEND[k]?'Searching…':'No player found with “'+esc(SQ[k].trim())+'”.')+'</p>';
+  }else if(!rows.length)return '<p class="mut">'+c.empty+'</p>';
+  return '<table>'+c.head+rows.map(v=>'<tr'+meRow(v.name)+'><td>'+(Number(v.rank)||'?')+'</td><td>'+esc(v.name||'?')+'</td>'+c.row(v)+'</tr>').join('')+'</table>';
+ }catch(e){return '<p class="mut">Ranking is loading.</p>'}
+}
+function rkBlock(k){
+ return '<div id="rkr'+k+'">'+rkRank(k)+'</div><input id="rks'+k+'" type="search" placeholder="🔎 Search player name" maxlength="14" autocomplete="off" autocapitalize="off" spellcheck="false" value="'+esc(SQ[k])+'" oninput="rkSearch(\''+k+'\',this.value)" style="width:100%;box-sizing:border-box;margin:6px 0"><div id="rkb'+k+'" style="max-height:360px;overflow:auto">'+rkBody(k)+'</div>';
+}
+function rkPaint(k){try{const b=document.getElementById('rkb'+k);if(b)b.innerHTML=rkBody(k);const r=document.getElementById('rkr'+k);if(r)r.innerHTML=rkRank(k)}catch(e){}}
+function rkSearch(k,v){
+ SQ[k]=String(v||'').slice(0,14);const q=SQ[k].trim().toLowerCase();
+ clearTimeout(STM[k]);
+ if(!q||!DB){SR[k]=null;PEND[k]=0;rkPaint(k);return}
+ PEND[k]=1;rkPaint(k);
+ STM[k]=setTimeout(async()=>{
+  let rows=[];
+  try{const r=await rpc(RK[k].fn,RK[k].args(q));rows=Array.isArray(r)?r:[]}catch(e){}
+  if(SQ[k].trim().toLowerCase()!=q)return;
+  SR[k]={q,rows};PEND[k]=0;rkPaint(k)},300)}
 function rankLine(r,txt,k){
  const n=cleanName();if(!n||/^Player \d$/i.test(n)||/^Computer/i.test(n))return '';
  const h=x=>'<p style="margin:4px 0"><b>🏅 Your rank: #'+Number(x.rank)+'</b> <span class="mut">'+esc(n)+' · '+txt(x)+'</span></p>';
@@ -434,11 +466,9 @@ function localBoard(){
  return '<div class="box"><b>🏆 Leaderboard</b> <span class="mut">(this device)</span>'+
  (e.length?'<table>'+e.map(([n,v],i)=>`<tr><td>${i+1}</td><td>${esc(n)}</td><td>${v.total} pts</td><td class="mut">${v.games} rounds</td></tr>`).join('')+'</table>':'<p class="mut">No scores yet.</p>')+'</div>';
 }
-function worldBox(){
- const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!WORLD?'<p class="mut">'+(WFAIL?(/schema cache|could not find|does not exist/i.test(WERR)?'World ranking is loading.</p><p class="mut">':'World ranking is unavailable right now. Connect to the internet to load it.'):'Loading…')+'</p>':WORLD.length?'<table>'+WORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.total)||0} pts</td><td class="mut">${Number(v.games)||0} rounds</td></tr>`).join('')+'</table>':'<p class="mut">No world scores yet. Be the first!</p>';
- return '<div class="box"><b>🌍 World ranking</b> <span class="mut">'+(WFAIL&&WORLD?'(saved copy, offline)':'(all games with your own name)')+'</span>'+(DB?rankLine(MYR.w,r=>Number(r.total)+' pts · '+Number(r.games)+' rounds','w'):'')+'<div id="world">'+body+'</div></div>';
-}
-function paintWorld(){const e=document.getElementById('world');if(e)e.parentElement.outerHTML=worldBox()}
+const wNote=()=>(typeof WFAIL!='undefined'&&WFAIL&&WORLD?'(saved copy, offline)':'(all games with your own name)');
+function worldBox(){return '<div class="box" id="wbx"><b>🌍 World ranking</b> <span class="mut" id="wnote">'+wNote()+'</span>'+rkBlock('w')+'</div>'}
+function paintWorld(){const n=document.getElementById('wnote');if(n)n.textContent=wNote();rkPaint('w')}
 const WK='lockflip_world',QK='lockflip_queue';
 let WFAIL=false,flushing=false;
 function ls(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
@@ -473,7 +503,7 @@ end $$;
 create or replace function public.world_leaderboard()
 returns table(name text, total integer, games integer)
 language sql security definer set search_path = public as $$
-  select name, total, games from public.world_scores order by total desc, games asc limit 10;
+  select name, total, games from public.world_scores order by total desc, games asc limit 100;
 $$;
 
 grant execute on function public.submit_score(text, integer) to anon, authenticated;
@@ -507,7 +537,7 @@ end $$;
 create or replace function public.daily_leaderboard(p_day text)
 returns table(name text, score integer)
 language sql security definer set search_path = public as $$
-  select name, score from public.daily_scores where day = p_day order by score desc, created asc limit 10;
+  select name, score from public.daily_scores where day = p_day order by score desc, created asc limit 100;
 $$;
 
 grant execute on function public.submit_daily(text, text, integer) to anon, authenticated;
@@ -543,7 +573,7 @@ end $$;
 create or replace function public.biz_leaderboard()
 returns table(name text, wins integer, games integer, best integer)
 language sql security definer set search_path = public as $$
-  select name, wins, games, best from public.biz_scores order by wins desc, best desc limit 10;
+  select name, wins, games, best from public.biz_scores order by wins desc, best desc limit 100;
 $$;
 
 grant execute on function public.submit_biz(text, integer, boolean) to anon, authenticated;
@@ -675,7 +705,19 @@ begin
  end if;
  return json_build_object('raised',f.raised,'goal',f.goal,'done',fin);
 end $$;
-grant execute on function public.fund_create(text,text,real,real,text,bigint,int,int), public.fund_list(), public.fund_pledge(bigint,bigint,text,text,int) to anon, authenticated;`;
+grant execute on function public.fund_create(text,text,real,real,text,bigint,int,int), public.fund_list(), public.fund_pledge(bigint,bigint,text,text,int) to anon, authenticated;
+
+-- Flio 1.10.1 ranking search (run once; safe to re-run)
+create or replace function public.search_world(p_q text) returns table(rank bigint,name text,total integer,games integer) language sql security definer set search_path=public as $$
+ select r.rank,r.name,r.total,r.games from (select s.name,s.total,s.games,row_number() over(order by s.total desc,s.games asc,s.name) as rank from public.world_scores s) r
+ where length(trim(coalesce(p_q,'')))>=1 and lower(r.name) like '%'||lower(replace(replace(trim(p_q),'%',''),'_',''))||'%' order by r.rank limit 20 $$;
+create or replace function public.search_daily(p_day text,p_q text) returns table(rank bigint,name text,score integer) language sql security definer set search_path=public as $$
+ select r.rank,r.name,r.score from (select s.name,s.score,row_number() over(order by s.score desc,s.created asc) as rank from public.daily_scores s where s.day=p_day) r
+ where length(trim(coalesce(p_q,'')))>=1 and lower(r.name) like '%'||lower(replace(replace(trim(p_q),'%',''),'_',''))||'%' order by r.rank limit 20 $$;
+create or replace function public.search_biz(p_q text) returns table(rank bigint,name text,wins integer,best integer) language sql security definer set search_path=public as $$
+ select r.rank,r.name,r.wins,r.best from (select s.name,s.wins,s.best,row_number() over(order by s.wins desc,s.best desc,s.name) as rank from public.biz_scores s) r
+ where length(trim(coalesce(p_q,'')))>=1 and lower(r.name) like '%'||lower(replace(replace(trim(p_q),'%',''),'_',''))||'%' order by r.rank limit 20 $$;
+grant execute on function public.search_world(text), public.search_daily(text,text), public.search_biz(text) to anon, authenticated;`;
 let WERR='';
 function setupBox(){if(location.hash!='#setup')return '';
  if(!SUPA_URL||!SUPA_KEY)return '';
@@ -730,9 +772,9 @@ const BWK='lockflip_bworld';let BWORLD=ls(BWK,null),BWFAIL=false,BWERR='';
 async function loadBizWorld(){try{BWORLD=await rpc('biz_leaderboard');lset(BWK,BWORLD);BWFAIL=false}catch(e){BWFAIL=true;BWERR=String(e&&e.message||'')}paintBiz()}
 function bizWorldBox(){
  const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!BWORLD?'<p class="mut">'+(BWFAIL?(/schema cache|could not find|does not exist/i.test(BWERR)?'Business ranking is loading.':'Business ranking is unavailable right now.'):'Loading…')+'</p>':BWORLD.length?'<table><tr><th>#</th><th>Name</th><th>Wins</th><th>Best net worth</th></tr>'+BWORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.wins)||0}</td><td>$${Number(v.best)||0}</td></tr>`).join('')+'</table>':'<p class="mut">No business scores yet. Be the first!</p>';
- return '<div class="box" id="bwbox"><b>🌍 Business world ranking</b> <span class="mut">(most wins, then best net worth)</span>'+(DB?rankLine(MYR.b,r=>Number(r.wins)+' wins · best $'+Number(r.best),'b'):'')+body+'</div>';
+ return '<div class="box" id="bwbox"><b>🌍 Business world ranking</b> <span class="mut">(most wins, then best net worth)</span>'+rkBlock('b')+'</div>';
 }
-function paintBiz(){const e=document.getElementById('bwbox');if(e)e.outerHTML=bizWorldBox()}
+function paintBiz(){rkPaint('b')}
 function submitBiz(n,f,w){
  if(!SUPA_URL||!SUPA_KEY||/^Player \d$/i.test(n)||/^Computer/i.test(n)||!NAMELOCK||n!==NAMELOCK)return;
  const q=ls(QK,[]);q.push({n:String(n).slice(0,14),p:f,w:w?1:0,x:1});lset(QK,q.slice(-200));
@@ -1519,8 +1561,8 @@ function drawMap(all){const c=$('#wm');if(!c)return;const S=2,W=560*S,H=250*S;c.
    x.font='bold 22px system-ui';const w=Math.max(x.measureText(l1).width,x.measureText(l2).width,x.measureText(l3).width)+28,h=92;let bx=sel.p[0]-w/2,by=sel.p[1]-h-rr(sel)-14;bx=Math.max(6,Math.min(W-w-6,bx));if(by<6)by=sel.p[1]+rr(sel)+14;
    x.fillStyle='rgba(8,14,34,.92)';x.strokeStyle=cl(sel);x.lineWidth=2;x.beginPath();x.roundRect?x.roundRect(bx,by,w,h,12):x.rect(bx,by,w,h);x.fill();x.stroke();x.textAlign='left';x.textBaseline='top';x.fillStyle='#fff';x.fillText(l1,bx+14,by+8);x.font='20px system-ui';x.fillStyle='#bcd';x.fillText(l2,bx+14,by+36);x.fillText(l3,bx+14,by+62)}
   requestAnimationFrame(fr)};requestAnimationFrame(fr)}
-window.W_open=function(){if(!CITY)return;const all=world(),r=all.findIndex(c=>c.me)+1,top=all.slice(0,15);if(r>15)top.push(all[r-1]);
- $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas>${frBar()}<p class="mut" style="margin:4px 0">🟣 you · 🟢 players · 💰 fundraisers · 🔴 struck by disaster · bigger dot = higher score · dashed gold lines = your flight routes ✈️ · shaded = night right now. Tap a dot for details. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Connecting to live players… check your internet.':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${dnIcon(c.lon)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button> <button style="padding:3px 6px" onclick="W_send('${c.id}')" title="Send money">💸</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. 💸 Send any amount ($10–$100,000) to any real player. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
+window.W_open=function(){if(!CITY)return;const all=world(),r=all.findIndex(c=>c.me)+1,top=all.slice();
+ $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas>${frBar()}<p class="mut" style="margin:4px 0">🟣 you · 🟢 players · 💰 fundraisers · 🔴 struck by disaster · bigger dot = higher score · dashed gold lines = your flight routes ✈️ · shaded = night right now. Tap a dot for details. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Connecting to live players… check your internet.':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr data-n="${esc((String(c.name||'')+' '+String(c.oname||'')).toLowerCase())}" style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${dnIcon(c.lon)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button> <button style="padding:3px 6px" onclick="W_send('${c.id}')" title="Send money">💸</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. 💸 Send any amount ($10–$100,000) to any real player. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
 /* ---- Flio 1.10 fundraisers on the world map ---- */
 let FR=ls('flio_fr',[]),FSEL=null,FRT=0;
 const frOn=()=>!CFG.fund||CFG.fund.on!==false;
@@ -1669,7 +1711,10 @@ const paintF=()=>{const e=document.getElementById('wf');if(!e)return;
   return '<div class="row" style="margin:6px 0 0"><span style="flex:1;font-size:14px"><b>'+esc(c.oname||c.name)+'</b>'+(c.oname?' <span class="mut">· '+esc(c.name)+'</span>':'')+(on?' 🟢':'')+'<br><span class="mut">Score '+Math.round(+c.score||0).toLocaleString()+'</span></span>'+(me?'<span class="mut">(you)</span>':'<button class="p" data-id="'+esc(c.id)+'" onclick="W_send(this.dataset.id)">💸 Send</button>')+'</div>'}).join('')};
 window.W_open=function(){
  oWO();const cv=document.getElementById('wm');if(!cv)return;
- cv.insertAdjacentHTML('afterend','<div class="box" style="margin:8px 0"><b>🔎 Find a player &amp; send money</b><div class="row" style="margin-top:6px"><input id="wq" placeholder="Player name" maxlength="14" value="'+esc(FQ)+'" onkeydown="if(event.key==\'Enter\')W_find()"><button class="p" onclick="W_find()">Search</button></div><div id="wf"></div></div>');paintF()};
+ cv.insertAdjacentHTML('afterend','<div class="box" style="margin:8px 0"><b>🔎 Find a player &amp; send money</b><div class="row" style="margin-top:6px"><input id="wq" placeholder="Player name" maxlength="14" value="'+esc(FQ)+'" onkeydown="if(event.key==\'Enter\')W_find()"><button class="p" onclick="W_find()">Search</button></div><div id="wf"></div></div>');paintF();
+ try{const tb=cv.parentElement&&cv.parentElement.querySelector(':scope > table');if(tb){tb.insertAdjacentHTML('beforebegin','<input id="wrq" type="search" placeholder="🔎 Search world ranking by name" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false" value="'+esc(RQ)+'" oninput="W_rf(this.value)" style="width:100%;box-sizing:border-box;margin:6px 0"><p id="wrn" class="mut" style="margin:0 0 6px;display:none">No player found.</p>');W_rf(RQ)}}catch(e){}};
+let RQ='';
+window.W_rf=v=>{try{RQ=String(v||'').slice(0,20);const q=RQ.trim().toLowerCase(),n=document.getElementById('wrn'),tb=n&&n.nextElementSibling;if(!tb)return;let k=0;tb.querySelectorAll('tr[data-n]').forEach(r=>{const ok=!q||String(r.dataset.n||'').includes(q);r.style.display=ok?'':'none';if(ok)k++});n.style.display=(q&&!k)?'':'none'}catch(e){}};
 window.W_find=async()=>{
  const el=document.getElementById('wq'),q=String((el&&el.value)||'').trim();FQ=q;
  if(q.length<2){FOUND=[];FMSG='Type at least 2 letters of the player’s name.';return paintF()}
@@ -1693,7 +1738,7 @@ function qBox(){const q=QS(),ds=qDay();let a=0,h='';QA.forEach((x,i)=>{const on=
  h='<div class="box"><b>📜 Daily quests</b> <span class="mut">🔥 '+q.st+' day streak</span>'+ds.map(k=>{const e=QP[k],v=Math.min(e[2],e[1](q)),dn=q.c[k],ok=v>=e[2];return '<div style="margin:6px 0"><div>'+e[0]+' <span class="mut">'+v+'/'+e[2]+'</span></div>'+cBar(v/e[2],'#3fae5a')+(dn?'<span class="mut">✅ Claimed</span>':'<button '+(ok?'class="p"':'disabled style="opacity:.5"')+' style="margin-top:4px" onclick="Q_claim(\''+k+'\')">Claim +'+cMoney(e[3])+'</button>')+'</div>'}).join('')+'<div class="mut">Finish all three for a streak bonus (+$100 per streak day, up to $1,000). Quests change every day.</div></div><div class="box"><b>🏅 Achievements '+n+'/'+QA.length+'</b><div style="margin-top:6px">'+ach+'</div>'+(CITY.wild?'<div class="mut" style="margin-top:6px">💎 Gold gems are hidden on the land. Explore and tap one to collect it. Found: '+(q.tot||0)+'</div>':'')+'</div>';return h}
 const oPq=cPanel;cPanel=function(){oPq();const pn=document.getElementById('cpn');if(pn&&CITY)try{pn.insertAdjacentHTML('beforeend',qBox())}catch(e){}};
 
-setInterval(async()=>{const m=document.getElementById('wm'),q=document.getElementById('wq');if(!m||document.hidden||(q&&(q.value||document.activeElement===q)))return;try{await sync();if(document.getElementById('wm'))window.W_open()}catch(e){}},20000);
+setInterval(async()=>{const m=document.getElementById('wm'),q=document.getElementById('wq'),rq=document.getElementById('wrq');if(!m||document.hidden||(q&&(q.value||document.activeElement===q))||(rq&&document.activeElement===rq))return;try{await sync();if(document.getElementById('wm'))window.W_open()}catch(e){}},20000);
 })();
 
 /* ===== Flio 3D polish: lit faces, ambient occlusion, sun-cast shadows, glass sheen, night glow, beacons ===== */
