@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="flio-version" content="1.10.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10}},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10}},"auth":null}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
 <title>Flio</title>
@@ -50,7 +50,7 @@ const SUPA_URL='https://seicvoktkezadcqgfvik.supabase.co',SUPA_KEY='eyJhbGciOiJI
 const SRC0='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 const $=s=>document.querySelector(s),app=$('#app');
 /* ---------- owner config (defaults; overridden by baked + local settings) ---------- */
-const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[],fund:{on:true,min:500,max:100000,hours:48,maxAct:1,karma:.5,mat:1,bonus:10}};
+const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz','pek'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[],lfCash:1,streak:3,twists:true,events:true,fund:{on:true,min:500,max:100000,hours:48,maxAct:1,karma:.5,mat:1,bonus:10}};
 const CFG=(()=>{let b={},l={};try{b=JSON.parse(document.getElementById('flio-cfg').textContent)||{}}catch(e){}try{l=JSON.parse(localStorage.getItem('flio_owner_cfg'))||{}}catch(e){}
  const m=Object.assign({},JSON.parse(JSON.stringify(CFG_DEF)),b.cfg||{},l.cfg||{});return m})();
 let seats=ls('lockflip_seats',null)||[{n:'Player 1',t:'h'},{n:'Computer',t:'b'},{n:'Player 3',t:'o'},{n:'Player 4',t:'o'}];
@@ -65,8 +65,9 @@ let PW=ls('lockflip_pw',1),LOG=[],trapKnown=false,pwUsed=false,MT=ls('lockflip_m
 const DK='lockflip_daily',SK='lockflip_streak';
 const mtTxt=n=>n?'First to '+n+' points':'Endless';
 /* ---------- power cards ---------- */
-const PWI={skip:'⏭',dbl:'✖2',shd:'🛡',frz:'❄️'},PWN={skip:'Skip',dbl:'Double',shd:'Shield',frz:'Freeze'};
-const PWD={skip:'Pass your turn without flipping',dbl:'Your next flip counts double',shd:'Survive one trap hit',frz:'The next player loses their turn'};
+const PWI={skip:'⏭',dbl:'✖2',shd:'🛡',frz:'❄️',pek:'🔍'},PWN={skip:'Skip',dbl:'Double',shd:'Shield',frz:'Freeze',pek:'Peek'};
+const PWD={skip:'Pass your turn without flipping',dbl:'Your next flip counts double',shd:'Survive one trap hit',frz:'The next player loses their turn',pek:'Learn if the trap is higher or lower than a number'};
+let RM=null;const RMT={dbl:'✨ Double points: every flip counts ×2',nop:'🚫 No power cards this round',lck:'🔒 Big locker bonus: the locker earns ×2 if someone hits the trap'};
 const PWON=()=>!!PW&&!DAILY;
 const rp=()=>{const a=CFG.pwSet.length?CFG.pwSet:['skip'];return a[Math.floor(Math.random()*a.length)]};
 const plog=m=>{LOG.push(m);LOG=LOG.slice(-6)};
@@ -79,6 +80,7 @@ function usePower(i,k){
  else if(k=='dbl'){p.dbl=true;plog(p.name+' played ✖2 Double')}
  else if(k=='frz'){const t=nextIdx();P[t].frz=true;plog(p.name+' froze '+P[t].name+' ❄️')}
  else if(k=='skip'){plog(p.name+' skipped ⏭');nextTurn()}
+ else if(k=='pek'&&trap!=null){let x;do{x=Math.floor(Math.random()*10)}while(x==trap);plog(p.name+' 🔍 peeked: the trap is '+(trap>x?'higher':'lower')+' than '+x)}
  sync();
  if(k=='skip')botCheck();
  return true;
@@ -89,6 +91,7 @@ function botPower(t){
  if(has('shd')&&Math.random()<.45)k='shd';
  else if(has('dbl')&&Math.random()<.35)k='dbl';
  else if(has('frz')&&Math.random()<.3)k='frz';
+ else if(has('pek')&&Math.random()<.3)k='pek';
  else if(has('skip')&&p.s>=8&&Math.random()<.35)k='skip';
  if(!k)return false;
  usePower(t,k);return k=='skip';
@@ -330,8 +333,9 @@ function lobby(){
 function newRound(){
  round++;res=null;MATCH=null;
  const rr=DAILY?DAILY.r:null,sh=a=>rr?shufR(a,rr):shuf(a);
- P.forEach(p=>{p.cards=sh([0,1,2,3,4,5,6,7,8,9]).map(v=>({v,o:false}));p.s=0;p.hit=false;p.pw=PWON()?Array.from({length:CFG.pwCount},rp):[];p.shield=false;p.dbl=false;p.frz=false});
+ P.forEach(p=>{p.cards=sh([0,1,2,3,4,5,6,7,8,9]).map(v=>({v,o:false}));p.s=0;p.hit=false;p.pw=PWON()?Array.from({length:CFG.pwCount},rp):[];p.shield=false;p.dbl=false;p.frz=false;p.fc=0});
  trap=null;SEC=null;LOG=[];trapKnown=false;pwUsed=false;
+ RM=(!DAILY&&CFG.twists!==false&&round>1&&Math.random()<.5)?['dbl','nop','lck'][Math.floor(Math.random()*3)]:null;if(RM=='nop')P.forEach(p=>p.pw=[]);if(RM)plog('🎲 Twist: '+RMT[RM]);
  if(DAILY)DAILY.ord=P.map(()=>sh([0,1,2,3,4,5,6,7,8,9]));
  if(P[locker].bot){trap=rr?Math.floor(rr()*10):Math.floor(Math.random()*10);beginPlay()}else{phase='trap';sync()}
 }
@@ -359,7 +363,7 @@ function flip(pi,ci){
   if(p.shield){p.shield=false;p.dbl=false;trapKnown=true;plog('🛡 '+p.name+' hit the trap '+trap+' but the Shield saved them!');nextTurn();sync();botCheck();return}
   p.hit=true;p.s=0;return endRound()
  }
- p.s+=c.v*(p.dbl?2:1);p.dbl=false;nextTurn();sync();botCheck();
+ p.s+=c.v*(p.dbl?2:1)*(RM=='dbl'?2:1);p.dbl=false;if(!DAILY&&(+CFG.streak||0)>0){p.fc=(p.fc||0)+1;if(p.fc%3==0){p.s+=+CFG.streak;plog('🔥 '+p.name+' hot streak: +'+CFG.streak)}}nextTurn();sync();botCheck();
 }
 function botCheck(){
  if(phase!='play'||!P[turn].bot)return;
@@ -382,13 +386,13 @@ function endRound(){
  P.forEach(p=>p.cards.forEach(c=>{if(c.v==trap)c.o=true}));
  const order=P.map((p,i)=>i).sort((a,b)=>P[b].s-P[a].s);
  const bonus=CFG.bonus;const caught=P.some(p=>p.hit);
- res=order.map((i,r)=>{const b=bonus[r]+(i==locker&&caught?CFG.lockerBonus:0);P[i].total+=P[i].s+b;return{i,r:r+1,s:P[i].s,b}});
+ res=order.map((i,r)=>{const b=bonus[r]+(i==locker&&caught?CFG.lockerBonus*(RM=='lck'?2:1):0);P[i].total+=P[i].s+b;return{i,r:r+1,s:P[i].s,b}});
  if(MT&&!DAILY){const top=Math.max(...P.map(p=>p.total)),ws=P.map((p,i)=>i).filter(i=>P[i].total==top);MATCH=(top>=MT&&ws.length==1)?{w:ws[0]}:null}
  sync();
 }
 function nextRound(){locker=(locker+1)%P.length;newRound()}
 function rematch(){P.forEach(p=>p.total=0);locker=0;round=0;MATCH=null;gid++;newRound()}
-function view(){return{g:gid,ph:phase,rd:round,lk:locker,tn:turn,tr:(phase=='over'||trapKnown)?trap:null,pwOn:PWON()?1:0,pu:pwUsed,lg:LOG.slice(-3),res,mt:(MT&&!DAILY)?MT:0,mw:MATCH?MATCH.w:null,ids:P.map(p=>p.pid||null),
+function view(){return{g:gid,ph:phase,rd:round,lk:locker,tn:turn,tr:(phase=='over'||trapKnown)?trap:null,pwOn:PWON()?1:0,pu:pwUsed,lg:LOG.slice(-3),rm:RM,res,mt:(MT&&!DAILY)?MT:0,mw:MATCH?MATCH.w:null,ids:P.map(p=>p.pid||null),
  P:P.map(p=>({n:p.name,b:p.bot,t:p.total,s:p.s,h:p.hit,pw:p.pw||[],sh:!!p.shield,db:!!p.dbl,fz:!!p.frz,c:p.cards.map(c=>c.o?c.v:null)}))}}
 function sync(){
  render();
@@ -715,6 +719,8 @@ function onOver(){
  const db=lb();
  V.res.forEach(x=>{if(!mine.includes(x.i))return;const n=V.P[x.i].n,e=db[n]||{total:0,games:0};e.total+=x.s+x.b;e.games++;db[n]=e;submitScore(n,x.s+x.b)});
  saveLb(db);
+ try{const k=+CFG.lfCash,mult=((isFinite(k)&&k>=0)?k:1)*evNow().lf,me=ONL?ONL.me:(mine.find(i=>V.P[i].n==myName)??mine[0]),x=V.res.find(r=>r.i==me);
+  const g=x?Math.round(x.s*mult):0;if(g>0)lfPay(g);gMark('play')}catch(e){}
  if(V.mw!=null)beep('win');
 }
 if(SUPA_URL&&SUPA_KEY){DB=true;WORLD=ls(WK,null);const refreshAll=()=>flushQueue().then(()=>{verifyName();loadWorld();loadDaily();loadBizWorld()});refreshAll();addEventListener('online',refreshAll);setInterval(()=>{if(!document.hidden)refreshAll()},30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshAll()})}
@@ -888,7 +894,7 @@ function render(){
  const P0=PREV,cur=V.P.map(p=>p.c.map(v=>v!==null));
  const same=!!P0&&P0.g==V.g&&P0.rd==V.rd&&P0.o.length==cur.length;
  const nw=(i,ci)=>same&&cur[i][ci]&&!P0.o[i][ci];
- let h=`<div class="hd"><span>${DAILY?'📅 Daily '+DAILY.day:'Round '+V.rd}${ONL?' · table '+esc(ONL.code):''}${V.mt?' · first to '+V.mt:''}</span><span>🔒 Locker: ${esc(V.P[V.lk].n)}${V.tr!=null?' · trap '+V.tr:''}</span></div>`;
+ let h=`<div class="hd"><span>${DAILY?'📅 Daily '+DAILY.day:'Round '+V.rd}${ONL?' · table '+esc(ONL.code):''}${V.mt?' · first to '+V.mt:''}</span><span>🔒 Locker: ${esc(V.P[V.lk].n)}${V.tr!=null?' · trap '+V.tr:''}</span></div>`+(V.rm&&RMT[V.rm]?'<div class="box" style="margin:0 0 8px;border-color:var(--ac)"><b>🎲 Twist:</b> '+RMT[V.rm]+'</div>':'');
  if(ph=='trap'){
   if(!ONL||me==V.lk)h+=`<div class="box"><b>${esc(V.P[V.lk].n)}, pick the trap number</b><p class="mut">${ONL?'Only you see this.':'Hand the device to the Locker. Others, look away!'}</p><div class="pick">${[0,1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="pickTrap(${n})">${n}</button>`).join('')}</div></div>`;
   else h+=`<div class="box"><b>Waiting for ${esc(V.P[V.lk].n)} to lock a number…</b></div>`;
@@ -1539,7 +1545,7 @@ window.W_fund=async id=>{const s=FR.find(x=>x.id==id);if(!s)return;const c=FC(),
  const a=Math.floor(+String(v).replace(/[^0-9.]/g,""));if(!(a>=10)||a>100000)return f("Enter an amount from $10 to $100,000.");if(CITY.cash<a)return f("Not enough cash. You have "+cMoney(CITY.cash)+".");
  CITY.cash-=a;cSave();cStats();
  try{const r=await rpc("fund_pledge",{p_id:id,p_amt:a,p_from:CITY.name,p_from_id:CITY.id,p_bonus:Math.min(25,c.bonus)});
-  const k=Math.round(a*c.karma),m=Math.floor(a/100*c.mat);CITY.karma=(CITY.karma||0)+k;CITY.mat=Math.min(1000,(CITY.mat||0)+m);cSave();cStats();await frLoad();
+  const ev=evNow().fr,k=Math.round(a*c.karma*ev),m=Math.floor(a/100*c.mat*ev);CITY.karma=(CITY.karma||0)+k;CITY.mat=Math.min(1000,(CITY.mat||0)+m);cSave();cStats();await frLoad();
   f("💰 You backed "+s.city_name+" with "+cMoney(a)+". Rewards: +"+k+" score"+(m?" and +"+m+" 🧱":"")+"."+(r&&r.done?" 🎉 Goal reached! Your cash-back bonus arrives within about 30 seconds.":""))}
  catch(e){CITY.cash+=a;cSave();cStats();f("Could not fund: "+e.message+" Your money was returned.")}cPanel()};
 window.W_atk=id=>{const c=world().find(x=>x.id==id),E=ECO;if(!c)return;const f=m=>{LAST=m;W_open()};
@@ -2414,6 +2420,24 @@ const FL=window.FL={boxes:[],errs:[],box(f){this.boxes.push(f)},
 {const s0=setup;setup=function(){const r=s0.apply(this,arguments);try{FL.paint()}catch(e){}return r}}
 function runMods(){if(location.hash=='#safe')return;(CFG.mods||[]).forEach(m=>{if(m&&m.on!==false&&m.code){try{(0,eval)(m.code)}catch(e){FL.errs.push((m.n||'mod')+': '+e.message)}}});try{FL.paint()}catch(e){}}
 
+/* ---- Flio 1.10: Lock & Flip points become city cash ---- */
+function lfToast(t){try{const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ok);color:#000;font-weight:800;padding:10px 16px;border-radius:12px;z-index:9998;box-shadow:0 4px 14px rgba(0,0,0,.4)';document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}catch(e){}}
+function lfApply(){try{const n=+ls('flio_lfpend',0)||0;if(n>0&&CITY&&!window.VIS){CITY.cash+=n;cSave();lset('flio_lfpend',0);if(scr=='city'){cStats();cPanel()}return n}}catch(e){}return 0}
+function lfPay(g){lset('flio_lfpend',(+ls('flio_lfpend',0)||0)+g);if(CITY&&!window.VIS){lfApply();lfToast('💰 +$'+g.toLocaleString()+' added to your city')}else lfToast('💰 +$'+g.toLocaleString()+' saved for your city')}
+{const _co=cityOpen;cityOpen=function(){const r=_co.apply(this,arguments);if(lfApply()>0)lfToast('💰 Your Lock & Flip cash was added to your city');return r}}
+/* ---- Flio 1.10: weekly events + getting-started guide ---- */
+const EVS=[{n:'💰 Double cash week',d:'Lock & Flip city cash is doubled',lf:2,fr:1},{n:'🤝 Backer boost week',d:'Fundraiser backer rewards are doubled',lf:1,fr:2},{n:'🎉 Bonus week',d:'Lock & Flip cash and fundraiser rewards ×1.5',lf:1.5,fr:1.5}];
+function evNow(){if(CFG.events===false)return{lf:1,fr:1,n:'',d:'',left:0};const D=864e5,t=Date.now(),w=Math.floor((t/D-4)/7);return Object.assign({left:Math.max(1,Math.ceil((((w+1)*7+4)*D-t)/D))},EVS[w%EVS.length])}
+const GK='flio_guide';
+function gMark(k){const g=ls(GK,{});if(!g[k]){g[k]=1;lset(GK,g)}}
+function guideHide(){const g=ls(GK,{});g.hide=1;lset(GK,g);setup()}
+function guideHtml(){const g=ls(GK,{});if(g.hide)return'';const nb=CITY&&CITY.g?CITY.g.filter(b=>b).length:0;
+ const st=[[!!g.play,'Play a Lock & Flip round (it earns city cash)'],[!!CITY,'Open the 🏙 city builder and start your city'],[nb>=3,'Build 3 buildings (homes first, then shops and power)'],[!!g.map,'Open the 🌍 world map inside your city'],[!!g.fund,'Raise funds or back another player 💰']];
+ const done=st.filter(s=>s[0]).length;if(done==st.length)return'';const nx=st.find(s=>!s[0]);
+ return'<b>🧭 Getting started ('+done+'/'+st.length+')</b>'+st.map(s=>'<div class="mut">'+(s[0]?'✅ ':'⬜ ')+s[1]+'</div>').join('')+'<div style="margin:6px 0"><b>Next:</b> '+nx[1]+'</div><button onclick="guideHide()">Hide guide</button>'}
+FL.box(guideHtml);
+FL.box(()=>{const e=evNow();return e.n?'<b>'+e.n+'</b><div class="mut">'+e.d+' · '+e.left+' day'+(e.left==1?'':'s')+' left</div>':''});
+[['W_open','map'],['W_fnew','fund'],['W_fund','fund']].forEach(([f,k])=>{const o=window[f];if(typeof o=='function')window[f]=function(){gMark(k);return o.apply(this,arguments)}});
 applyCfg();runMods();
 
 
