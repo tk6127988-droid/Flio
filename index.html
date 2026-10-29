@@ -2464,6 +2464,36 @@ const FL=window.FL={boxes:[],errs:[],box(f){this.boxes.push(f)},
    if(ref){a.insertBefore(d,ref.nextSibling)}else{a.insertBefore(d,a.firstChild)}ref=d}catch(e){FL.errs.push('box: '+e.message)}})}};
 {const s0=setup;setup=function(){const r=s0.apply(this,arguments);try{FL.paint()}catch(e){}return r}}
 function runMods(){if(location.hash=='#safe')return;(CFG.mods||[]).forEach(m=>{if(m&&m.on!==false&&m.code){try{(0,eval)(m.code)}catch(e){FL.errs.push((m.n||'mod')+': '+e.message)}}});try{FL.paint()}catch(e){}}
+/* ---- 🐞 report a bug (players) ---- */
+(()=>{
+ const BQ='flio_bugq';
+ const ctx=()=>{try{return (scr||'')+(window.CITY?' · city':'')+' · '+(innerWidth+'x'+innerHeight)+' · '+String(navigator.userAgent||'').slice(0,120)}catch(e){return ''}};
+ async function send(it){try{const r=await rpc('submit_bug',{p_name:it.n,p_msg:it.m,p_ver:it.v,p_ctx:it.c});return r}catch(e){return 'fail'}}
+ async function flush(){try{if(!DB)return;const q=ls(BQ,[]),rest=[];for(const it of q){const r=await send(it);if(r=='fail')rest.push(it)}lset(BQ,rest.slice(-20))}catch(e){}}
+ function close(){const e=document.getElementById('bugm');if(e)e.remove()}
+ window.bugClose=close;
+ window.bugOpen=()=>{try{
+  close();const m=document.createElement('div');m.id='bugm';
+  m.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px';
+  m.innerHTML='<div class="box" style="width:min(100%,460px);margin:0"><b>🐞 Report a bug</b><p class="mut" style="margin:6px 0">Tell us what went wrong and what you were doing. Thank you for helping!</p><textarea id="bugt" rows="5" maxlength="1000" placeholder="What happened?" style="width:100%;box-sizing:border-box"></textarea><p class="mut" id="bugs" style="margin:6px 0"></p><div class="row"><button class="p" onclick="bugSend()">Send</button><button onclick="bugClose()">Cancel</button></div></div>';
+  document.body.appendChild(m);setTimeout(()=>{const t=document.getElementById('bugt');if(t)t.focus()},50)}catch(e){}};
+ window.bugSend=async()=>{try{
+  const t=document.getElementById('bugt'),st=document.getElementById('bugs'),msg=String((t&&t.value)||'').trim();
+  if(msg.length<5){if(st)st.textContent='Please write a little more (at least 5 letters).';return}
+  const it={n:String(typeof myName!='undefined'?myName:'').trim().slice(0,14),m:msg.slice(0,1000),v:VER,c:ctx()};
+  if(st)st.textContent='Sending…';
+  const r=DB?await send(it):'fail';
+  if(r=='ok'){if(st)st.textContent='✅ Sent. Thank you!';setTimeout(close,1200)}
+  else if(r=='slow'||r=='busy'){if(st)st.textContent='Too many reports right now. Please try again in a few minutes.'}
+  else{const q=ls(BQ,[]);q.push(it);lset(BQ,q.slice(-20));if(st)st.textContent='📴 No connection. Saved, it will be sent when you are online.';setTimeout(close,1800)}
+ }catch(e){}};
+ const b=document.createElement('button');b.id='bugb';b.title='Report a bug';b.textContent='🐞';
+ b.style.cssText='position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:50;width:40px;height:40px;border-radius:50%;padding:0;font-size:20px;opacity:.75';
+ b.onclick=()=>window.bugOpen();
+ const add=()=>{if(document.body&&!document.getElementById('bugb'))document.body.appendChild(b)};
+ if(document.body)add();else addEventListener('DOMContentLoaded',add);
+ addEventListener('online',flush);setTimeout(flush,4000);
+})();
 
 /* ---- Flio 1.10: Lock & Flip points become city cash ---- */
 function lfToast(t){try{const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ok);color:#000;font-weight:800;padding:10px 16px;border-radius:12px;z-index:9998;box-shadow:0 4px 14px rgba(0,0,0,.4)';document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}catch(e){}}
