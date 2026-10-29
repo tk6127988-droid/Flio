@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.5.2">
+<meta name="flio-version" content="1.6.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[]},"auth":null}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -119,7 +119,7 @@ function streakNow(){const st=ls(SK,{last:'',n:0});return(st.last==dayStr()||st.
 function dlbBody(){
  if(!DB)return '';
  const d=dayStr(),rk=rankLine(MYR.d,r=>Number(r.score)+' pts today','d');
- if(!DLB||DLB.day!=d)return '<p class="mut">'+(DFAIL?(/schema cache|could not find|does not exist/i.test(DERR)?'The daily leaderboard needs the updated setup. <a href="#" onclick="openSetup();return false" style="color:var(--ac)">Show setup steps</a>':'Today’s leaderboard is unavailable offline.'):'Loading today’s leaderboard…')+'</p>';
+ if(!DLB||DLB.day!=d)return '<p class="mut">'+(DFAIL?(/schema cache|could not find|does not exist/i.test(DERR)?'The daily leaderboard is loading.':'Today’s leaderboard is unavailable offline.'):'Loading today’s leaderboard…')+'</p>';
  return rk+(DLB.rows.length?'<table>'+DLB.rows.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name)}</td><td>${Number(v.score)||0} pts</td></tr>`).join('')+'</table>':'<p class="mut">No scores today yet. Be the first!</p>');
 }
 function paintDaily(){const e=document.getElementById('dlb');if(e)e.innerHTML=dlbBody()}
@@ -177,8 +177,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.5.2',UPD_K='flio_update_url',UPD_A='flio_update_auto';
-const CHANGES=[['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.6.1',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const CHANGES=[['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -416,7 +416,7 @@ function rankLine(r,txt,k){
  if(r)return h(r);
  const L=k=='w'?WORLD:k=='d'?(DLB&&DLB.rows):BWORLD,i=Array.isArray(L)?L.findIndex(v=>v&&v.name==n):-1;
  if(i>=0)return h(Object.assign({},L[i],{rank:i+1}));
- if(MYE[k]==1)return '<p class="mut" style="margin:4px 0">🏅 '+esc(n)+' isn’t in the top 10. Your exact rank needs the updated setup. <a href="#" onclick="openSetup();return false" style="color:var(--ac)">Show setup steps</a></p>';
+ if(MYE[k]==1)return '<p class="mut" style="margin:4px 0">🏅 '+esc(n)+' isn’t in the top 10. Your exact rank will appear shortly.</p>';
  if(MYE[k]==2)return '<p class="mut" style="margin:4px 0">🏅 Your rank will appear when you are back online.</p>';
  if(!MYL[k])return '<p class="mut" style="margin:4px 0">🏅 Finding your rank…</p>';
  return '<p class="mut" style="margin:4px 0">🏅 '+esc(n)+' isn’t ranked yet. Play a game to get on the board.</p>';
@@ -431,7 +431,7 @@ function localBoard(){
  (e.length?'<table>'+e.map(([n,v],i)=>`<tr><td>${i+1}</td><td>${esc(n)}</td><td>${v.total} pts</td><td class="mut">${v.games} rounds</td></tr>`).join('')+'</table>':'<p class="mut">No scores yet.</p>')+'</div>';
 }
 function worldBox(){
- const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!WORLD?'<p class="mut">'+(WFAIL?(/schema cache|could not find|does not exist/i.test(WERR)?'World ranking needs one-time setup.</p><button class="p" onclick="openSetup()">Show setup steps</button><p class="mut">':'World ranking is unavailable right now. Connect to the internet to load it.'):'Loading…')+'</p>':WORLD.length?'<table>'+WORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.total)||0} pts</td><td class="mut">${Number(v.games)||0} rounds</td></tr>`).join('')+'</table>':'<p class="mut">No world scores yet. Be the first!</p>';
+ const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!WORLD?'<p class="mut">'+(WFAIL?(/schema cache|could not find|does not exist/i.test(WERR)?'World ranking is loading.</p><p class="mut">':'World ranking is unavailable right now. Connect to the internet to load it.'):'Loading…')+'</p>':WORLD.length?'<table>'+WORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.total)||0} pts</td><td class="mut">${Number(v.games)||0} rounds</td></tr>`).join('')+'</table>':'<p class="mut">No world scores yet. Be the first!</p>';
  return '<div class="box"><b>🌍 World ranking</b> <span class="mut">'+(WFAIL&&WORLD?'(saved copy, offline)':'(all games with your own name)')+'</span>'+(DB?rankLine(MYR.w,r=>Number(r.total)+' pts · '+Number(r.games)+' rounds','w'):'')+'<div id="world">'+body+'</div></div>';
 }
 function paintWorld(){const e=document.getElementById('world');if(e)e.parentElement.outerHTML=worldBox()}
@@ -636,7 +636,7 @@ create or replace function public.find_players(p_q text) returns table(id text,n
  order by (lower(c.oname)=q.s) desc, c.score desc limit 10 $$;
 grant execute on function public.set_city_owner(text,text), public.find_players(text) to anon, authenticated;`;
 let WERR='';
-function setupBox(){
+function setupBox(){if(location.hash!='#setup')return '';
  if(!SUPA_URL||!SUPA_KEY)return '';
  const ref=SUPA_URL.replace('https://','').split('.')[0],link='https://supabase.com/dashboard/project/'+ref+'/sql/new';
  return '<details class="box" id="wsetup"><summary><b>⚙️ World ranking setup</b> <span class="mut">(game owner, one time)</span></summary><ol class="mut" style="padding-left:20px;line-height:1.6"><li>Tap <b>Copy SQL</b>.</li><li>Tap <b>Open SQL Editor</b> (sign in to Supabase if asked).</li><li>Paste, then press <b>Run</b>.</li><li>Come back and tap <b>Check again</b>.</li></ol><textarea id="sql" readonly rows="6" style="width:100%;font:12px monospace;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px">'+esc(WSQL)+'</textarea><div style="height:8px"></div><div class="row" style="flex-wrap:wrap"><button class="p" id="cp" onclick="copySql()">Copy SQL</button><a href="'+link+'" target="_blank" rel="noopener" style="text-decoration:none"><button type="button">Open SQL Editor</button></a><button onclick="recheck()">Check again</button></div></details>';
@@ -686,7 +686,7 @@ let BZ=null,BZV=null,BZID=0,bzScored=0;
 const BWK='lockflip_bworld';let BWORLD=ls(BWK,null),BWFAIL=false,BWERR='';
 async function loadBizWorld(){try{BWORLD=await rpc('biz_leaderboard');lset(BWK,BWORLD);BWFAIL=false}catch(e){BWFAIL=true;BWERR=String(e&&e.message||'')}paintBiz()}
 function bizWorldBox(){
- const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!BWORLD?'<p class="mut">'+(BWFAIL?(/schema cache|could not find|does not exist/i.test(BWERR)?'Business ranking needs the updated setup. <a href="#" onclick="openSetup();return false" style="color:var(--ac)">Show setup steps</a>':'Business ranking is unavailable right now.'):'Loading…')+'</p>':BWORLD.length?'<table><tr><th>#</th><th>Name</th><th>Wins</th><th>Best net worth</th></tr>'+BWORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.wins)||0}</td><td>$${Number(v.best)||0}</td></tr>`).join('')+'</table>':'<p class="mut">No business scores yet. Be the first!</p>';
+ const body=!DB?'<p class="mut">World ranking isn’t set up yet.</p>':!BWORLD?'<p class="mut">'+(BWFAIL?(/schema cache|could not find|does not exist/i.test(BWERR)?'Business ranking is loading.':'Business ranking is unavailable right now.'):'Loading…')+'</p>':BWORLD.length?'<table><tr><th>#</th><th>Name</th><th>Wins</th><th>Best net worth</th></tr>'+BWORLD.map((v,i)=>`<tr${meRow(v.name)}><td>${i+1}</td><td>${esc(v.name||'?')}</td><td>${Number(v.wins)||0}</td><td>$${Number(v.best)||0}</td></tr>`).join('')+'</table>':'<p class="mut">No business scores yet. Be the first!</p>';
  return '<div class="box" id="bwbox"><b>🌍 Business world ranking</b> <span class="mut">(most wins, then best net worth)</span>'+(DB?rankLine(MYR.b,r=>Number(r.wins)+' wins · best $'+Number(r.best),'b'):'')+body+'</div>';
 }
 function paintBiz(){const e=document.getElementById('bwbox');if(e)e.outerHTML=bizWorldBox()}
@@ -902,7 +902,7 @@ let CITY=ls(CK,null),CAWAY=null,CSEL=null,CTYPE='house',cAnim=0,cCan=null,cX=nul
 function cNorm(){if(!CITY)return;if(!CITY.g||CITY.g.length<25){CITY=null;return}CITY.n=CITY.n||Math.round(Math.sqrt(CITY.g.length));CITY.custom=CITY.custom||[];GN=CITY.n}
 cNorm();
 const cP=(x,y)=>[OX+(x-y)*TW,OY+(x+y)*TH];
-const cB=(x,y)=>CITY&&x>=0&&y>=0&&x<GN&&y<GN?CITY.g[y*GN+x]:null;
+const cB=(x,y)=>CITY&&CITY.wild?(CITY.g[(((y%GN)+GN)%GN)*GN+(((x%GN)+GN)%GN)]||null):(CITY&&x>=0&&y>=0&&x<GN&&y<GN?CITY.g[y*GN+x]:null);
 function cMk(role,size,o){const a=CT[role],m=CSZ[size];return Object.assign({role,name:a[0],emoji:a[1],cost:Math.round(a[2]*m*1.15),inc:a[3]*m,hs:a[4]*m,jb:Math.round(a[5]*m),pw:a[6]*m,sv:a[7]*m,col:a[8],custom:1,size},o)}
 function cS(t){
  if(t.slice(0,2)!='c:'){const a=CT[t];return{role:t,name:a[0],emoji:a[1],cost:a[2],inc:a[3],hs:a[4],jb:a[5],pw:a[6],sv:a[7],col:a[8]}}
@@ -952,7 +952,7 @@ function cTick(){
  if(dt>40&&g>=1)CAWAY={sec:(CAWAY?CAWAY.sec:0)+dt,g:(CAWAY?CAWAY.g:0)+g};
 }
 function cityStartNow(){
- if(!CITY){CITY={v:2,n:6,custom:[],name:(String(myName||'My').trim().slice(0,10)||'My')+' City',cash:3000,earned:0,t:Date.now(),g:Array(36).fill(null)};GN=6;cSave()}
+ wildUp();if(!CITY){CITY=wildNew((String(myName||'My').trim().slice(0,10)||'My')+' City',3000);GN=WN;cSave()}
  cityOpen();
 }
 function cityFromBiz(){
@@ -961,7 +961,7 @@ function cityFromBiz(){
  if(!f)return;
  const nw=Math.max(300,Math.round(bnw(f)));
  if(bzCity!==B.z){bzCity=B.z;
-  if(CITY){CITY.cash+=nw}else{CITY={v:2,n:6,custom:[],name:String(f.n).slice(0,14)+' City',cash:nw,earned:0,t:Date.now(),g:Array(36).fill(null)};GN=6}
+  wildUp();if(CITY){CITY.cash+=nw}else{CITY=wildNew(String(f.n).slice(0,14)+' City',nw);GN=WN}
   cSave()}
  cityOpen();
 }
@@ -975,10 +975,10 @@ function cStop(keep){
  cancelAnimationFrame(cAnim);cAnim=0;const o=document.getElementById('cfs');if(o)o.remove();cCan=null;
  if(!keep){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}}
 }
-function cFS(){try{if(!matchMedia('(pointer:coarse)').matches)return;const e=document.documentElement;if(!document.fullscreenElement&&e.requestFullscreen)e.requestFullscreen().then(()=>{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})}).catch(()=>{})}catch(e){}}
+function cFS(){try{if(!matchMedia('(pointer:coarse)').matches)return;const e=document.documentElement;if(!document.fullscreenElement&&e.requestFullscreen)e.requestFullscreen().catch(()=>{})}catch(e){}}
 function cLayout(){
  const o=document.getElementById('cin');if(!o)return;const W=innerWidth,H=innerHeight;
- o.style.cssText='position:absolute;top:0;left:0;display:flex;gap:8px;padding:6px;box-sizing:border-box;'+(H>W?'width:'+H+'px;height:'+W+'px;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)':'width:'+W+'px;height:'+H+'px');
+ o.style.cssText='position:absolute;top:0;left:0;display:flex;gap:8px;padding:6px;box-sizing:border-box;'+'width:'+W+'px;height:'+H+'px';
  cResize();
 }
 function cResize(){const v=document.getElementById('cvw');if(!v||!cCan)return;CW=Math.max(120,v.clientWidth);CH=Math.max(120,v.clientHeight);cD=Math.min(cDmax,window.devicePixelRatio||1);cCan.width=Math.round(CW*cD);cCan.height=Math.round(CH*cD)}
@@ -1008,7 +1008,7 @@ function cPanel(){
  else{const sp=cS(s.t),i=CSEL.y*GN+CSEL.x,ef=E.eff[i]||0,up=s.l<3?sp.cost*CUP[s.l+1]:0;
   h+=`<div class="box"><b>${sp.emoji} ${esc(sp.name)} · level ${s.l}/3</b><div style="margin:4px 0">Efficiency <b style="color:${cl(ef)}">${Math.round(ef*100)}%</b> · earns ${cMoney(sp.inc*CM[s.l]*ef*(E.act&&E.act[i]!=null?E.act[i]:1))}/min <span class="mut">(max ${cMoney(sp.inc*CM[s.l])})</span></div>${cBar(ef,cl(ef))}<div class="mut">${esc(E.msg[i]||'Working well.')}</div><div class="row" style="margin-top:6px">${s.l<3&&sp.role!='road'?`<button class="p" onclick="cUp()">⬆ Upgrade ${cMoney(up)}</button>`:'<span class="mut">Max level</span>'}<button onclick="cSell()">Sell +${cMoney(sp.cost*CVL[s.l]/2)}</button></div></div>`}
  h+=`<div class="box"><b>📊 City health</b><div class="mut">👥 ${Math.round(E.R)} residents · 💼 ${Math.round(E.J)} jobs for ${Math.round(E.W)} workers</div><div style="margin-top:4px">💼 Employment ${Math.round(E.emp*100)}%</div>${cBar(E.emp,cl(E.emp))}<div>⚡ Power ${Math.round(E.pwS)} / ${Math.round(E.pwD)} used</div>${cBar(E.pwD>0?E.pwS/E.pwD:1,cl(E.pwD>0?E.pwS/E.pwD:1))}<div>😊 Happiness ${Math.round(E.hp*100)}%</div>${cBar(E.hp,cl(E.hp))}`+(E.warn.length?E.warn.slice(0,4).map(w=>'<div class="mut" style="margin-top:3px">'+esc(w)+'</div>').join(''):'<div class="mut">✅ Your city is balanced.</div>')+'</div>';
- h+=`<div class="box"><b>🗺 Land ${GN}×${GN}</b> <span class="mut">(${GN*GN} plots)</span>`+(GN<12?`<button class="p" style="width:100%;margin-top:6px" onclick="cExpand()">Buy land → ${GN+1}×${GN+1} for ${cMoney(cLand(GN))}</button>`:'<div class="mut">Maximum size reached.</div>')+`</div><div class="mut" style="padding:0 4px 8px">Your city keeps earning while the game is closed (up to 3 days).</div>`;
+ h+=`<div class="box"><b>🗺 ${CITY.wild?'Endless land':'Land '+GN+'×'+GN}</b> <span class="mut">${CITY.wild?'(drag to explore, build anywhere)':'('+GN*GN+' plots)'}</span>`+(CITY.wild?'':GN<12?`<button class="p" style="width:100%;margin-top:6px" onclick="cExpand()">Buy land → ${GN+1}×${GN+1} for ${cMoney(cLand(GN))}</button>`:'<div class="mut">Maximum size reached.</div>')+`</div><div class="mut" style="padding:0 4px 8px">Your city keeps earning while the game is closed (up to 3 days).</div>`;
  const keep=pn.scrollTop;pn.innerHTML=h;pn.scrollTop=keep;pn.style.display=CPO?'block':'none';cChip();
 }
 const cLand=n=>60*(n+1)*(n+1);
@@ -1102,7 +1102,7 @@ function cBld(c,x,y,b,L,N,t){
  if(k>1){c.fillStyle='#ffc61a';c.font='bold 11px system-ui';c.textAlign='center';c.fillText('★'.repeat(k-1),top[0],top[1])}
  return top
 }
-function ringPt(t,o,rev){t=((rev?1-t:t)%1+1)%1;const a=-o,b=GN+o,s=b-a,q=t*4,i=Math.floor(q)%4,f=q-Math.floor(q);return[[a+s*f,a],[b,a+s*f],[b-s*f,b],[a,b-s*f]][i]}
+function ringPt(t,o,rev){if(CITY&&CITY.wild)return[-9999,-9999];t=((rev?1-t:t)%1+1)%1;const a=-o,b=GN+o,s=b-a,q=t*4,i=Math.floor(q)%4,f=q-Math.floor(q);return[[a+s*f,a],[b,a+s*f],[b-s*f,b],[a,b-s*f]][i]}
 function cCar(c,p,q,col,L,N){
  const hz=Math.abs(q[0]-p[0])>Math.abs(q[1]-p[1]),w=hz?.34:.17,d=hz?.17:.34,s=cP(p[0],p[1]);
  c.fillStyle='rgba(0,0,0,.28)';c.beginPath();c.ellipse(s[0],s[1]+1,7,3.2,0,0,7);c.fill();
@@ -1244,7 +1244,7 @@ async function randomMatch(){
 }
 
 /* ===== Flio 1.5: unique names, natural landscape, roads, world time ===== */
-CD.rd='Roads link your buildings. A building that is not on the edge of the land and has no road next to it works at only 75%. Roads must connect to the edge of the land.';
+CD.rd='Roads link your buildings. A building with no road next to it works at only 75%. (In old fixed-size cities, buildings on the edge of the land count as connected.)';
 function nameBox(){
  if(NAMELOCK)return '<div class="box"><b>👤 Player name: '+esc(NAMELOCK)+' 🔒</b><p class="mut" style="margin:4px 0 0">Your name is unique worldwide and can’t be changed. Export your save to keep it if you change device.'+(ls('flio_nameok',0)?'':' It will be verified with the server once the game owner has run the updated setup.')+'</p></div>';
  return '<div class="box"><b>👤 Choose your player name</b><p class="mut">Pick it once. It is unique worldwide and can’t be changed later. If another player already has it, you’ll be asked to choose a different one.</p>'+(NERR?'<p style="color:var(--ac);margin:6px 0">'+esc(NERR)+'</p>':'')+'<div class="row"><input id="pn" placeholder="Your name" maxlength="14" value="'+esc(NNAME||(/^Player \d$/i.test(myName)?'':myName))+'"><button class="p" id="pnb" onclick="claimName()">Claim name</button></div></div>';
@@ -1269,6 +1269,20 @@ async function verifyName(){
   else if(r=='taken'){const old=NAMELOCK;NAMELOCK=null;try{localStorage.removeItem('flio_namelock')}catch(e){}NERR='The name “'+old+'” belongs to another player, so please choose a new one.';NNAME='';if(scr=='setup')setup()}
  }catch(e){}
 }
+
+/* ===== Flio 1.6: endless wild land. The world wraps every 96 tiles, so you can drag forever ===== */
+const WN=96;
+function wildNew(name,cash){return{v:2,n:WN,wild:1,seed:Math.floor(Math.random()*2147483646)+1,custom:[],name,cash,earned:0,t:Date.now(),g:Array(WN*WN).fill(null),fx:WN/2,fz:WN/2}}
+function wildUp(){if(CITY&&!CITY.wild&&!CITY.g.some(b=>b)){const o=CITY;CITY=wildNew(o.name,o.cash);GN=WN;cSave()}}
+function wn(s,x,y,N,cs){const P=Math.round(N/cs),u=x/cs,v=y/cs,xi=Math.floor(u),yi=Math.floor(v),xf=u-xi,yf=v-yi,sm=t=>t*t*(3-2*t),a=landRnd(s,xi%P,yi%P),b=landRnd(s,(xi+1)%P,yi%P),c=landRnd(s,xi%P,(yi+1)%P),d=landRnd(s,(xi+1)%P,(yi+1)%P),U=sm(xf),V=sm(yf);return a+(b-a)*U+(c-a)*V+(a-b-c+d)*U*V}
+function wildGen(x,y,N){
+ const sd=hashStr('wild-'+CITY.seed),c=N/2;
+ if(Math.hypot(x+.5-c,y+.5-c)<5)return '';
+ const h=wn(sd,x,y,N,24)*.5+wn(sd+1,x,y,N,12)*.3+wn(sd+2,x,y,N,6)*.2;
+ if(h<.34)return 'w';
+ if(h>.65)return 'm';
+ if(h>.58&&wn(sd+4,x,y,N,12)>.4)return 'p';
+ return wn(sd+3,x,y,N,6)>.6&&landRnd(sd,x,y)>.3?'f':''}
 /* ---- natural landscape: lakes, mountains and forests, fixed by the city id ---- */
 const landRnd=(s,x,y)=>{let h=(s^Math.imul(x+101,374761393)^Math.imul(y+211,668265263))>>>0;h=Math.imul(h^(h>>>13),1274126177)>>>0;return((h^(h>>>16))>>>0)/4294967296};
 function landNoise(s,x,y){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=landRnd(s,xi,yi),b=landRnd(s,xi+1,yi),c=landRnd(s,xi,yi+1),d=landRnd(s,xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}
@@ -1280,13 +1294,14 @@ function landFeat(s){
  F.push({k:'m',x:cs[1][0]+(r()-.5),y:cs[1][1]+(r()-.5),r:1.1+r()*.35});
  for(let i=0;i<8;i++){const a=i%4<2;F.push({k:i%2?'m':'w',x:a?6+r()*7:r()*13,y:a?r()*13:6+r()*7,r:1.1+r()*1.1})}
  LF={s,F};return F}
-const landSeed=()=>hashStr('flio-land-'+String((CITY&&CITY.id)||'x').replace(/^visit-/,''));
+const landSeed=()=>CITY&&CITY.wild?hashStr('wild-'+CITY.seed):hashStr('flio-land-'+String((CITY&&CITY.id)||'x').replace(/^visit-/,''));
 function landGen(x,y){
  const s=landSeed(),F=landFeat(s),nz=landNoise(s+7,x*.9,y*.9)-.5;let w=false;
  for(const f of F){const d=Math.hypot(x+.5-f.x,y+.5-f.y)+nz*1.1;if(d<f.r){if(f.k=='m')return 'm';w=true}}
  if(w)return 'w';
  return landNoise(s+31,x*.55,y*.55)>.64&&landRnd(s,x,y)>.25?'f':''}
 function landEns(){
+ if(CITY&&CITY.wild&&!window.VIS){const N=GN;if(CITY.tr&&CITY.tr.length==N*N)return CITY.tr;const a=new Array(N*N);for(let y=0;y<N;y++)for(let x=0;x<N;x++)a[y*N+x]=wildGen(x,y,N);CITY.tr=a;cSave();return a}
  if(!CITY||!CITY.id||window.VIS||String(CITY.id).startsWith('visit-'))return null;
  const n=GN,old=CITY.tr,on=old?Math.round(Math.sqrt(old.length)):0;
  if(old&&on==n&&old.length==n*n)return old;
@@ -1294,6 +1309,7 @@ function landEns(){
  for(let y=0;y<n;y++)for(let x=0;x<n;x++)a[y*n+x]=(old&&old.length==on*on&&x<on&&y<on)?old[y*on+x]:(cB(x,y)?'':landGen(x,y));
  CITY.tr=a;cSave();return a}
 function landAt(x,y){
+ if(CITY&&CITY.wild&&!window.VIS){const a=landEns(),N=GN;return a?(a[(((y%N)+N)%N)*N+(((x%N)+N)%N)]||''):''}
  if(!CITY||x<0||y<0||x>=GN||y>=GN)return '';
  if(window.VIS||String(CITY.id||'').startsWith('visit-'))return cB(x,y)?'':landGen(x,y);
  const a=landEns();return a?(a[y*GN+x]||''):''}
@@ -1429,11 +1445,39 @@ let LAYS='';const layoutStr=()=>JSON.stringify({n:CITY.n,g:CITY.g.map(b=>b?b.t+'
 async function sync(){if(!CITY||!DB||window.VIS)return;init();try{const a={p_id:CITY.id,p_name:CITY.name,p_lon:CITY.geo[0],p_lat:CITY.geo[1],p_score:myScore(),p_def:Math.round(ECO.df||0),p_happy:+(ECO.H||0).toFixed(2),p_hit:CITY.hit||0};try{await rpc('upsert_city',Object.assign({},a,{p_ap:apLv(),p_bl:skyline()}))}catch(e){await rpc('upsert_city',a)}WC=await rpc('world_cities');lset('flio_wc',WC);WOK=true;try{if(NAMELOCK&&CITY.on!==NAMELOCK){await rpc('set_city_owner',{p_id:CITY.id,p_owner:NAMELOCK});CITY.on=NAMELOCK}}catch(e){}try{const L=layoutStr();if(L!=LAYS&&L.length<12000){await rpc('save_layout',{p_id:CITY.id,p_lay:L});LAYS=L}}catch(e){}
  const ev=await rpc('my_events',{p_id:CITY.id});ev.forEach(e=>{if(e.kind=='deal'&&e.from_id){CITY.offers=(CITY.offers||[]).filter(o=>o.id!=e.from_id);CITY.offers.push({id:e.from_id,name:e.from_name,at:now()});CITY.news='🤝 '+e.from_name+' proposes a tourism deal! Accept it in the Tourism deals box.'}else if(e.kind=='deal_ok'&&e.from_id){CITY.deals=CITY.deals||{};CITY.deals[e.from_id]={name:e.from_name,exp:now()+(+e.amt||120)*6e4};CITY.news='🤝 '+e.from_name+' accepted your tourism deal! Tourists now travel between your cities.'}else if(e.kind=='visit'){CITY.cash+=+e.amt;CITY.news='✈️ '+e.from_name+' landed at your airport and paid '+cMoney(e.amt)+' in landing fees!'}else if(e.kind=='help'){CITY.cash+=+e.amt;if(String(e.from_name).indexOf('🎁')==0){CITY.news=e.from_name+' gifted your city '+cMoney(e.amt)+'!'}else{CITY.dis0*=.5;CITY.news='🤝 '+e.from_name+' sent you '+cMoney(e.amt)+' to rebuild!'}}else{const l=Math.min(+e.amt,Math.floor(CITY.cash*.3));CITY.cash-=l;CITY.news='⚔ '+e.from_name+' raided your city and took '+cMoney(l)+'. Build more defence!'}});
  if(ev.length){cSave();if(scr=='city')cPanel()}}catch(e){WOK=false}}
-function drawMap(all){const c=$('#wm');if(!c)return;const x=c.getContext('2d'),W=560,H=250,P=(o,a)=>[(o+180)/360*W,(90-a)/180*H];x.fillStyle='#1d4e89';x.fillRect(0,0,W,H);x.fillStyle='#3f8f5a';
- LAND.forEach(p=>{x.beginPath();p.forEach((q,i)=>{const a=P(q[0],q[1]);i?x.lineTo(a[0],a[1]):x.moveTo(a[0],a[1])});x.closePath();x.fill()});
- nightShade(x,W,H);all.forEach(t=>{const a=P(t.lon,t.lat);x.beginPath();x.arc(a[0],a[1],t.me?7:4.5,0,7);x.fillStyle=t.me?'#ff4fa3':hot(t)?'#ff3b30':t.npc?'#e8e8e8':'#2dff8a';x.fill();x.strokeStyle='#000';x.lineWidth=1.2;x.stroke();if(t.me){x.fillStyle='#fff';x.font='bold 11px system-ui';x.fillText(t.name,a[0]+9,a[1]+4)}})}
+function drawMap(all){const c=$('#wm');if(!c)return;const S=2,W=560*S,H=250*S;c.width=W;c.height=H;const x=c.getContext('2d'),P=(o,a)=>[(o+180)/360*W,(90-a)/180*H];
+ const bc=document.createElement('canvas');bc.width=W;bc.height=H;const b=bc.getContext('2d');
+ let g=b.createLinearGradient(0,0,0,H);g.addColorStop(0,'#071d3d');g.addColorStop(.5,'#15589a');g.addColorStop(1,'#071d3d');b.fillStyle=g;b.fillRect(0,0,W,H);
+ b.lineWidth=1;for(let o=-180;o<=180;o+=30){b.strokeStyle='rgba(255,255,255,.08)';const u=P(o,0)[0];b.beginPath();b.moveTo(u,0);b.lineTo(u,H);b.stroke()}
+ for(let l=-60;l<=60;l+=30){b.strokeStyle=l?'rgba(255,255,255,.08)':'rgba(255,230,150,.22)';const v=P(0,l)[1];b.beginPath();b.moveTo(0,v);b.lineTo(W,v);b.stroke()}
+ const path=()=>{b.beginPath();LAND.forEach(q=>{q.forEach((r,i)=>{const u=P(r[0],r[1]);i?b.lineTo(u[0],u[1]):b.moveTo(u[0],u[1])});b.closePath()})};
+ b.save();b.shadowColor='rgba(130,210,255,.75)';b.shadowBlur=16;path();b.fillStyle='#2f7d57';b.fill();b.restore();
+ g=b.createLinearGradient(0,0,0,H);[[0,'#e3ece6'],[.2,'#78b56f'],[.45,'#3f9a5e'],[.62,'#b3aa68'],[.8,'#4f9c5f'],[1,'#e9f1ec']].forEach(q=>g.addColorStop(q[0],q[1]));
+ path();b.fillStyle=g;b.fill();b.strokeStyle='rgba(255,255,255,.6)';b.lineWidth=1.6;b.stroke();
+ nightShade(b,W,H);
+ g=b.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,W*.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,15,.5)');b.fillStyle=g;b.fillRect(0,0,W,H);
+ const tk=window.__wmT=(window.__wmT||0)+1,pts=all.map((t,i)=>({t,i,p:P(t.lon,t.lat)}));let sel=null;
+ c.onpointerdown=e=>{const r=c.getBoundingClientRect(),mx=(e.clientX-r.left)/r.width*W,my=(e.clientY-r.top)/r.height*H;let bd=30,bq=null;pts.forEach(q=>{const d=Math.hypot(q.p[0]-mx,q.p[1]-my);if(d<bd){bd=d;bq=q}});sel=bq===sel?null:bq};
+ const rr=q=>(q.t.me?8:5)+Math.min(6,Math.log10(Math.max(1,q.t.score))*1.1),cl=q=>q.t.me?'#ff4fa3':hot(q.t)?'#ff3b30':q.t.npc?'#e8e8e8':'#2dff8a',
+ arc=(m,q,tt,k)=>{const dx=q.p[0]-m.p[0],dy=q.p[1]-m.p[1],cx=(m.p[0]+q.p[0])/2,cy=Math.min(m.p[1],q.p[1])-Math.hypot(dx,dy)*.28-10,bz=u=>[(1-u)*(1-u)*m.p[0]+2*(1-u)*u*cx+u*u*q.p[0],(1-u)*(1-u)*m.p[1]+2*(1-u)*u*cy+u*u*q.p[1]];
+  x.save();x.strokeStyle='rgba(255,230,120,.75)';x.lineWidth=1.6;x.setLineDash([7,7]);x.lineDashOffset=-tt*24;x.beginPath();x.moveTo(m.p[0],m.p[1]);x.quadraticCurveTo(cx,cy,q.p[0],q.p[1]);x.stroke();x.restore();
+  const u=(tt*.12+k*.17)%1,pp=bz(u),p2=bz(Math.min(1,u+.01));x.save();x.translate(pp[0],pp[1]);x.rotate(Math.atan2(p2[1]-pp[1],p2[0]-pp[0]));x.font='15px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText('✈️',0,0);x.restore()},
+ mark=(q,tt)=>{const r=rr(q),u=q.p,c0=cl(q),ph=(tt*.8+q.i*.37)%1;
+  const gl=x.createRadialGradient(u[0],u[1],0,u[0],u[1],r*3.2);gl.addColorStop(0,c0+'88');gl.addColorStop(1,c0+'00');x.fillStyle=gl;x.beginPath();x.arc(u[0],u[1],r*3.2,0,7);x.fill();
+  x.strokeStyle=c0;x.globalAlpha=1-ph;x.lineWidth=2;x.beginPath();x.arc(u[0],u[1],r+ph*r*2.6,0,7);x.stroke();x.globalAlpha=1;
+  x.beginPath();x.arc(u[0],u[1],r,0,7);x.fillStyle=c0;x.fill();x.strokeStyle='#fff';x.lineWidth=2;x.stroke();
+  x.font='bold 20px system-ui';x.textBaseline='middle';
+  if(q.i<3){x.fillStyle='#fff';x.font='bold 12px system-ui';x.textAlign='center';x.fillText(q.i+1,u[0],u[1]+.5)}
+  if(q.t.me){x.font='bold 22px system-ui';x.textAlign='left';x.lineWidth=4;x.strokeStyle='rgba(0,0,0,.7)';x.strokeText(q.t.name,u[0]+r+6,u[1]);x.fillStyle='#fff';x.fillText(q.t.name,u[0]+r+6,u[1])}};
+ const fr=ts=>{if(window.__wmT!=tk||!document.body.contains(c))return;const tt=ts/1000;x.drawImage(bc,0,0);
+  const me=pts.find(q=>q.t.me);if(me&&apLv()>0)pts.forEach((q,k)=>{if(!q.t.me&&!q.t.npc&&q.t.ap>0)arc(me,q,tt,k)});
+  pts.slice().reverse().forEach(q=>mark(q,tt));
+  if(sel){const t=sel.t,l1=t.name+(hot(t)?' 🔥':''),l2='#'+(sel.i+1)+' of '+pts.length+' · '+Math.round(t.score).toLocaleString()+' pts',l3=(face(t.happy||0)+' happy')+(!t.npc&&!t.me&&t.ap>0?(online(t)?' · ✈️ online':' · ✈️ offline'):'');
+   x.font='bold 22px system-ui';const w=Math.max(x.measureText(l1).width,x.measureText(l2).width,x.measureText(l3).width)+28,h=92;let bx=sel.p[0]-w/2,by=sel.p[1]-h-rr(sel)-14;bx=Math.max(6,Math.min(W-w-6,bx));if(by<6)by=sel.p[1]+rr(sel)+14;
+   x.fillStyle='rgba(8,14,34,.92)';x.strokeStyle=cl(sel);x.lineWidth=2;x.beginPath();x.roundRect?x.roundRect(bx,by,w,h,12):x.rect(bx,by,w,h);x.fill();x.stroke();x.textAlign='left';x.textBaseline='top';x.fillStyle='#fff';x.fillText(l1,bx+14,by+8);x.font='20px system-ui';x.fillStyle='#bcd';x.fillText(l2,bx+14,by+36);x.fillText(l3,bx+14,by+62)}
+  requestAnimationFrame(fr)};requestAnimationFrame(fr)}
 window.W_open=function(){if(!CITY)return;const all=world(),r=all.findIndex(c=>c.me)+1,top=all.slice(0,15);if(r>15)top.push(all[r-1]);
- $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas><p class="mut" style="margin:4px 0">🟣 you · 🟢 players · 🔴 struck by disaster · shaded area = night right now. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Live players need the one-time database setup. <button style="padding:3px 8px" onclick="W_sql()">Copy SQL &amp; open Supabase</button>':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${dnIcon(c.lon)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button> <button style="padding:3px 6px" onclick="W_send('${c.id}')" title="Send money">💸</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. 💸 Send any amount ($10–$100,000) to any real player. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
+ $('#cmod').innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:5"><div class="box" style="width:min(96%,560px);max-height:96%;overflow:auto;margin:0"><div class="row"><b style="flex:1">🌍 World map &amp; ranking</b><button onclick="$('#cmod').innerHTML=''">✕</button></div><canvas id="wm" width="560" height="250" style="width:100%;border-radius:8px"></canvas><p class="mut" style="margin:4px 0">🟣 you · 🟢 players · 🔴 struck by disaster · bigger dot = higher score · dashed gold lines = your flight routes ✈️ · shaded = night right now. Tap a dot for details. You are <b>#${r}</b> of ${all.length}. ${WOK?'':WOK===false?'Connecting to live players… check your internet.':'Connecting…'}</p>${LAST?`<p style="margin:4px 0"><b>${esc(LAST)}</b></p>`:''}<table><tr><th>#</th><th>City</th><th>Score</th><th></th></tr>${top.map(c=>`<tr style="${c.me?'font-weight:800;color:var(--ac)':''}"><td>${all.indexOf(c)+1}</td><td>${face(c.happy||0)} ${dnIcon(c.lon)} ${esc(c.name)}${hot(c)?' 🔥':''}${!c.npc&&!c.me&&c.ap>0?(online(c)?' <span class="mut">✈️🟢 online</span>':' <span class="mut">✈️⚫ offline</span>'):''}</td><td>${Math.round(c.score).toLocaleString()}</td><td>${c.me?'':`${c.npc||!(c.ap>0)?'':`<button style="padding:3px 6px" onclick="W_fly('${c.id}')" title="Fly there">✈️</button> `}<button style="padding:3px 6px" onclick="W_atk('${c.id}')">⚔</button> <button style="padding:3px 6px" onclick="W_help('${c.id}')">🤝</button> <button style="padding:3px 6px" onclick="W_send('${c.id}')" title="Send money">💸</button>`}</td></tr>`).join('')}</table><p class="mut">⚔ Attack (needs a 🛡 Defence grid, costs $300 + 10 🧱, wins loot). 🤝 Send $500 to a city hit by a disaster. 💸 Send any amount ($10–$100,000) to any real player. Score = buildings + cash + happy people. ✈️ Fly to another player&#39;s airport: you need your own ✈️ Airport, they need one too, online or offline. Costs $150 fuel. You fly your own plane in 3D and must land on their runway to earn tourist money. After landing you can propose a 🤝 tourism deal.</p></div></div>`;drawMap(all)}
 window.W_atk=id=>{const c=world().find(x=>x.id==id),E=ECO;if(!c)return;const f=m=>{LAST=m;W_open()};
  if(E.df<=0)return f('You need a 🛡 Defence grid to attack.');if(now()<(CITY.cd[id]||0))return f('Your forces are recovering (5 min cooldown).');
  if(CITY.cash<300||CITY.mat<10)return f('An attack costs $300 and 10 🧱.');
@@ -1514,18 +1558,18 @@ cEco=function(){
  const E=oE2();if(!CITY)return E;
  const n=GN,h=cHour(),act=[],rd=new Array(n*n).fill(false),q=[];E.act=act;
  const isR=(x,y)=>{const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
- for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x==0||y==0||x==n-1||y==n-1)&&isR(x,y)){rd[y*n+x]=true;q.push([x,y])}
+ const W=CITY.wild;for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((W||x==0||y==0||x==n-1||y==n-1)&&isR(x,y)){rd[y*n+x]=true;q.push([x,y])}
  while(q.length){const [x,y]=q.pop();[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const a=x+dx,b=y+dy;if(a>=0&&b>=0&&a<n&&b<n&&!rd[b*n+a]&&isR(a,b)){rd[b*n+a]=true;q.push([a,b])}})}
  const up0=E.up||0,k0=.8+.4*(E.H||0);let d=0,nr=0,nc=0;
  CITY.g.forEach((b,i)=>{if(!b)return;const s=cS(b.t),m=CM[b.l],x=i%n,y=Math.floor(i/n);
   if(s.role=='road'){nr++;E.eff[i]=1;act[i]=1;E.msg[i]=rd[i]?'Connected to the road network.':'Not linked to the edge of the land yet, so it serves nobody.';return}
-  const ef0=E.eff[i]||0,a=actM(s.role,h),conn=x==0||y==0||x==n-1||y==n-1||[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>rd[(y+dy)*n+x+dx]);
+  const ef0=E.eff[i]||0,a=actM(s.role,h),conn=(!W&&(x==0||y==0||x==n-1||y==n-1))||[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>rd[((y+dy+n)%n)*n+(x+dx+n)%n]);
   act[i]=a;const ef=conn?ef0:ef0*.75;E.eff[i]=ef;
   if(!conn){nc++;E.msg[i]='🛣 No road access: connect it to the road network or build it on the edge of the land (works at 75%). '+(E.msg[i]||'')}
   else if(s.role=='solar'&&a<.3)E.msg[i]='🌙 No sunlight: solar panels make no power at night. '+(E.msg[i]||'');
   else if(a<.6)E.msg[i]=(a<.3?'🌙 Closed or almost empty at this hour. ':'🌆 Quiet at this hour. ')+(E.msg[i]||'');
   d+=s.inc*m*(ef*a-ef0)});
- let lw=0,lm=0,lf=0;const tr=landEns();if(tr)tr.forEach(k=>{if(k=='w')lw++;else if(k=='m')lm++;else if(k=='f')lf++});
+ let lw=0,lm=0,lf=0;const tr=landEns();if(tr&&CITY.wild){for(let dy=-9;dy<=9;dy++)for(let dx=-9;dx<=9;dx++){const k=landAt(Math.round(CITY.fx)+dx,Math.round(CITY.fz)+dy);if(k=='w')lw++;else if(k=='m')lm++;else if(k=='f')lf++}}else if(tr)tr.forEach(k=>{if(k=='w')lw++;else if(k=='m')lm++;else if(k=='f')lf++});
  const sb=Math.min(.12,lw*.012+lm*.01+lf*.006);E.scn={w:lw,m:lm,f:lf,b:sb};
  if(E.R>0)E.H=Math.min(1,(E.H||0)+sb);
  E.rate=((E.rate+up0)/k0+d)*(.8+.4*(E.H||0))-up0;
@@ -1562,9 +1606,10 @@ window.W_find=async()=>{
  FOUND=[];FMSG='Searching…';paintF();
  try{FOUND=(await rpc('find_players',{p_q:q}))||[];FMSG=FOUND.length?'':'No player found with that name.'}
  catch(e){const ql=q.toLowerCase();FOUND=WC.filter(c=>String(c.name||'').toLowerCase().includes(ql)||String(c.oname||'').toLowerCase().includes(ql)).slice(0,10);
-  FMSG=FOUND.length?'':(setupErr(e&&e.message)?'Search needs the updated setup (game owner: Show setup steps on the home screen). Only recently active cities can be found for now.':'Search failed. Check your connection.')}
+  FMSG=FOUND.length?'':(setupErr(e&&e.message)?'Search is loading, try again in a moment. Only recently active cities can be found for now.':'Search failed. Check your connection.')}
  paintF()};
 if(CITY)setTimeout(sync,2500);
+setInterval(async()=>{const m=document.getElementById('wm'),q=document.getElementById('wq');if(!m||document.hidden||(q&&(q.value||document.activeElement===q)))return;try{await sync();if(document.getElementById('wm'))window.W_open()}catch(e){}},20000);
 })();
 
 /* ===== Flio 3D polish: lit faces, ambient occlusion, sun-cast shadows, glass sheen, night glow, beacons ===== */
@@ -1608,12 +1653,12 @@ const sd=(c,r)=>{const k=c+r;if(MM[k])return MM[k];const w=wt(r),m=new THREE.Mes
 function bx(g,w,h,d,c,x,y,z,r){const s=r?sd(c,r):0,m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),r?[s,s,pm(c),pm(c),s,s]:pm(c));m.position.set(x,y+h/2,z);m.castShadow=m.receiveShadow=true;g.add(m);return m}
 function cy(g,r0,r1,h,c,x,y,z,n){const m=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,n||12),pm(c));m.position.set(x,y+h/2,z);m.castShadow=true;g.add(m);return m}
 function roadG(g,gx,gy){
- const n=GN,isR=(x,y)=>{if(x<0||y<0||x>=n||y>=n)return true;const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
+ const n=GN,isR=(x,y)=>{if(!CITY.wild&&(x<0||y<0||x>=n||y>=n))return true;const b=cB(x,y);return !!b&&cS(b.t).role=='road'};
  bx(g,1,.03,1,'#4a4e57',0,0,0);let any=0;
  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dz])=>{if(!isR(gx+dx,gy+dz))return;any=1;for(let i=0;i<3;i++){const o=.12+i*.15;bx(g,dx?.08:.025,.006,dx?.025:.08,'#ffffff',dx*o,.03,dz*o)}});
  if(!any)bx(g,.1,.006,.025,'#ffffff',0,.03,0)}
 let WMAT=null;
-const tileMat3=(x,y)=>{const k=landAt(x,y);if(k=='w')return WMAT||(WMAT=new THREE.MeshPhongMaterial({color:0x3b8fd6,shininess:90,specular:0x99ccff}));return pm(k=='m'?'#7d8573':k=='f'?'#4c9a56':((x+y)%2?'#68bf6e':'#5fb566'))};
+const tileMat3=(x,y)=>{const k=landAt(x,y);if(k=='w')return WMAT||(WMAT=new THREE.MeshPhongMaterial({color:0x3b8fd6,shininess:90,specular:0x99ccff}));return pm(k=='m'?'#7d8573':k=='f'?'#4c9a56':k=='p'?'#c2b07e':((x+y)%2?'#68bf6e':'#5fb566'))};
 function addTerr3(x,y){const k=landAt(x,y);if(!k||k=='w')return;const s=landSeed(),g=new THREE.Group();
  if(k=='m'){[[0,0,.9+landRnd(s+3,x,y)*.8,.5],[.18,-.14,.55+landRnd(s+4,x,y)*.4,.32]].forEach(p=>{const h=p[2],r=p[3],c1=new THREE.Mesh(new THREE.ConeGeometry(r,h,7),pm('#7b7f78'));c1.position.set(p[0],h/2,p[1]);c1.castShadow=c1.receiveShadow=true;g.add(c1);const hc=h*.36,sc=new THREE.Mesh(new THREE.ConeGeometry(r*.36,hc,7),pm('#f4f6f8'));sc.position.set(p[0],h-hc/2,p[1]);g.add(sc)})}
  else{for(let i=0;i<4;i++){const px=(landRnd(s+i,x,y)-.5)*.7,pz=(landRnd(s+9+i,x,y)-.5)*.7,h=.28+landRnd(s+20+i,x,y)*.2,tr=new THREE.Mesh(new THREE.CylinderGeometry(.02,.03,.12,6),pm('#5b3d22'));tr.position.set(px,.06,pz);g.add(tr);[[.16,h],[.12,h*.75]].forEach((q,j)=>{const c1=new THREE.Mesh(new THREE.ConeGeometry(q[0],q[1],8),pm(i%2?'#2f8a4d':'#2a7a45'));c1.position.set(px,.1+q[1]/2+j*.12,pz);c1.castShadow=true;g.add(c1)})}}
@@ -1644,7 +1689,41 @@ function mkB(b,gx,gy){
  return g;
 }
 function clr(g){while(g.children.length){const o=g.children[0];g.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose()})}}
+
+const RAD=18;let wcx=1e9,wcz=1e9;
+function buildW(){
+ clr(tg);clr(bg);apc=null;const fx=CITY.fx,fz=CITY.fz,cx=Math.round(fx),cz=Math.round(fz),N=GN;wcx=cx;wcz=cz;root.position.set(-fx,0,-fz);
+ if(lastN!=-1){view.dist=15;lastN=-1}
+ if(fl)fl.visible=false;
+ const D=new THREE.Object3D(),mt=(x,y,z,a,b,c)=>{D.position.set(x,y,z);D.scale.set(a,b,c);D.updateMatrix();return D.matrix.clone()},
+ I={g:[],w:[],p:[],m:[],s:[],t:[],c:[]},sd=landSeed();
+ for(let dz=-RAD;dz<=RAD;dz++)for(let dx=-RAD;dx<=RAD;dx++){
+  if(dx*dx+dz*dz>RAD*RAD)continue;
+  const x=cx+dx,y=cz+dz,k=landAt(x,y),ux=((x%N)+N)%N,uy=((y%N)+N)%N,px=x+.5,pz=y+.5,r=i=>landRnd(sd+i,ux,uy);
+  if(k=='w'){I.w.push([mt(px,.012,pz,1,1,1)]);continue}
+  if(k=='p'){I.p.push([mt(px,.1,pz,1,.2,1),(ux*7+uy*3)%2?'#c8b684':'#bba978']);if(cB(x,y)){const b=cB(x,y);if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(px,.215,pz);g.userData.cell=[x,y];bg.add(g)}continue}
+  const b=cB(x,y);
+  I.g.push([mt(px,.015,pz,1,1,1),k=='m'?'#7d8573':k=='f'?'#4c9a56':((ux+uy)%2?'#68bf6e':'#5fb566')]);
+  if(b){if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(px,.015,pz);g.userData.cell=[x,y];bg.add(g);continue}
+  if(k=='m'){[[0,0,.9+r(3)*.8,.5],[.18,-.14,.55+r(4)*.4,.32]].forEach(q=>{const h=q[2],rr=q[3],hc=h*.36;I.m.push([mt(px+q[0],h/2,pz+q[1],rr*2,h,rr*2)]);I.s.push([mt(px+q[0],h-hc/2,pz+q[1],rr*.72,hc,rr*.72)])})}
+  else if(k=='f'){for(let i=0;i<2;i++){const tx=px+(r(i)-.5)*.7,tz=pz+(r(9+i)-.5)*.7,h=.28+r(20+i)*.2;I.t.push([mt(tx,.06,tz,.05,.12,.05)]);[[.16,h],[.12,h*.75]].forEach((q,j)=>I.c.push([mt(tx,.1+q[1]/2+j*.12,tz,q[0]*2,q[1],q[0]*2),i%2?'#2f8a4d':'#2a7a45']))}}
+ }
+ const mk=(geo,mat,a,cast,recv)=>{if(!a.length)return;const im=new THREE.InstancedMesh(geo,mat,a.length);a.forEach((it,i)=>{im.setMatrixAt(i,it[0]);if(it[1])im.setColorAt(i,col(it[1]))});im.castShadow=cast;im.receiveShadow=recv;im.frustumCulled=false;tg.add(im)},
+ L=c=>new THREE.MeshLambertMaterial({color:c});
+ mk(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),L(0xffffff),I.g,false,true);
+ mk(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),new THREE.MeshPhongMaterial({color:0x3b8fd6,shininess:90,specular:0x99ccff}),I.w,false,true);
+ mk(new THREE.BoxGeometry(1,1,1),L(0xffffff),I.p,true,true);
+ mk(new THREE.ConeGeometry(.5,1,7),L(0x7b7f78),I.m,true,true);
+ mk(new THREE.ConeGeometry(.5,1,7),L(0xf4f6f8),I.s,false,false);
+ mk(new THREE.CylinderGeometry(.5,.7,1,6),L(0x5b3d22),I.t,false,false);
+ mk(new THREE.ConeGeometry(.5,1,8),L(0xffffff),I.c,true,false);
+ acD=1;occ=CITY.g.map(b=>b?b.t:null);
+ const q=dl.shadow.camera,e=15;q.left=q.bottom=-e;q.right=q.top=e;q.near=1;q.far=110;q.updateProjectionMatrix();
+}
+function panW(dx,dy){const k=view.dist*.69/Math.max(120,CH),a=view.az,se=Math.max(.35,Math.sin(view.el)),rx=Math.cos(a),rz=-Math.sin(a),fx=-Math.sin(a),fz=-Math.cos(a);CITY.fx+=(-rx*dx+fx*dy/se)*k;CITY.fz+=(-rz*dx+fz*dy/se)*k}
+
 function build3(){
+ if(CITY.wild)return buildW();if(fl)fl.visible=true;
  const n=GN;clr(tg);clr(bg);apc=null;root.position.set(-n/2,0,-n/2);
  if(lastN&&lastN!=n)view.dist*=(n*1.5+6)/(lastN*1.5+6);lastN=n;
  bx(tg,n+1.56,.2,n+1.56,'#4b4f5c',n/2,-.2,n/2);
@@ -1672,10 +1751,10 @@ function init3(){
  const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));stars=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:2,sizeAttenuation:false,transparent:true,fog:false}));S.add(stars);
  for(let i=0;i<5;i++){const m=new THREE.MeshLambertMaterial({color:0xffffff,transparent:true}),g=new THREE.Group();[[0,0,1.4],[1.5,-.2,1.1],[-1.4,-.1,1]].forEach(q=>{const s=new THREE.Mesh(new THREE.SphereGeometry(q[2],10,8),m);s.position.set(q[0],q[1],0);s.scale.y=.6;g.add(s)});g.position.set(i*18-36,9+i%3*1.5,-16+i*7);S.add(g);cl3.push({g,m,v:.4+i*.08})}
  if(!view.dist)view.dist=GN*1.5+6;fxInit();
- const pp={};let mv=0,t0=0,pd=0;const d2=()=>{const a=Object.values(pp);return a.length>1?Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]):0};
- cCan.onpointerdown=e=>{if(!M3||!R)return cTap(e);if(drv>=0||ad>=0)return;try{cCan.setPointerCapture(e.pointerId)}catch(x){}pp[e.pointerId]=[e.offsetX,e.offsetY];if(Object.keys(pp).length==1){mv=0;t0=performance.now()}else{mv=99;pd=d2()}};
- cCan.onpointermove=e=>{const p=pp[e.pointerId];if(!p)return;const x=e.offsetX,y=e.offsetY;if(Object.keys(pp).length==1){view.az-=(x-p[0])*.008;view.el+=(y-p[1])*.006;mv+=Math.abs(x-p[0])+Math.abs(y-p[1]);pp[e.pointerId]=[x,y]}else{pp[e.pointerId]=[x,y];const d=d2();if(pd&&d)view.dist*=pd/d;pd=d}};
- cCan.onpointerup=cCan.onpointercancel=e=>{if(!pp[e.pointerId])return;delete pp[e.pointerId];if(!Object.keys(pp).length&&mv<8&&e.type=='pointerup'&&performance.now()-t0<500)tap3(e.offsetX,e.offsetY);pd=0};
+ const pp={};let mv=0,t0=0,pd=0,pa=0;const an=()=>{const a=Object.values(pp);return a.length>1?Math.atan2(a[1][1]-a[0][1],a[1][0]-a[0][0]):0};const d2=()=>{const a=Object.values(pp);return a.length>1?Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]):0};
+ cCan.onpointerdown=e=>{if(!M3||!R)return cTap(e);if(drv>=0||ad>=0)return;try{cCan.setPointerCapture(e.pointerId)}catch(x){}pp[e.pointerId]=[e.offsetX,e.offsetY];if(Object.keys(pp).length==1){mv=0;t0=performance.now()}else{mv=99;pd=d2();pa=an()}};
+ cCan.onpointermove=e=>{const p=pp[e.pointerId];if(!p)return;const x=e.offsetX,y=e.offsetY;if(Object.keys(pp).length==1){if(CITY.wild&&!e.shiftKey)panW(x-p[0],y-p[1]);else{view.az-=(x-p[0])*.008;view.el+=(y-p[1])*.006}mv+=Math.abs(x-p[0])+Math.abs(y-p[1]);pp[e.pointerId]=[x,y]}else{pp[e.pointerId]=[x,y];const d=d2();if(pd&&d)view.dist*=pd/d;pd=d;const A=an();if(CITY.wild&&pa)view.az-=A-pa;pa=A}};
+ cCan.onpointerup=cCan.onpointercancel=e=>{if(!pp[e.pointerId])return;delete pp[e.pointerId];if(!Object.keys(pp).length&&mv<8&&e.type=='pointerup'&&performance.now()-t0<500)tap3(e.offsetX,e.offsetY);else if(!Object.keys(pp).length&&CITY&&CITY.wild)cSave();pd=0;pa=0};
  cCan.addEventListener('wheel',e=>{if(!M3)return;e.preventDefault();if(drv>=0||ad>=0)cz=Math.max(.5,Math.min(3,cz*Math.exp(e.deltaY*.0012)));else view.dist*=Math.exp(e.deltaY*.0012)},{passive:false});
 }
 /* ---- drivable vehicles ---- */
@@ -1716,7 +1795,7 @@ function phys(v,m,dt){dt=Math.min(dt,.05);const T=VT[v.vt],n=GN,gr=v.sx>=0&&v.sx
  v.sv=sv;m.position.set(v.sx,.015,v.sz);m.rotation.set(-Math.max(-.6,Math.min(.6,w*sv*(v.vt=='bike'?.12:.03))),-v.sh,0)}
 function chase(dt){const v=cars[drv],T=VT[v.vt],n=GN/2,d=(.9+T.L*2+Math.abs(v.sv)*.12)*cz,fx=Math.cos(v.sh),fz=Math.sin(v.sh),tx=v.sx-n,tz=v.sz-n,des=new THREE.Vector3(tx-fx*d,.3+.5*cz+Math.abs(v.sv)*.05,tz-fz*d);
  if(!cam2)cam2=des.clone();cam2.lerp(des,1-Math.exp(-5*dt));CA.position.copy(cam2);CA.lookAt(tx+fx*.5,.12,tz+fz*.5)}
-function enter(i){if(drv>=0)return;const v=cars[i],p=ringPt(v.t,v.o,v.rev),q=ringPt(v.t+.002,v.o,v.rev);Object.assign(v,{sx:p[0],sz:p[1],sh:Math.atan2(q[1]-p[1],q[0]-p[0]),sv:v.sp*4*(GN+2*v.o),sd:0});drv=i;cam2=null;cz=1;for(const k in ctl)ctl[k]=0;ui(1)}
+function enter(i){if(drv>=0||(CITY&&CITY.wild))return;const v=cars[i],p=ringPt(v.t,v.o,v.rev),q=ringPt(v.t+.002,v.o,v.rev);Object.assign(v,{sx:p[0],sz:p[1],sh:Math.atan2(q[1]-p[1],q[0]-p[0]),sv:v.sp*4*(GN+2*v.o),sd:0});drv=i;cam2=null;cz=1;for(const k in ctl)ctl[k]=0;ui(1)}
 function leave(){if(ad>=0)return leaveA();if(drv<0)return;const v=cars[drv];let bt=0,bd=1e9;for(let k=0;k<240;k++){const p=ringPt(k/240,v.o,v.rev),d=(p[0]-v.sx)**2+(p[1]-v.sz)**2;if(d<bd){bd=d;bt=k/240}}v.t=bt;drv=-1;cam2=null;ui(0)}
 function ui(on,m){const v=document.getElementById('cvw'),o=document.getElementById('dv');if(o)o.remove();if(!on||!v)return;
  const b=(k,t,s)=>`<button data-k="${k}" style="position:absolute;${s};width:58px;height:58px;font-size:22px;padding:0;touch-action:none;user-select:none;opacity:.88">${t}</button>`;
@@ -1809,24 +1888,24 @@ function tap3(x,y){
  if(drv<0&&ad<0){let bi=-1,bd=34;A3.forEach((a,i)=>{const p=pj(a.x,a.y+.1,a.z);if(p){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i}}});if(bi>=0)return enterA(bi)}
  if(drv<0&&ad<0){let bi=-1,bd=28;C3.forEach((m,i)=>{const p=pj(m.position.x,.1,m.position.z);if(p){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i}}});if(bi>=0)return enter(bi)}
  rc=rc||new THREE.Raycaster();rc.setFromCamera({x:x/CW*2-1,y:-y/CH*2+1},CA);
- const h=rc.intersectObjects([tg,bg],true)[0];if(!h)return;let o=h.object;while(o&&!o.userData.cell)o=o.parent;if(!o)return;
- const [gx,gy]=o.userData.cell;if(cB(gx,gy)){CSEL={x:gx,y:gy};cMsg('');cTogPanel(1);return cPanel()}CSEL=null;cBuild(gx,gy);
+ let gx,gy;if(CITY.wild){const hb=rc.intersectObjects([bg],true)[0];let o=hb&&hb.object;while(o&&!o.userData.cell)o=o.parent;if(o){gx=o.userData.cell[0];gy=o.userData.cell[1]}else{const r=rc.ray;if(r.direction.y>-1e-4)return;const t=-r.origin.y/r.direction.y;gx=Math.floor(r.origin.x+r.direction.x*t-root.position.x);gy=Math.floor(r.origin.z+r.direction.z*t-root.position.z)}gx=((gx%GN)+GN)%GN;gy=((gy%GN)+GN)%GN}else{const h=rc.intersectObjects([tg,bg],true)[0];if(!h)return;let o=h.object;while(o&&!o.userData.cell)o=o.parent;if(!o)return;[gx,gy]=o.userData.cell}
+if(cB(gx,gy)){CSEL={x:gx,y:gy};cMsg('');cTogPanel(1);return cPanel()}CSEL=null;cBuild(gx,gy);
 }
 function draw3(t,dt){
  const c=cX;if(!c||!CITY||!R)return;if(cWarp)cWT=(cWT+dt*.9)%24;
  const h=cHour(),lt=Math.max(0,Math.min(1,Math.sin((h-6)/12*Math.PI)*1.5+.35)),N=1-lt,ps=(h-6)/12,up=ps>=0&&ps<=1,pn=((h+6)%24)/12;
  if(w0!=CW||h0!=CH||d0!=cD){w0=CW;h0=CH;d0=cD;R.setPixelRatio(cD);R.setSize(CW,CH,false);CA.aspect=CW/CH;CA.updateProjectionMatrix()}
  if(CITY.hit&&CITY.hit!=lh){lh=CITY.hit;if(Date.now()-CITY.hit<2e4)fxStart(t)}
- const sg=(landAt(0,0),GN)+'|'+CITY.g.map(b=>b?b.t+b.l:'-').join()+CITY.custom.map(d=>d.id+d.col+d.size).join()+'|'+(window.VIS?'v':(CITY.tr?CITY.tr.join(''):''));if(sg!=sig){sig=sg;build3()}
+ const sg=(landAt(0,0),GN)+'|'+CITY.g.map(b=>b?b.t+b.l:'-').join()+CITY.custom.map(d=>d.id+d.col+d.size).join()+'|'+(window.VIS?'v':(CITY.tr?CITY.tr.join(''):''));if(CITY.wild&&Math.hypot(CITY.fx-wcx,CITY.fz-wcz)>3)sig='';if(sg!=sig){sig=sg;build3()}
  const tp=cMix([10,14,46],[88,165,232],lt),bt=cMix([42,30,92],[252,228,186],lt),sk=col('rgb('+tp.map(Math.round)+')').lerp(col('rgb('+bt.map(Math.round)+')'),.5);
- S.background=sk;S.fog.color.copy(sk);
+ S.background=sk;S.fog.color.copy(sk);if(CITY.wild){const fe=Math.sqrt(RAD*RAD+view.dist*view.dist)*.97;S.fog.far=fe;S.fog.near=Math.min(view.dist*1.25,fe*.8)}else{S.fog.near=45;S.fog.far=130}
  sun.position.set(-Math.cos(ps*Math.PI)*34,Math.sin(ps*Math.PI)*30,14);moon.position.set(-Math.cos(pn*Math.PI)*34,Math.sin(pn*Math.PI)*28,14);
  sun.visible=up;moon.visible=pn>=0&&pn<=1;dl.position.copy(up?sun.position:moon.position);dl.color.set(up?0xfff1d0:0x8fa8ff);dl.intensity=up?.25+.85*lt:.3;hl.intensity=.3+.4*lt;
  stars.material.opacity=N*.9;fxLight(N,t);
  cl3.forEach(o=>{o.g.position.x+=o.v*dt;if(o.g.position.x>45)o.g.position.x=-45;o.m.opacity=.25+.7*lt});
- if(drv>=0)chase(dt);else if(ad>=0)chaseA(dt);else{view.el=Math.max(.12,Math.min(1.5,view.el));view.dist=Math.max(3,Math.min(GN*4+12,view.dist));const ce=Math.cos(view.el);
+ if(drv>=0)chase(dt);else if(ad>=0)chaseA(dt);else{view.el=Math.max(.12,Math.min(1.5,view.el));view.dist=Math.max(3,Math.min(CITY.wild?22:GN*4+12,view.dist));if(CITY.wild)root.position.set(-CITY.fx,0,-CITY.fz);const ce=Math.cos(view.el);
  CA.position.set(Math.sin(view.az)*ce*view.dist,Math.sin(view.el)*view.dist+.4,Math.cos(view.az)*ce*view.dist);CA.lookAt(0,.4,0)}fxStep(t,dt);
- if(CSEL&&cB(CSEL.x,CSEL.y)){sel.visible=true;sel.position.set(CSEL.x+.5,.03,CSEL.y+.5);const p=1+.04*Math.sin(t*5);sel.scale.set(p,1,p)}else sel.visible=false;
+ if(CSEL&&cB(CSEL.x,CSEL.y)){sel.visible=true;sel.position.set((CITY.wild?CSEL.x+Math.round((CITY.fx-CSEL.x)/GN)*GN:CSEL.x)+.5,.03+(CITY.wild&&landAt(CSEL.x,CSEL.y)=='p'?.2:0),(CITY.wild?CSEL.y+Math.round((CITY.fz-CSEL.y)/GN)*GN:CSEL.y)+.5);const p=1+.04*Math.sin(t*5);sel.scale.set(p,1,p)}else sel.visible=false;
  vsync();cars.forEach((v,i)=>carStep(v,i,dt));rv3(dt);if(acD)asyncA();A3.forEach((a,i)=>acStep(a,i,t,dt));if(window.VIS)visTick(t);
  while(PP3.length<peds.length){const m=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,.09,6),new THREE.MeshLambertMaterial());root.add(m);PP3.push(m)}
  while(PP3.length>peds.length)root.remove(PP3.pop());
