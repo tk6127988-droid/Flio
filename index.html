@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.11">
+<meta name="flio-version" content="1.10.12">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
@@ -175,7 +175,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.11',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const VER='1.10.12',UPD_K='flio_update_url',UPD_A='flio_update_auto';
 const CHANGES=[['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -214,7 +214,7 @@ function updBox(){
  '<div class="row"><input id="uurl" placeholder="https://your-site/Flio.html" value="'+esc(ls(UPD_K,'')||'')+'" onchange="setUpdUrl(this.value)"></div>'+
  '<div class="row" style="flex-wrap:wrap"><button class="p" onclick="checkUpdate(1)">Check for updates</button>'+(nw?'<button class="p" onclick="applyUpdate()">Update to v'+esc(UPD.latest)+'</button>':'')+'</div>'+
  '<p class="mut" id="umsg" style="margin:6px 0">'+esc(UPD.msg)+'</p>'+
- '<label class="mut" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" '+(ls(UPD_A,0)?'checked':'')+' onchange="lset(UPD_A,this.checked?1:0)"> Check automatically when the game opens</label>'+
+ '<label class="mut" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" '+(ls(UPD_A,1)?'checked':'')+' onchange="lset(UPD_A,this.checked?1:0)"> Check automatically when the game opens</label>'+
  '<b>What’s new</b><ul class="mut" style="padding-left:20px;margin:6px 0">'+CHANGES.map(c=>'<li><b>v'+c[0]+'</b>: '+esc(c[1])+'</li>').join('')+'</ul>'+
  '<b>Backup</b><p class="mut" style="margin:4px 0 8px">Save your progress to a file before changing devices or replacing the game file.</p>'+
  '<div class="row" style="flex-wrap:wrap"><button onclick="exportSave()">Export save</button><button onclick="document.getElementById(\'imp\').click()">Import save</button><input id="imp" type="file" accept=".json,application/json" style="display:none" onchange="importSave(this)"></div></details>';
@@ -766,7 +766,7 @@ function onOver(){
  const db=lb();
  V.res.forEach(x=>{if(!mine.includes(x.i))return;const n=V.P[x.i].n,e=db[n]||{total:0,games:0};e.total+=x.s+x.b;e.games++;db[n]=e;submitScore(n,x.s+x.b)});
  saveLb(db);
- try{const k=+CFG.lfCash,mult=((isFinite(k)&&k>=0)?k:1)*evNow().lf,me=ONL?ONL.me:(mine.find(i=>V.P[i].n==myName)??mine[0]),x=V.res.find(r=>r.i==me);
+ try{const k=+CFG.lfCash,mult=((isFinite(k)&&k>=0)?k:1)*evNow().lf,me=ONL?ONL.me:(function(q){return q==null?mine[0]:q})(mine.find(i=>V.P[i].n==myName)),x=V.res.find(r=>r.i==me);
   const g=x?Math.round(x.s*mult):0;if(g>0)lfPay(g);gMark('play')}catch(e){}
  if(V.mw!=null)beep('win');
 }
@@ -1498,7 +1498,7 @@ function init(){if(!CITY||CITY.mat!=null)return;const a=A[Math.floor(Math.random
 /* economy: waste, water, happiness, upkeep (everything costs money) */
 const oE=cEco;
 cEco=function(){const E=oE();if(!CITY)return E;init();let wp=0,wc=20,ws=20,df=0,up=0;
- CITY.g.forEach(b=>{if(!b)return;const s=cS(b.t),m=CM[b.l],z=zs(s);wp+=(WX[s.role]??2)*m*z;if(s.role=='recycle')wc+=40*m*z;if(s.role=='water')ws+=30*m*z;if(s.role=='defense')df+=10*m*z;up+=s.cost*.0004*CVL[b.l]});
+ CITY.g.forEach(b=>{if(!b)return;const s=cS(b.t),m=CM[b.l],z=zs(s);wp+=(WX[s.role]!=null?WX[s.role]:2)*m*z;if(s.role=='recycle')wc+=40*m*z;if(s.role=='water')ws+=30*m*z;if(s.role=='defense')df+=10*m*z;up+=s.cost*.0004*CVL[b.l]});
  const wd=E.R*.5+E.J*.2,dis=CITY.dis0?Math.max(0,CITY.dis0*(1-(now()-CITY.dt0)/18e5)):0;
  Object.assign(E,{wp,wc,wr:wp>0?Math.min(1,wc/wp):1,wd,ws,wf:wd>0?Math.min(1,ws/wd):1,df,dis,up});
  E.H=E.R>0?Math.max(0,Math.min(1,E.hp*(.55+.45*E.wr)*(.6+.4*E.wf)*(1-dis))):0;
@@ -2075,7 +2075,7 @@ window.W3={ok(){return !!(R&&M3&&window.THREE)},visit:visitStart,visitEnd,tog(){
 
 
 setup();updSnd();
-if(ls(UPD_A,0))setTimeout(()=>checkUpdate(0),1200);
+if(ls(UPD_A,1))setTimeout(()=>checkUpdate(0),1200);
 /* ================= OWNER EDITOR (private) =================
    Open: tap the game title 5 times, then enter your owner passcode.
    Changes apply on this device; "Export game file" bakes them in for everyone. */
@@ -2539,7 +2539,7 @@ applyCfg();runMods();
   var s=document.createElement('script');s.setAttribute('data-inj','1');
   s.text=document.getElementById('flio-main').textContent;document.body.appendChild(s)}
  window.addEventListener('error',function(e){var a=document.getElementById('app');
-  if(a&&!a.innerHTML.trim()){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tell the game owner this message.</p></div>'}});
+  if(a&&(!a.innerHTML.trim()||a.textContent.trim()==='Loading…')){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tell the game owner this message.</p></div>'}});
  var a=document.getElementById('app');if(a)a.innerHTML='<div class="box mut">Loading…</div>';
  L(['https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js','https://unpkg.com/three@0.149.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js'],function(){return typeof THREE!=='undefined'},3000).then(run,run);
 })();
