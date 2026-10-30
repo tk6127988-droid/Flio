@@ -2,9 +2,9 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="flio-version" content="1.10.9">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,10,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script><script>window.Peer||document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>')</script><script>window.Peer||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"><\/script>')</script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script><script>window.THREE||document.write('<script src="https://unpkg.com/three@0.149.0/build/three.min.js"><\/script>')</script><script>window.THREE||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js"><\/script>')</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10}},"auth":null}</script>
+
+
 <title>Flio</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff3d1;--fg:#0f0f0f;--card:#fff;--mut:#4a4538;--ac:#d6126f;--ok:#0a8f33;--bd:#1d1c1a;--bk:#4c2fd1}
@@ -43,11 +43,11 @@ table{width:100%;border-collapse:collapse}td,th{padding:5px 4px;text-align:left;
 </style></head><body>
 <div class="hd"><h1 id="ttl" style="margin:4px 0 12px">🔒 Flio</h1><button id="snd" onclick="toggleSnd()" style="padding:4px 10px;height:36px" aria-label="Sound">🔊</button></div>
 <div id="app"></div>
-<script>
+<script id="flio-main" type="text/plain">
 /* === PASTE YOUR SUPABASE PROJECT URL AND ANON KEY BETWEEN THE QUOTES (see world-setup.sql) === */
 const SUPA_URL='https://seicvoktkezadcqgfvik.supabase.co',SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlaWN2b2t0a2V6YWRjcWdmdmlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwODA1MTcsImV4cCI6MjEwODY1NjUxN30.huJxr7ixmRiw4FaRQ6xYXjcoG58cjydf30lXJj1dyj4';
 
-const SRC0='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+const SRC0=(()=>{const c=document.documentElement.cloneNode(true);c.querySelectorAll('[data-inj]').forEach(e=>e.remove());const a=c.querySelector('#app');if(a)a.innerHTML='';return '<!DOCTYPE html>\n'+c.outerHTML})();
 const $=s=>document.querySelector(s),app=$('#app');
 /* ---------- owner config (defaults; overridden by baked + local settings) ---------- */
 const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz','pek'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[],lfCash:1,streak:3,twists:true,events:true,fund:{on:true,min:500,max:100000,hours:48,maxAct:1,karma:.5,mat:1,bonus:10}};
@@ -265,7 +265,8 @@ async function goOnline(host){
  if(!NAMELOCK){err='Choose your player name first (top of the page).';return setup()}const nm=NAMELOCK;saveName(nm);DAILY=null;
  const code=host?String(Math.floor(1000+Math.random()*9000)):$('#oc').value.trim();
  if(!code){err='Enter the 4-digit table code first.';return setup()}
- if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
+ if(typeof Peer==='undefined'&&window.__peerP){app.innerHTML='<div class="box"><b>Loading online play…</b></div>';await window.__peerP}
+  if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
  app.innerHTML='<div class="box"><b>Connecting to table '+esc(code)+'…</b></div>';
  const id='lockflip-'+code,conns=[];
  let peer,done=false;
@@ -1320,7 +1321,8 @@ function rmWatch(){clearInterval(rmIv);rmIv=setInterval(()=>{
 async function randomMatch(){
  if(!NAMELOCK){cStop();err='Choose your player name first (top of the page).';return setup()}const tok=++rmTok,nm=NAMELOCK;saveName(nm);DAILY=null;cStop();
  try{ONL&&ONL.R.leave()}catch(e){}ONL=null;clearInterval(rmIv);
- if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
+ if(typeof Peer==='undefined'&&window.__peerP){app.innerHTML='<div class="box"><b>Loading online play…</b></div>';await window.__peerP}
+  if(typeof Peer==='undefined'){err='Couldn’t load the online library. Check your internet connection and reload.';return setup()}
  scr='match';
  for(let rd=0;rd<4;rd++){
   app.innerHTML='<div class="box"><b>🎲 Finding players…</b><p class="mut">Searching the world for an open table.</p><button onclick="rmTok++;setup()">Cancel</button></div>';
@@ -2521,4 +2523,24 @@ FL.box(()=>{const e=evNow();return e.n?'<b>'+e.n+'</b><div class="mut">'+e.d+' �
 applyCfg();runMods();
 
 
+</script>
+<script>
+/* Non-blocking library loader: the game starts even if a CDN is slow or blocked. */
+(function(){
+ function L(urls,test,ms){return new Promise(function(res){var i=0;(function next(){
+  if(test()||i>=urls.length)return res(test());
+  var s=document.createElement('script'),t,d=0;
+  function skip(){if(d)return;d=1;clearTimeout(t);next()}
+  s.src=urls[i++];s.async=true;s.setAttribute('data-inj','1');
+  s.onload=function(){if(d)return;d=1;clearTimeout(t);res(test())};s.onerror=skip;t=setTimeout(skip,ms);
+  document.head.appendChild(s)})()})}
+ window.__peerP=L(['https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'],function(){return typeof Peer!=='undefined'},7000);
+ function run(){
+  var s=document.createElement('script');s.setAttribute('data-inj','1');
+  s.text=document.getElementById('flio-main').textContent;document.body.appendChild(s)}
+ window.addEventListener('error',function(e){var a=document.getElementById('app');
+  if(a&&!a.innerHTML.trim()){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tell the game owner this message.</p></div>'}});
+ var a=document.getElementById('app');if(a)a.innerHTML='<div class="box mut">Loading…</div>';
+ L(['https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js','https://unpkg.com/three@0.149.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js'],function(){return typeof THREE!=='undefined'},3000).then(run,run);
+})();
 </script></body></html>
