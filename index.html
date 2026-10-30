@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.13">
+<meta name="flio-version" content="1.10.15">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
@@ -41,7 +41,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:5px 4px;text-align:left;
 .trophy{font-size:56px;text-align:center;animation:pop .6s ease-out}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style></head><body>
-<div class="hd"><h1 id="ttl" style="margin:4px 0 12px">🔒 Flio</h1><button id="snd" onclick="toggleSnd()" style="padding:4px 10px;height:36px" aria-label="Sound">🔊</button></div>
+<div class="hd"><h1 id="ttl" style="margin:4px 0 12px">🔒 Flio</h1><button id="snd" onclick="toggleSnd()" style="padding:4px 10px;height:36px" aria-label="Sound">🔊</button></div><div id="vlbl" style="font:600 11px system-ui;opacity:.5;margin:-8px 0 6px 2px"></div>
 <div id="app"></div>
 <script id="flio-main" type="text/plain">
 /* === PASTE YOUR SUPABASE PROJECT URL AND ANON KEY BETWEEN THE QUOTES (see world-setup.sql) === */
@@ -175,7 +175,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.13',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const VER='1.10.15',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
 const CHANGES=[['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -477,7 +477,8 @@ function paintWorld(){const n=document.getElementById('wnote');if(n)n.textConten
 const WK='lockflip_world',QK='lockflip_queue';
 let WFAIL=false,flushing=false;
 function ls(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
-function lset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function svFail(){if(window.__svw||!document.body)return;window.__svw=1;var d=document.createElement('div');d.style.cssText='position:fixed;left:8px;right:8px;bottom:10px;z-index:99999;background:#7a1f2b;color:#fff;border:2px solid #ff8a9a;border-radius:10px;padding:10px;font:600 13px system-ui';d.textContent='⚠️ Could not save your progress. Phone storage may be full or blocked (private tab?). Open 🔄 Game updates & backup and tap Export save. Tap here to hide.';d.onclick=function(){d.remove()};document.body.appendChild(d)}
+function lset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){svFail()}}
 const WSQL=`-- Lock & Flip world ranking: run once in Supabase > SQL Editor.
 -- Anyone can submit a round score and read the top 10. No accounts needed.
 
@@ -1091,7 +1092,8 @@ const cBar=(p,c)=>`<div style="height:6px;background:rgba(128,128,128,.3);border
 function cPanel(){
  const pn=document.getElementById('cpn');if(!pn)return;cEco();const E=ECO,cl=v=>v>=.75?'var(--ok)':v>=.45?'#e6a100':'var(--ac)';
  let h='<div class="row"><b style="flex:1">🏙 City menu</b><button onclick="cTogPanel(0);cChip()">✕ Close</button></div>';h+=CAWAY?`<div class="box"><b>🌙 Welcome back!</b><p class="mut" style="margin:4px 0">In the ${cFmt(CAWAY.sec)} you were away, your city earned <b style="color:var(--ok)">+${cMoney(CAWAY.g)}</b>.</p><button class="p" onclick="CAWAY=null;cPanel()">Nice!</button></div>`:'';
- const ids=[...Object.keys(CT),...CITY.custom.map(d=>'c:'+d.id)],cs=cS(CTYPE);
+ if((CFG.hide||[]).indexOf(CTYPE)>=0)CTYPE=Object.keys(CT).find(k=>CFG.hide.indexOf(k)<0)||CTYPE;
+ const ids=[...Object.keys(CT).filter(k=>(CFG.hide||[]).indexOf(k)<0),...CITY.custom.map(d=>'c:'+d.id)],cs=cS(CTYPE);
  h+=`<div class="box"><b>🏗 Build</b> <span class="mut">pick one, then tap an empty plot</span><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px">`+ids.map(id=>{const s=cS(id);return `<button onclick="CTYPE='${id}';CSEL=null;cTogPanel(0);cPanel();cMsg('Selected '+cS('${id}').name+'. Tap an empty plot.')" style="padding:3px 1px;font-size:10.5px;line-height:1.2;${CTYPE==id?'border-color:var(--ac);box-shadow:0 0 0 2px var(--ac);':''}${CITY.cash<s.cost?'opacity:.55':''}"><span style="font-size:19px">${s.emoji}</span><br>${esc(s.name)}<br>${cMoney(s.cost)}</button>`}).join('')+`</div><div class="mut" style="margin-top:6px"><b>${cs.emoji} ${esc(cs.name)}</b>: up to ${cMoney(cs.inc)}/min${cs.hs?' · homes '+Math.round(cs.hs):''}${cs.jb?' · jobs '+Math.round(cs.jb):''}${cs.pw?' · power '+(cs.pw>0?'+':'')+Math.round(cs.pw):''}${cs.sv?' · serves '+Math.round(cs.sv)+' people':''}<br>${CD[CRL[cs.role]]}</div>`+(CITY.custom.length<8?'<button style="width:100%;margin-top:6px" onclick="cCustom()">🎨 Design your own building</button>':'')+`<p class="mut" id="cmsg" style="margin:6px 0 0"></p></div>`;
  const s=CSEL&&cB(CSEL.x,CSEL.y);
  if(!s)h+='<div class="box mut">Tap a building to see how well it earns, upgrade or sell it.</div>';
@@ -1132,6 +1134,7 @@ function cTap(e){
 }
 function cBuild(x,y,type){
  const k=type||CTYPE,s=cS(k);if(cB(x,y))return false;
+ if(!type&&(CFG.hide||[]).indexOf(k)>=0){cMsg(s.name+' is no longer available to build.');return false}
  if(CITY.cash<s.cost){cPanel();cMsg('Not enough cash: '+s.name+' costs '+cMoney(s.cost)+', you have '+cMoney(CITY.cash)+'.');return false}
  CITY.cash-=s.cost;CITY.g[y*GN+x]={t:k,l:1};cSave();cPeds();cPanel();cMsg('Built a '+s.name+'!');cStats();beep('flip');return true;
 }
@@ -2536,10 +2539,13 @@ applyCfg();runMods();
   document.head.appendChild(s)})()})}
  window.__peerP=L(['https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'],function(){return typeof Peer!=='undefined'},7000);
  function run(){
+  try{var K='flio_city_v1',nf=+(localStorage.getItem('flio_fail')||0),cur=localStorage.getItem(K),good=localStorage.getItem('flio_city_good');
+   if(nf>=2&&cur){if(nf==2)localStorage.setItem('flio_city_backup',cur);if(nf==2&&good)localStorage.setItem(K,good);else localStorage.removeItem(K)}}catch(e){}
   var s=document.createElement('script');s.setAttribute('data-inj','1');
-  s.text=document.getElementById('flio-main').textContent;document.body.appendChild(s)}
+  s.text=document.getElementById('flio-main').textContent;document.body.appendChild(s);
+  setTimeout(function(){try{var a=document.getElementById('app');if(a&&a.textContent.indexOf('could not start')<0&&!window.__fl){localStorage.removeItem('flio_fail');var c=localStorage.getItem('flio_city_v1');if(c&&JSON.parse(c).g)localStorage.setItem('flio_city_good',c)}}catch(e){}},4000)}
  window.addEventListener('error',function(e){var a=document.getElementById('app');
-  if(a&&(!a.innerHTML.trim()||a.textContent.trim()==='Loading…')){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tap Repair (your city is kept as a backup), then tell the game owner this message.</p><button onclick="try{var c=localStorage.getItem(\'flio_city_v1\');if(c)localStorage.setItem(\'flio_city_backup\',c);localStorage.removeItem(\'flio_city_v1\')}catch(x){}location.reload()">🔧 Repair &amp; reload</button></div>'}});
+  if(a&&(!a.innerHTML.trim()||a.textContent.trim()==='Loading…')){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tap Repair (your city is kept as a backup), then tell the game owner this message.</p><button onclick="try{var c=localStorage.getItem(\'flio_city_v1\');if(c)localStorage.setItem(\'flio_city_backup\',c);localStorage.removeItem(\'flio_city_v1\');localStorage.removeItem(\'flio_fail\')}catch(x){}location.reload()">🔧 Repair &amp; reload</button></div>';if(!window.__fl){window.__fl=1;try{var n=(+localStorage.getItem('flio_fail')||0)+1;localStorage.setItem('flio_fail',n);if(n<=3)setTimeout(function(){location.reload()},900)}catch(x){}}}});
  var a=document.getElementById('app');if(a)a.innerHTML='<div class="box mut">Loading…</div>';
  L(['https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js','https://unpkg.com/three@0.149.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js'],function(){return typeof THREE!=='undefined'},3000).then(run,run);
 })();
