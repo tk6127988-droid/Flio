@@ -2,9 +2,9 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="flio-version" content="1.10.8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10}},"auth":null}</script>
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script><script>window.Peer||document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>')</script><script>window.Peer||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"><\/script>')</script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script><script>window.THREE||document.write('<script src="https://unpkg.com/three@0.149.0/build/three.min.js"><\/script>')</script><script>window.THREE||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js"><\/script>')</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
 <title>Flio</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff3d1;--fg:#0f0f0f;--card:#fff;--mut:#4a4538;--ac:#d6126f;--ok:#0a8f33;--bd:#1d1c1a;--bk:#4c2fd1}
@@ -243,14 +243,14 @@ function setup(){
  scr='setup';phase='setup';DAILY=null;
  if(myName&&(!seats[0].n||/^Player \d$/i.test(seats[0].n)))seats[0].n=myName;
  if(NAMELOCK&&seats[0].t=='h')seats[0].n=NAMELOCK;
- const E_=err;app.innerHTML=(err?`<div class="box" style="border-color:#ff4d6d;background:rgba(255,77,109,.18)"><b>⚠️ ${esc(err)}</b></div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+dailyBox()+
+ app.innerHTML=(err?`<div class="box">${esc(err)}</div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+dailyBox()+
  '<div class="box"><b>🎯 Game options</b><div class="row" style="margin-top:8px"><span style="flex:1">Match length</span><select onchange="MT=+this.value;lset(\'lockflip_mt\',MT)">'+[[0,'Endless']].concat(CFG.matchOpts.map(n=>[n,'First to '+n])).map(o=>'<option value="'+o[0]+'"'+(MT==o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div><div class="row"><span style="flex:1">⚡ Power cards</span><select onchange="PW=+this.value;lset(\'lockflip_pw\',PW)"><option value="1"'+(PW?' selected':'')+'>On</option><option value="0"'+(PW?'':' selected')+'>Off</option></select></div><p class="mut">For the games below. The daily challenge never uses power cards.</p></div>'+
  '<div class="box"><b>🌐 Casual online</b><p class="mut">Each player uses their own phone. One creates a table and shares the 4-digit code.</p><div class="row"><input id="on" placeholder="Your name" maxlength="14" value="'+esc(NAMELOCK||myName)+'"'+(NAMELOCK?' readonly':'')+'></div><div class="row"><button class="p" onclick="goOnline(true)">Create table</button><input id="oc" placeholder="Code" inputmode="numeric" maxlength="6" style="max-width:90px"><button onclick="goOnline(false)">Join</button></div><button class="p" style="width:100%" onclick="randomMatch()">🎲 Random match (play people worldwide)</button></div>'+
  '<div class="box"><b>Same device (pass &amp; play)</b><div style="height:8px"></div>'+
  seats.map((s,i)=>`<div class="row"><input id="n${i}" value="${esc(s.n)}" maxlength="14"><select id="t${i}"><option value="h"${s.t=='h'?' selected':''}>Human</option><option value="b"${s.t=='b'?' selected':''}>Computer</option><option value="o"${s.t=='o'?' selected':''}>Empty</option></select></div>`).join('')+
  '<button class="p" onclick="start()">Start game</button><p class="mut" id="err"></p></div>'+
  '<div class="box"><b>How to play</b><p class="mut">Everyone has cards 0–9, face down. The Locker secretly picks a trap number. Take turns flipping one of your cards to add its value. Flip the trap and the round ends and your round score is 0. Rank bonus: +5, +3, +1. The Locker gets +3 if the trap catches someone. Totals carry over between rounds until someone reaches the match target.</p><p class="mut"><b>🏪 Business Showdown:</b> after any round, the host (or the single device) taps Run a business, online or pass &amp; play. Your total score becomes starting cash. Over 6 quarters you type in your own price, marketing and quality spend, staff count and loan amount, and compete with every player for customers. Random events, taxes and interest apply. Highest net worth wins.</p><p class="mut"><b>⚡ Power cards:</b> everyone gets 2 each round. Use one before you flip, once per turn. ⏭ Skip passes your turn. ✖2 Double counts your next flip twice. 🛡 Shield saves you from one trap hit. ❄️ Freeze makes the next player lose a turn.</p></div>'+updBox()+board()+setupBox();
- err='';if(E_){try{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}catch(e){}}
+ err='';
 }
 function saveName(nm){if(NAMELOCK&&nm!==NAMELOCK)nm=NAMELOCK;myName=nm;lset('lockflip_name',nm)}
 function start(){
@@ -272,7 +272,6 @@ async function goOnline(host){
  const fail=m=>{if(done)return;done=true;try{peer&&peer.destroy()}catch(e){}ONL=null;err=m;setup()};
  const R={emit(t,d){conns.forEach(c=>{try{if(c.open)c.send(d)}catch(e){}});return Promise.resolve()},leave(){try{peer.destroy()}catch(e){}return Promise.resolve()}};
  try{peer=host?new Peer(id):new Peer()}catch(e){return fail('Couldn’t start online play.')}
- if(host)setTimeout(()=>fail('Couldn’t connect to the online server. Check your internet and try again.'),12000);
  peer.on('error',e=>{
   if(e.type=='unavailable-id')fail('That code is already in use. Try again.');
   else if(e.type=='peer-unavailable')fail('No table with that code. Check it and make sure the host is on the lobby screen.');
