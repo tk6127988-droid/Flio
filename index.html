@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="flio-version" content="1.10.11">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -214,7 +214,7 @@ function updBox(){
  '<div class="row"><input id="uurl" placeholder="https://your-site/Flio.html" value="'+esc(ls(UPD_K,'')||'')+'" onchange="setUpdUrl(this.value)"></div>'+
  '<div class="row" style="flex-wrap:wrap"><button class="p" onclick="checkUpdate(1)">Check for updates</button>'+(nw?'<button class="p" onclick="applyUpdate()">Update to v'+esc(UPD.latest)+'</button>':'')+'</div>'+
  '<p class="mut" id="umsg" style="margin:6px 0">'+esc(UPD.msg)+'</p>'+
- '<label class="mut" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" '+(ls(UPD_A,1)?'checked':'')+' onchange="lset(UPD_A,this.checked?1:0)"> Check automatically when the game opens</label>'+
+ '<label class="mut" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" '+(ls(UPD_A,0)?'checked':'')+' onchange="lset(UPD_A,this.checked?1:0)"> Check automatically when the game opens</label>'+
  '<b>What’s new</b><ul class="mut" style="padding-left:20px;margin:6px 0">'+CHANGES.map(c=>'<li><b>v'+c[0]+'</b>: '+esc(c[1])+'</li>').join('')+'</ul>'+
  '<b>Backup</b><p class="mut" style="margin:4px 0 8px">Save your progress to a file before changing devices or replacing the game file.</p>'+
  '<div class="row" style="flex-wrap:wrap"><button onclick="exportSave()">Export save</button><button onclick="document.getElementById(\'imp\').click()">Import save</button><input id="imp" type="file" accept=".json,application/json" style="display:none" onchange="importSave(this)"></div></details>';
@@ -2075,7 +2075,7 @@ window.W3={ok(){return !!(R&&M3&&window.THREE)},visit:visitStart,visitEnd,tog(){
 
 
 setup();updSnd();
-if(ls(UPD_A,1))setTimeout(()=>checkUpdate(0),1200);
+if(ls(UPD_A,0))setTimeout(()=>checkUpdate(0),1200);
 /* ================= OWNER EDITOR (private) =================
    Open: tap the game title 5 times, then enter your owner passcode.
    Changes apply on this device; "Export game file" bakes them in for everyone. */
