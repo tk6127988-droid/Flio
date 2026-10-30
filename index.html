@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.12">
+<meta name="flio-version" content="1.10.13">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
@@ -175,7 +175,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.12',UPD_K='flio_update_url',UPD_A='flio_update_auto';
+const VER='1.10.13',UPD_K='flio_update_url',UPD_A='flio_update_auto';
 const CHANGES=[['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -995,7 +995,7 @@ const cP=(x,y)=>[OX+(x-y)*TW,OY+(x+y)*TH];
 const cB=(x,y)=>CITY&&CITY.wild?(CITY.g[(((y%GN)+GN)%GN)*GN+(((x%GN)+GN)%GN)]||null):(CITY&&x>=0&&y>=0&&x<GN&&y<GN?CITY.g[y*GN+x]:null);
 function cMk(role,size,o){const a=CT[role],m=CSZ[size];return Object.assign({role,name:a[0],emoji:a[1],cost:Math.round(a[2]*m*1.15),inc:a[3]*m,hs:a[4]*m,jb:Math.round(a[5]*m),pw:a[6]*m,sv:a[7]*m,col:a[8],custom:1,size},o)}
 function cS(t){
- if(t.slice(0,2)!='c:'){const a=CT[t];return{role:t,name:a[0],emoji:a[1],cost:a[2],inc:a[3],hs:a[4],jb:a[5],pw:a[6],sv:a[7],col:a[8]}}
+ if(t.slice(0,2)!='c:'){const a=CT[t]||(window.CPLUS?CT.house:null);return{role:t,name:a[0],emoji:a[1],cost:a[2],inc:a[3],hs:a[4],jb:a[5],pw:a[6],sv:a[7],col:a[8]}}
  const d=CITY.custom.find(x=>x.id==t.slice(2));return d?cMk(d.role,d.size,{name:d.name,emoji:d.emoji,col:d.col}):cS('house');
 }
 /* ---- real-world economy: every building depends on people, jobs, power and services ---- */
@@ -1279,7 +1279,7 @@ function cLoop(ts){if(scr!='city'||!cCan||!document.body.contains(cCan)){if(scr!
 setInterval(()=>{if(CITY){cTick();if(scr!='city')cSave()}},1000);
 ['visibilitychange','pagehide'].forEach(e=>addEventListener(e,()=>{if(CITY){cTick();cSave()}}));
 addEventListener('resize',cLayout);addEventListener('orientationchange',()=>setTimeout(cLayout,150));
-if(CITY){cTick();cSave()}
+if(CITY){try{cTick();cSave()}catch(e){}}
 /* ---------- Random matchmaking (PeerJS slot tables: first free slot hosts, others scan and join) ---------- */
 let rmTok=0,rmIv=0;
 const rmShuf=()=>[1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5);
@@ -1488,7 +1488,7 @@ function nightShade(x,W,H){
 /* ===== Flio City+ : waste, resources, upkeep, defence, disasters, happiness, world map & ranking ===== */
 (()=>{
 const ADD={recycle:['Recycling plant','♻️',1400,6,0,8,-3,0,'#2e9e6b'],water:['Water works','💧',1100,5,0,6,-2,0,'#2f9fd8'],defense:['Defence grid','🛡',2000,2,0,5,-3,0,'#607d8b']};
-for(const k in ADD){CT[k]=ADD[k];CRL[k]='svc'}
+for(const k in ADD){CT[k]=ADD[k];CRL[k]='svc'}window.CPLUS=1;
 const WX={house:1,apartment:4,shop:2,cafe:1.5,park:0,school:2,hospital:4,office:3,factory:8,tower:8,power:5,solar:0,water:0,defense:1,recycle:1,road:0};
 const need=c=>Math.max(1,Math.ceil(c/30)),face=h=>h>=.8?'😄':h>=.6?'🙂':h>=.4?'😐':h>=.2?'😟':'😡',now=()=>Date.now(),pc=v=>Math.round(v*100)+'%',zs=s=>s.size?CSZ[s.size]:1;
 const DIS=[['🌍','Earthquake',0],['🌊','Flood',0],['🔥','Wildfire',0],['🌪','Tornado',0],['💥','Industrial explosion',1],['⚡','Grid blackout',1],['💻','Cyberattack',1]];
@@ -2539,7 +2539,7 @@ applyCfg();runMods();
   var s=document.createElement('script');s.setAttribute('data-inj','1');
   s.text=document.getElementById('flio-main').textContent;document.body.appendChild(s)}
  window.addEventListener('error',function(e){var a=document.getElementById('app');
-  if(a&&(!a.innerHTML.trim()||a.textContent.trim()==='Loading…')){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tell the game owner this message.</p></div>'}});
+  if(a&&(!a.innerHTML.trim()||a.textContent.trim()==='Loading…')){a.innerHTML='<div class="box"><b>⚠️ The game could not start.</b><p class="mut">'+String(e.message||'error').replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':'')+'</p><p class="mut">Reload the page. If it keeps happening, tap Repair (your city is kept as a backup), then tell the game owner this message.</p><button onclick="try{var c=localStorage.getItem(\'flio_city_v1\');if(c)localStorage.setItem(\'flio_city_backup\',c);localStorage.removeItem(\'flio_city_v1\')}catch(x){}location.reload()">🔧 Repair &amp; reload</button></div>'}});
  var a=document.getElementById('app');if(a)a.innerHTML='<div class="box mut">Loading…</div>';
  L(['https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js','https://unpkg.com/three@0.149.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js'],function(){return typeof THREE!=='undefined'},3000).then(run,run);
 })();
