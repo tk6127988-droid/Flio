@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.15">
+<meta name="flio-version" content="1.10.21">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{"bg":"#5a6496","ac":"#c7bf67","fg":"#ffffff","bk":"#ffff00"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":false,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516285015,"timeStart":0,"timeEnd":1793516285015,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -50,7 +50,7 @@ const SUPA_URL='https://seicvoktkezadcqgfvik.supabase.co',SUPA_KEY='eyJhbGciOiJI
 const SRC0=(()=>{const c=document.documentElement.cloneNode(true);c.querySelectorAll('[data-inj]').forEach(e=>e.remove());const a=c.querySelector('#app');if(a)a.innerHTML='';return '<!DOCTYPE html>\n'+c.outerHTML})();
 const $=s=>document.querySelector(s),app=$('#app');
 /* ---------- owner config (defaults; overridden by baked + local settings) ---------- */
-const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz','pek'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[],lfCash:1,streak:3,twists:true,events:true,fund:{on:true,min:500,max:100000,hours:48,maxAct:1,karma:.5,mat:1,bonus:10}};
+const CFG_DEF={title:'🔒 Flio',bonus:[5,3,1,0],lockerBonus:3,botMs:750,pwCount:2,pwSet:['skip','dbl','shd','frz','pek'],matchOpts:[40,75,120],bizCash:1000,bizMul:50,bizQ:6,theme:{light:{},dark:{}},ct:{},csz:null,cup:null,cvl:null,vt:{},texts:{},nb:[],mods:[],lfCash:1,dayBonus:200,timeOn:false,timeEvery:5,timeAmt:50,timeCap:30,timeId:0,timeStart:0,timeEnd:0,streak:3,twists:true,events:true,fund:{on:true,min:500,max:100000,hours:48,maxAct:1,karma:.5,mat:1,bonus:10}};
 const CFG=(()=>{let b={},l={};try{b=JSON.parse(document.getElementById('flio-cfg').textContent)||{}}catch(e){}
  const m=Object.assign({},JSON.parse(JSON.stringify(CFG_DEF)),b.cfg||{},l.cfg||{});return m})();
 let seats=ls('lockflip_seats',null)||[{n:'Player 1',t:'h'},{n:'Computer',t:'b'},{n:'Player 3',t:'o'},{n:'Player 4',t:'o'}];
@@ -175,7 +175,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.15',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const VER='1.10.21',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
 const CHANGES=[['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -239,11 +239,54 @@ function importSave(inp){
  }catch(e){alert('That isn’t a Flio save file.');inp.value=''}};
  r.readAsText(f);
 }
+var DSMSG='';
+function dsDay(t){var d=new Date(t||Date.now());return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function dsInfo(){var s=ls('flio_dstreak',null)||{n:0,last:'',ts:0},today=dsDay(),yest=dsDay(Date.now()-864e5),k=+CFG.dayBonus;if(!isFinite(k)||k<0)k=200;
+ var claimed=s.last>=today,n=claimed?s.n:(s.last==yest?s.n+1:1),wait=!claimed&&(Date.now()-(s.ts||0))<36e6;
+ return{s:s,k:k,claimed:claimed,n:n,wait:wait,amt:Math.round(k*Math.min(n,7)),broke:!claimed&&s.last&&s.last!=yest&&s.n>1}}
+function dsClaim(){var i=dsInfo();if(i.k<=0||i.claimed||i.wait)return;
+ if(!CITY){DSMSG='Start your city first, then come back to claim.';setup();return}
+ CITY.cash+=i.amt;lset('flio_dstreak',{n:i.n,last:dsDay(),ts:Date.now()});cSave();try{beep('flip')}catch(e){}
+ DSMSG='🎉 +'+cMoney(i.amt)+' added to your city!';setup()}
+function streakBox(){var i=dsInfo();if(i.k<=0)return '';var m=DSMSG;DSMSG='';
+ var msg=m?'<p style="margin:6px 0"><b>'+m+'</b></p>':'';
+ if(i.claimed)return '<div class="box"><b>🔥 '+i.s.n+'-day streak</b>'+msg+'<p class="mut">Claimed today. Come back tomorrow for '+cMoney(Math.round(i.k*Math.min(i.s.n+1,7)))+(i.s.n<7?'':' (the biggest bonus)')+'.</p></div>';
+ if(i.wait)return '<div class="box"><b>🔥 Daily bonus</b>'+msg+'<p class="mut">Come back a little later for your next bonus.</p></div>';
+ return '<div class="box"><b>🔥 Daily bonus · Day '+i.n+'</b>'+msg+'<p class="mut">'+(i.broke?'Your streak ended at '+i.s.n+' days. Start a new one today! ':(i.n>1?'Keep your streak going! ':''))+'Claim '+cMoney(i.amt)+' for your city'+(CITY?'.':'. Start your city first to receive it.')+'</p>'+(CITY?'<button class="p" onclick="dsClaim()">Claim '+cMoney(i.amt)+'</button>':'')+'</div>'}
+var TB={lastAct:Date.now(),acc:0,s:null,open:0};
+['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,function(){TB.lastAct=Date.now()},{passive:true,capture:true})});
+var TBR=ls('flio_tbr',null);
+function tbCfg(){var R=(TBR&&typeof TBR=='object')?TBR:null,on0,id,st,ev,a,c,end;
+ if(R){on0=R.on===true;id=+R.id||0;st=+R.start||0;ev=+R.every;a=+R.amt;c=+R.cap;end=+R.end||0}
+ else{on0=CFG.timeOn===true;id=CFG.timeId||0;st=+CFG.timeStart||0;ev=+CFG.timeEvery;a=+CFG.timeAmt;c=+CFG.timeCap;end=CFG.timeEnd||0}
+ var ok=on0&&isFinite(ev)&&ev>=0.1&&isFinite(a)&&a>0&&a<=1e6;
+ return{on:ok,live:ok&&st<=Date.now(),st:st,ev:ev,iv:Math.max(5,Math.round(ev*60)),a:a,c:(isFinite(c)&&c>0)?Math.min(c,1440):30,id:id,end:end}}
+async function tbPoll(){try{var r=await rpc('get_event');if(typeof r=='string'){try{r=JSON.parse(r)}catch(e){r=null}}if(r&&typeof r=='object'){TBR=r;lset('flio_tbr',r)}}catch(e){}}
+function tbEvLbl(ev){return ev==1?'minute':(ev<1?(Math.round(ev*60)+' seconds'):ev+' minutes')}
+function tbFmt(ms){var m=Math.max(0,Math.ceil(ms/6e4)),d=Math.floor(m/1440),h=Math.floor(m%1440/60);m=m%60;return (d?d+'d ':'')+(d||h?h+'h ':'')+m+'m'}
+function tbWhen(st){try{return new Date(st).toLocaleString([],{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}catch(e){return new Date(st).toString()}}
+function tbState(){var t=dsDay();if(!TB.s||TB.s.d!=t){var s=ls('flio_tbonus',null);TB.s=(s&&s.d==t)?s:{d:t,sec:0,got:0}}return TB.s}
+function tbToast(m){try{var d=document.createElement('div');d.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);transform:translateX(-50%);z-index:99997;background:var(--card);color:var(--fg);border:2px solid var(--ok);border-radius:12px;padding:8px 14px;font:700 14px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.4)';d.textContent=m;document.body.appendChild(d);setTimeout(function(){d.remove()},2600)}catch(e){}}
+function tbLive(){var e=document.getElementById('tbl');if(!e)return;var c=tbCfg(),s=tbState();e.textContent='Today: '+Math.floor(s.sec/60)+' / '+c.c+' min · earned '+cMoney(s.got)+(CITY?'':' · Start your city to earn')}
+function tbRule(c){return 'Earn '+cMoney(c.a)+' of city cash for every '+tbEvLbl(c.ev)+' you play, up to '+c.c+' minutes of play a day.'}
+function tbInner(){var c=tbCfg(),s=tbState();if(!c.on)return '';
+ if(!c.live)return '<div class="box" style="border-color:var(--ac)"><b>⏱ Play bonus event starts in <span id="tbc">'+tbFmt(c.st-Date.now())+'</span></b><p class="mut">'+tbWhen(c.st)+'. '+tbRule(c)+' Come back then!</p></div>';
+ return '<div class="box" style="border-color:var(--ok)"><b>🔴 LIVE: Play bonus event</b><p class="mut">'+tbRule(c)+' It counts while you are active in the game.</p><p class="mut" id="tbl">Today: '+Math.floor(s.sec/60)+' / '+c.c+' min · earned '+cMoney(s.got)+(CITY?'':' · Start your city to earn')+'</p></div>'}
+function tbStName(){var c=tbCfg();return !c.on?'off':(c.live?'live':'sched')}
+function timeBox(){TB.st=tbStName();return '<div id="tbbox">'+tbInner()+'</div>'}
+function tbTick(){try{var c=tbCfg();var n=tbStName();if(TB.st!==undefined&&TB.st!=n){TB.st=n;var bx=document.getElementById('tbbox');if(bx)bx.innerHTML=tbInner()}var ce=document.getElementById('tbc');if(ce&&!c.live)ce.textContent=tbFmt(c.st-Date.now());
+ if(!c.live||!CITY||window.VIS)return;if(document.visibilityState!='visible'||Date.now()-TB.lastAct>6e4)return;var s=tbState();if(s.sec>=c.c*60)return;s.sec++;if(s.sec%c.iv==0){CITY.cash+=c.a;s.got+=c.a;tbToast('⏱ +'+cMoney(c.a)+' play bonus');lset('flio_tbonus',s);cSave()}else if(s.sec%5==0)lset('flio_tbonus',s);if(s.sec>=c.c*60){lset('flio_tbonus',s);cSave();tbToast('⏱ Daily play bonus limit reached. See you tomorrow!')}tbLive()}catch(e){}}
+function tbPop(html,ok){TB.open=1;var d=document.createElement('div');d.id='tbnote';d.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px';d.innerHTML='<div class="box" style="max-width:340px;margin:0">'+html+'<button class="p" id="tbok" style="width:100%">Got it!</button></div>';document.body.appendChild(d);document.getElementById('tbok').onclick=function(){try{ok()}catch(e){}d.remove();TB.open=0}}
+function timeNote(){try{if(TB.open||(scr!='setup'&&scr!='city'))return;var c=tbCfg();
+ if(c.on){if(c.live){if(ls('flio_tb_live',0)!=c.id)tbPop('<b style="font-size:18px">🎉 Play bonus is LIVE!</b><p>'+tbRule(c)+'</p><p class="mut">It counts while you are active in the game, and you need a city to receive it.</p>',function(){lset('flio_tb_live',c.id);lset('flio_tb_seen',c.id)})}
+  else if(ls('flio_tb_seen',0)!=c.id)tbPop('<b style="font-size:18px">⏱ Play bonus event coming!</b><p>Starts <b>'+tbWhen(c.st)+'</b>.</p><p>'+tbRule(c)+'</p><p class="mut">Come back then. You need a city to receive it.</p>',function(){lset('flio_tb_seen',c.id)})}
+ else if(c.end&&ls('flio_tb_seen',0)==c.end&&ls('flio_tb_end',0)!=c.end)tbPop('<b style="font-size:18px">⏱ The play bonus event has ended</b><p>Thanks for playing! Watch for the next one.</p>',function(){lset('flio_tb_end',c.end)})}catch(e){}}
+TB.pc=0;setTimeout(tbPoll,2500);document.addEventListener('visibilitychange',function(){if(document.visibilityState=='visible')tbPoll()});setInterval(function(){tbTick();timeNote();if(++TB.pc%60==0)tbPoll()},1000);
 function setup(){
  scr='setup';phase='setup';DAILY=null;
  if(myName&&(!seats[0].n||/^Player \d$/i.test(seats[0].n)))seats[0].n=myName;
  if(NAMELOCK&&seats[0].t=='h')seats[0].n=NAMELOCK;
- const E_=err;app.innerHTML=(err?`<div class="box" style="border-color:#ff4d6d;background:rgba(255,77,109,.18)"><b>⚠️ ${esc(err)}</b></div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+dailyBox()+
+ const E_=err;app.innerHTML=(err?`<div class="box" style="border-color:#ff4d6d;background:rgba(255,77,109,.18)"><b>⚠️ ${esc(err)}</b></div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+streakBox()+timeBox()+dailyBox()+
  '<div class="box"><b>🎯 Game options</b><div class="row" style="margin-top:8px"><span style="flex:1">Match length</span><select onchange="MT=+this.value;lset(\'lockflip_mt\',MT)">'+[[0,'Endless']].concat(CFG.matchOpts.map(n=>[n,'First to '+n])).map(o=>'<option value="'+o[0]+'"'+(MT==o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div><div class="row"><span style="flex:1">⚡ Power cards</span><select onchange="PW=+this.value;lset(\'lockflip_pw\',PW)"><option value="1"'+(PW?' selected':'')+'>On</option><option value="0"'+(PW?'':' selected')+'>Off</option></select></div><p class="mut">For the games below. The daily challenge never uses power cards.</p></div>'+
  '<div class="box"><b>🌐 Casual online</b><p class="mut">Each player uses their own phone. One creates a table and shares the 4-digit code.</p><div class="row"><input id="on" placeholder="Your name" maxlength="14" value="'+esc(NAMELOCK||myName)+'"'+(NAMELOCK?' readonly':'')+'></div><div class="row"><button class="p" onclick="goOnline(true)">Create table</button><input id="oc" placeholder="Code" inputmode="numeric" maxlength="6" style="max-width:90px"><button onclick="goOnline(false)">Join</button></div><button class="p" style="width:100%" onclick="randomMatch()">🎲 Random match (play people worldwide)</button></div>'+
  '<div class="box"><b>Same device (pass &amp; play)</b><div style="height:8px"></div>'+
