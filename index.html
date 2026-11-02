@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.23">
+<meta name="flio-version" content="1.11.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{"bg":"#5a6496","ac":"#c7bf67","fg":"#ffffff","bk":"#ffff00"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":false,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516285015,"timeStart":1793519940000,"timeEnd":1793516285015,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{"bg":"#5a6496","ac":"#c7bf67","fg":"#ffffff","bk":"#ffff00"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":false,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516285015,"timeStart":1793519940000,"timeEnd":1793516285015,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":1000,"matMax":2000},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -187,8 +187,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.23',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
-const CHANGES=[['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.11.1',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const CHANGES=[['1.11.0','🏁 Race circuit: build one in your city. Endless unique cars (designs, engines and engine sounds) are earned from time played, money, city size, world ranking and wins. Realistic car physics, Grand Prix vs 5 drivers, time trial with ghost, tuning, lap records, races in other cities and live online races with collisions.'],['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim()||String((typeof CFG!='undefined'&&CFG.upd)||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -863,7 +863,23 @@ create or replace function public.search_daily(p_day text,p_q text) returns tabl
 create or replace function public.search_biz(p_q text) returns table(rank bigint,name text,wins integer,best integer) language sql security definer set search_path=public as $$
  select r.rank,r.name,r.wins,r.best from (select s.name,s.wins,s.best,row_number() over(order by s.wins desc,s.best desc,s.name) as rank from public.biz_scores s) r
  where length(trim(coalesce(p_q,'')))>=1 and lower(r.name) like '%'||lower(replace(replace(trim(p_q),'%',''),'_',''))||'%' order by r.rank limit 20 $$;
-grant execute on function public.search_world(text), public.search_daily(text,text), public.search_biz(text) to anon, authenticated;`;
+grant execute on function public.search_world(text), public.search_daily(text,text), public.search_biz(text) to anon, authenticated;
+create table if not exists public.laps(key text,name text,ms int,tier int,cname text,at timestamptz default now(),primary key(key,name));
+alter table public.laps enable row level security;
+create or replace function public.submit_lap(p_key text,p_name text,p_ms int,p_tier int,p_cname text) returns void language sql security definer set search_path=public as $$
+insert into public.laps(key,name,ms,tier,cname) values(left(p_key,60),left(p_name,24),p_ms,p_tier,left(p_cname,24)) on conflict(key,name) do update set ms=excluded.ms,tier=excluded.tier,at=now() where excluded.ms<public.laps.ms and excluded.ms>20000; $$;
+create or replace function public.lap_board(p_key text) returns table(name text,ms int) language sql security definer set search_path=public as $$
+select name,ms from public.laps where key=left(p_key,60) order by ms limit 10; $$;
+grant execute on function public.submit_lap(text,text,int,int,text), public.lap_board(text) to anon, authenticated;
+create table if not exists public.race_lobbies(code text primary key,city_id text,hname text,cname text,at timestamptz default now());
+alter table public.race_lobbies enable row level security;
+create or replace function public.post_lobby(p_code text,p_city text,p_name text,p_cname text) returns void language sql security definer set search_path=public as $$
+insert into public.race_lobbies(code,city_id,hname,cname) values(left(p_code,8),left(p_city,60),left(p_name,24),left(p_cname,24)) on conflict(code) do update set city_id=excluded.city_id,hname=excluded.hname,cname=excluded.cname,at=now(); $$;
+create or replace function public.close_lobby(p_code text) returns void language sql security definer set search_path=public as $$
+delete from public.race_lobbies where code=left(p_code,8); $$;
+create or replace function public.list_lobbies() returns table(code text,hname text,cname text) language sql security definer set search_path=public as $$
+select code,hname,cname from public.race_lobbies where at>now()-interval '3 minutes' order by at desc limit 12; $$;
+grant execute on function public.post_lobby(text,text,text,text), public.close_lobby(text), public.list_lobbies() to anon, authenticated;`;
 let WERR='';
 function setupBox(){if(location.hash!='#setup')return '';
  if(!SUPA_URL||!SUPA_KEY)return '';
@@ -1126,6 +1142,7 @@ const CM=[0,1,1.8,3],CUP=[0,0,1.2,2],CVL=[0,1,2.2,4.2],CSZ=[1,2.2,4.5];
 const NAMESHAPE=[[/hospital|clinic|medic|health/i,'hospital','hospital','🏥'],[/school|college|univers|academy/i,'school','school','🏫'],[/airport|airstrip|runway/i,'airport',null,'✈️'],[/park|garden|forest|zoo/i,'park','park','🌳'],[/house|home|villa|cottage/i,'house','house','🏠'],[/apart|flat|condo/i,'apartment','apartment','🏘'],[/shop|store|market|mall|super/i,'shop','shop','🛍'],[/cafe|café|coffee|restaurant|bakery|pizza|diner/i,'cafe','cafe','☕'],[/factory|plant|mill|workshop/i,'factory','factory','🏭'],[/tower|skyscraper|sky/i,'tower','tower','🌆'],[/office|bank|company/i,'office','office','🏢'],[/solar/i,'solar','solar','☀️'],[/power|energy|electric/i,'power','power','⚡'],[/church|temple|mosque|chapel|cathedral/i,'church','school','⛪'],[/stadium|arena|colosseum|gym/i,'stadium','office','🏟'],[/hotel|resort|inn/i,'hotel','apartment','🏨'],[/castle|fort|palace/i,'castle','tower','🏰'],[/museum|library|hall|court|parliament/i,'museum','school','🏛'],[/cinema|theatre|theater|movie|circus/i,'cinema','shop','🎪'],[/police|fire ?station|station/i,'station','hospital','🚒'],[/barn|farm|ranch/i,'barn','house','🌾']];
 function nameLook(n){n=n||'';for(const r of NAMESHAPE)if(r[0].test(n))return{shape:r[1],role:r[2],emoji:r[3]};return null}
 const CT={house:['House','🏠',250,3,4,0,-1,0,'#e8845a'],apartment:['Apartment','🏘',1200,16,20,0,-4,0,'#d9a066'],shop:['Shop','🛍',800,10,0,6,-2,30,'#e0408a'],cafe:['Café','☕',500,6,0,4,-1,20,'#c58a52'],park:['Park','🌳',200,1.5,0,1,0,25,'#3fae5a'],school:['School','🏫',900,5,0,8,-2,40,'#f2b84b'],hospital:['Hospital','🏥',1500,8,0,15,-4,60,'#f4f4f4'],office:['Office','🏢',1800,24,0,25,-4,0,'#5b86d9'],factory:['Factory','🏭',2200,30,0,30,-6,0,'#8a8f98'],tower:['Tower','🌆',5000,75,0,60,-10,0,'#8a6df0'],power:['Power plant','⚡',2500,14,0,10,40,0,'#c9a227'],solar:['Solar farm','☀️',1200,7,0,2,14,0,'#2f7fc9'],road:['Road','🛣',60,0,0,0,0,0,'#4a4e57']};
+const MATCAP=()=>Math.max(100,Math.floor(+CFG.matMax||1000));
 const CT_BASE=new Set(Object.keys(CT));
 const CRL={house:'res',apartment:'res',shop:'svc',cafe:'svc',park:'svc',school:'svc',hospital:'svc',office:'wrk',factory:'wrk',tower:'wrk',power:'pow',solar:'pow',road:'rd'};
 const CD={res:'Homes bring residents. Rent depends on jobs, happiness (parks, schools, hospitals, shops) and power.',svc:'Serves residents. It only earns when there are enough people, and many of the same type share the customers.',wrk:'Needs workers (60% of residents work). Too few homes and it runs understaffed.',pow:'Powers the city. It only earns for the power the city really uses.'};
@@ -1737,7 +1754,7 @@ window.W_fund=async id=>{const s=FR.find(x=>x.id==id);if(!s)return;const c=FC(),
  const a=Math.floor(+String(v).replace(/[^0-9.]/g,""));if(!(a>=10)||a>100000)return f("Enter an amount from $10 to $100,000.");if(CITY.cash<a)return f("Not enough cash. You have "+cMoney(CITY.cash)+".");
  CITY.cash-=a;cSave();cStats();
  try{const r=await rpc("fund_pledge",{p_id:id,p_amt:a,p_from:CITY.name,p_from_id:CITY.id,p_bonus:Math.min(25,c.bonus)});
-  const ev=evNow().fr,k=Math.round(a*c.karma*ev),m=Math.floor(a/100*c.mat*ev);CITY.karma=(CITY.karma||0)+k;CITY.mat=Math.min(1000,(CITY.mat||0)+m);cSave();cStats();await frLoad();
+  const ev=evNow().fr,k=Math.round(a*c.karma*ev),m=Math.floor(a/100*c.mat*ev);CITY.karma=(CITY.karma||0)+k;CITY.mat=Math.min(MATCAP(),(CITY.mat||0)+m);cSave();cStats();await frLoad();
   f("💰 You backed "+s.city_name+" with "+cMoney(a)+". Rewards: +"+k+" score"+(m?" and +"+m+" 🧱":"")+"."+(r&&r.done?" 🎉 Goal reached! Your cash-back bonus arrives within about 30 seconds.":""))}
  catch(e){CITY.cash+=a;cSave();cStats();f("Could not fund: "+e.message+" Your money was returned.")}cPanel()};
 window.W_atk=id=>{const c=world().find(x=>x.id==id),E=ECO;if(!c)return;const f=m=>{LAST=m;W_open()};
@@ -1797,7 +1814,7 @@ window.W_visitDone=function(r,V){clearInterval(VW);const c=WC.find(x=>x.id==V.id
  else if(r=='noap'){CITY.cash+=150;cSave();cPanel();cStats();vbox('<b>No runway found in '+nm+'</b><p class="mut">Fuel refunded.</p><button class="p" onclick="W_open()">Back to the map</button>')}
  else{cPanel();cStats();vbox('<b>🛫 You flew home</b><p class="mut">Flight aborted, no money earned.</p><button class="p" onclick="W_open()">Back to the map</button>')}};
 window.W_buy=n=>{const d=new Date().toISOString().slice(0,10);if(CITY.buy.d!=d)CITY.buy={d,n:0};const pr=3+CITY.g.filter(Boolean).length*.12+1.5*Math.sin(now()/36e5),cost=Math.round(n*pr);
- if(CITY.buy.n+n>600)return cMsg('Market limit: only 600 🧱 can be bought per day.');if(CITY.mat+n>1000)return cMsg('Storage is full (1000 🧱).');if(CITY.cash<cost)return cMsg('You need '+cMoney(cost)+'.');
+ const BL=Math.max(0,+CFG.buyMax||600);if(CITY.buy.n+n>BL)return cMsg('Market limit: only '+BL+' 🧱 can be bought per day.');if(CITY.mat+n>MATCAP())return cMsg('Storage is full ('+MATCAP()+' 🧱).');if(CITY.cash<cost)return cMsg('You need '+cMoney(cost)+'.');
  CITY.cash-=cost;CITY.mat+=n;CITY.buy.n+=n;cSave();cPanel();cStats();cMsg('Bought '+n+' 🧱 for '+cMoney(cost))};
 /* hooks into the city screen */
 const oP=cPanel;
@@ -1805,13 +1822,13 @@ cPanel=function(){oP();const pn=document.getElementById('cpn');if(!pn||!CITY)ret
  const pr=(3+CITY.g.filter(Boolean).length*.12+1.5*Math.sin(now()/36e5)),H=E.H||0;
  pn.insertAdjacentHTML('afterbegin',(CITY.news?`<div class="box" style="border-color:var(--ac)"><b>📰 ${esc(CITY.news)}</b><br><button onclick="CITY.news='';cPanel()">OK</button></div>`:'')+`<div class="box"><b>${face(H)} City happiness ${pc(H)}</b> <span class="mut">${Math.round(E.R)} people live here</span>${cBar(H,cl(H))}<div class="mut">Parks ${pc(E.cov.park)} · Schools ${pc(E.cov.school)} · Hospitals ${pc(E.cov.hospital)} · Shops ${pc(E.cov.shop)} · Waste ${pc(E.wr)} · Water ${pc(E.wf)}</div></div>`);
  pn.insertAdjacentHTML('afterbegin',dealBox());
- pn.insertAdjacentHTML('beforeend',`<div class="box"><b>🌐 Resources &amp; waste</b><div class="mut">Every build and upgrade needs 🧱 materials (about cost ÷ 30) and cash. Upkeep is paid every minute.</div>${bar(Math.min(1,CITY.mat/1000),'🧱 Materials '+Math.floor(CITY.mat)+'/1000')}${bar(E.wf,'💧 Water '+Math.round(E.ws)+' supply / '+Math.round(E.wd)+' needed')}${bar(E.wr,'🗑 Waste '+Math.round(E.wc)+' capacity / '+Math.round(E.wp)+' made')}<div class="mut">🧾 Upkeep ${cMoney(E.up)}/min · ♻️ recycling brings back ${(E.mr||0).toFixed(1)} 🧱/min</div><div class="row" style="margin-top:6px"><button onclick="W_buy(50)">+50 🧱 ${cMoney(50*pr)}</button><button onclick="W_buy(200)">+200 🧱 ${cMoney(200*pr)}</button></div><div class="mut">Market price changes with time and city size; max 600 🧱 a day.</div></div><div class="box"><b>🛡 Defence &amp; world</b><div class="mut">Defence power ${Math.round(E.df)}. Disasters (natural or man-made) strike at random; defence reduces damage, and rebuilding costs money.</div><div class="row" style="margin-top:6px"><button class="p" onclick="W_open()">🌍 Map &amp; ranking</button><button onclick="W_test()">🧪 Test disaster</button></div></div>`)};
+ pn.insertAdjacentHTML('beforeend',`<div class="box"><b>🌐 Resources &amp; waste</b><div class="mut">Every build and upgrade needs 🧱 materials (about cost ÷ 30) and cash. Upkeep is paid every minute.</div>${bar(Math.min(1,CITY.mat/MATCAP()),'🧱 Materials '+Math.floor(CITY.mat)+'/'+MATCAP())}${bar(E.wf,'💧 Water '+Math.round(E.ws)+' supply / '+Math.round(E.wd)+' needed')}${bar(E.wr,'🗑 Waste '+Math.round(E.wc)+' capacity / '+Math.round(E.wp)+' made')}<div class="mut">🧾 Upkeep ${cMoney(E.up)}/min · ♻️ recycling brings back ${(E.mr||0).toFixed(1)} 🧱/min</div><div class="row" style="margin-top:6px"><button onclick="W_buy(50)">+50 🧱 ${cMoney(50*pr)}</button><button onclick="W_buy(200)">+200 🧱 ${cMoney(200*pr)}</button></div><div class="mut">Market price changes with time and city size; max ${Math.max(0,+CFG.buyMax||600)} 🧱 a day.</div></div><div class="box"><b>🛡 Defence &amp; world</b><div class="mut">Defence power ${Math.round(E.df)}. Disasters (natural or man-made) strike at random; defence reduces damage, and rebuilding costs money.</div><div class="row" style="margin-top:6px"><button class="p" onclick="W_open()">🌍 Map &amp; ranking</button><button onclick="W_test()">🧪 Test disaster</button></div></div>`)};
 let RKT=0,RKV='…',RKG='';const cRank=()=>{if(now()-RKT>5000){RKT=now();try{const a=world(),i=a.findIndex(c=>c.me),nx=i>0?a[i-1]:null;RKV='#'+(i+1)+' of '+a.length;RKG=i==0?'👑 You lead. Defend #1!':(nx?'🎯 +'+Math.max(1,Math.ceil(nx.score-a[i].score)).toLocaleString('en-US')+' pts to pass '+esc(nx.name)+(i>=10?' · '+(i-9)+' places from Top 10':''):'')}catch(e){}}return RKV};window.flioRank=()=>{cRank();return{r:RKV,g:RKG}};
 const oS=cStats;cStats=function(){oS();const e=document.getElementById('chud');if(e&&CITY)e.innerHTML+=`<br>${face(ECO.H||0)} Happy ${pc(ECO.H||0)} · 🧱 ${Math.floor(CITY.mat||0)}${window.VIS?'':' · 🌍 Rank '+cRank()+(RKG?'<br>'+RKG:'')}`};
 const oD=cDrawB;cDrawB=function(c,x,y,b,L,N,t){const tp=oD(c,x,y,b,L,N,t),s=cS(b.t);if(ADD[s.role]&&!s.custom){c.font='13px system-ui';c.textAlign='center';c.fillStyle='#fff';c.fillText(s.emoji,tp[0],tp[1]-(b.l>1?12:0))}return tp};
 const oB=cBuild;cBuild=function(x,y,t){const s=cS(t||CTYPE),m=need(s.cost);if(cB(x,y))return false;if((CITY.mat||0)<m){cPanel();cMsg('Not enough materials: '+s.name+' needs '+m+' 🧱, you have '+Math.floor(CITY.mat)+'. Buy or recycle more.');return false}const ok=oB(x,y,t);if(ok){CITY.mat-=m;cSave();cPanel();cMsg('Built a '+s.name+' (−'+m+' 🧱)')}return ok};
 const oU=cUp;cUp=function(){const b=cB(CSEL.x,CSEL.y);if(!b||b.l>=3)return;const m=need(cS(b.t).cost*CUP[b.l+1]);if(CITY.mat<m){cMsg('Upgrade needs '+m+' 🧱 materials.');return}const l=b.l;oU();if(b.l>l){CITY.mat-=m;cSave();cPanel()}};
-const oT=cTick;cTick=function(){if(!CITY||window.VIS)return;const t0=CITY.t;oT();init();dealPay(t0);const dt=Math.min(259200,Math.max(0,(CITY.t-t0)/1000));CITY.mat=Math.min(1000,CITY.mat+(ECO.mr||0)*dt/60);if(CITY.cash<0)CITY.cash=0;if(now()>CITY.nd)disaster();if(now()-pol>3e4){pol=now();sync()}};
+const oT=cTick;cTick=function(){if(!CITY||window.VIS)return;const t0=CITY.t;oT();init();dealPay(t0);const dt=Math.min(259200,Math.max(0,(CITY.t-t0)/1000));CITY.mat=Math.min(MATCAP(),CITY.mat+(ECO.mr||0)*dt/60);if(CITY.cash<0)CITY.cash=0;if(now()>CITY.nd)disaster();if(now()-pol>3e4){pol=now();sync()}};
 window.W_sync=sync;
 window.W_sql=()=>{const ref=SUPA_URL.replace('https://','').split('.')[0];(navigator.clipboard?navigator.clipboard.writeText(WSQL):Promise.reject()).then(()=>{LAST='SQL copied. Paste it in the editor and press Run, then reopen this screen.';W_open()}).catch(()=>{LAST='Copy failed: use Show setup steps on the home screen.';W_open()});window.open('https://supabase.com/dashboard/project/'+ref+'/sql/new','_blank','noopener')};
 /* ---- Flio 1.5 city rules: roads, scenery and time of day ---- */
@@ -1877,7 +1894,7 @@ if(CITY)setTimeout(sync,2500);
 /* ===== Flio 1.7: treasure hunt, daily quests + streak, achievements ===== */
 function tres(x,y){if(!CITY||!CITY.wild||window.VIS)return 0;const N=GN,ux=((x%N)+N)%N,uy=((y%N)+N)%N;if(landAt(ux,uy)!=''||cB(ux,uy)||(CITY.tf&&CITY.tf[uy*N+ux]))return 0;return landRnd(hashStr('tr'+CITY.seed),ux,uy)<.012?1:0}
 window.tres=tres;
-const oBt=cBuild;cBuild=function(x,y,t){if(CITY&&CITY.wild&&tres(x,y)){const N=GN,ux=((x%N)+N)%N,uy=((y%N)+N)%N,r=landRnd(hashStr('tv'+CITY.seed),ux,uy),$=Math.round(150+r*450),m=5+Math.floor(r*20);CITY.tf=CITY.tf||{};CITY.tf[uy*N+ux]=1;CITY.cash+=$;CITY.mat=Math.min(1000,(CITY.mat||0)+m);const q=QS();q.tt=(q.tt||0)+1;q.tot=(q.tot||0)+1;cSave();cStats();cPanel();cMsg('💎 Treasure found! +'+cMoney($)+' and +'+m+' 🧱');beep('win');return true}return oBt(x,y,t)};
+const oBt=cBuild;cBuild=function(x,y,t){if(CITY&&CITY.wild&&tres(x,y)){const N=GN,ux=((x%N)+N)%N,uy=((y%N)+N)%N,r=landRnd(hashStr('tv'+CITY.seed),ux,uy),$=Math.round(150+r*450),m=5+Math.floor(r*20);CITY.tf=CITY.tf||{};CITY.tf[uy*N+ux]=1;CITY.cash+=$;CITY.mat=Math.min(MATCAP(),(CITY.mat||0)+m);const q=QS();q.tt=(q.tt||0)+1;q.tot=(q.tot||0)+1;cSave();cStats();cPanel();cMsg('💎 Treasure found! +'+cMoney($)+' and +'+m+' 🧱');beep('win');return true}return oBt(x,y,t)};
 const QS=()=>{CITY.q=CITY.q||{d:'',st:0,c:{},a:{},tt:0,tot:0,b0:0};return CITY.q};
 const qN=()=>CITY.g.filter(b=>b).length,qR=r=>CITY.g.filter(b=>b&&cS(b.t).role==r).length;
 const QP={b3:['🏗 Build 3 new buildings',q=>qN()-q.b0,3,300],rd:['🛣 Have 6 road tiles',()=>qR('road'),6,250],pk:['🌳 Have 2 parks',()=>qR('park'),2,300],hm:['🏠 Reach 40 residents',()=>Math.floor(ECO.R||0),40,350],cs:['💰 Hold $2,000',()=>Math.floor(CITY.cash),2000,200],tr:['💎 Find a treasure on the map',q=>q.tt||0,1,400],sv:['🏫 Have a school and a café',()=>Math.min(qR('school'),1)+Math.min(qR('cafe'),1),2,350],pw:['⚡ Have a power source',()=>qR('power')+qR('solar'),1,250]};
@@ -2276,7 +2293,7 @@ const save=()=>{try{cSave()}catch(e){}};
 function give(r,quiet){
  const f=F();if(!f)return '';const out=[];
  if(r.c>0){const c=Math.round(r.c);CITY.cash+=c;out.push('+'+cMoney(c))}
- if(r.m>0){const m=Math.round(r.m);CITY.mat=Math.min(1000,num(CITY.mat)+m);out.push('+'+m+' 🧱')}
+ if(r.m>0){const m=Math.round(r.m);CITY.mat=Math.min(MATCAP(),num(CITY.mat)+m);out.push('+'+m+' 🧱')}
  if(r.g>0){f.gm+=r.g;out.push('+'+r.g+' 💠')}
  if(r.bo>0){f.bo=Math.max(f.bo,Date.now())+r.bo*1000;out.push('⚡ x2 income '+Math.round(r.bo/60)+' min')}
  if(r.sp>0){f.sp+=r.sp;out.push('+'+r.sp+' 🎡')}
@@ -2296,7 +2313,7 @@ cTick=function(){
  try{const f=F();if(f&&CITY){
   const g=CITY.cash-c0,mu=incMult()-1;
   if(g>0&&mu>0){CITY.cash+=g*mu;CITY.earned=num(CITY.earned)+g*mu;if(CAWAY&&CAWAY.g>a0)CAWAY.g+=(CAWAY.g-a0)*mu}
-  const gm=num(CITY.mat)-m0;if(gm>0&&f.pk.mat>0)CITY.mat=Math.min(1000,CITY.mat+gm*.1*f.pk.mat)}}catch(e){}
+  const gm=num(CITY.mat)-m0;if(gm>0&&f.pk.mat>0)CITY.mat=Math.min(MATCAP(),CITY.mat+gm*.1*f.pk.mat)}}catch(e){}
  return r};
 const oBd=cBuild;
 cBuild=function(x,y,t){
@@ -2631,6 +2648,527 @@ setInterval(()=>{try{if(scr!='city'||!CITY||window.VIS||document.hidden)return;c
  if(F&&F.R>BACKYARD&&F.fed<.6&&Date.now()-lastWarn>120000){lastWarn=Date.now();cMsg('🍞 Your people are hungry! Build Farms'+(F.nM?'':' and a Food market')+'.')}}catch(e){}},15000);
 }catch(err){try{console.warn('Flio food chain failed to start',err)}catch(_){}}
 })();
+
+/* ===== Flio 1.11: Race circuit. Realistic racing, cars earned by performance, races between cities ===== */
+(()=>{
+try{
+/*RC-PURE-START*/
+const RHO=1.2,G=9.81,TAU=Math.PI*2,clamp=(v,a,b)=>v<a?a:v>b?b:v,wrapA=a=>((a+Math.PI)%TAU+TAU)%TAU-Math.PI;
+const GR=[3.6,2.45,1.8,1.4,1.12,.93,.78];
+/* Real-world car classes. kw = peak power, kg = mass, cda = drag area (Cd x frontal area, m2), cla = downforce area, mu = tyre grip, tf = share of weight on driven wheels */
+/* ---- endless cars: every car number n is a unique design, generated from n ---- */
+const MK=['Aster','Veloce','Korin','Brandt','Mirai','Halden','Orsa','Valkyr','Nuvo','Sable','Ferron','Tessa','Kaiser','Lumen','Vanta','Strada','Okami','Riva','Zephra','Dorn','Calder','Mondo','Aurex','Taegu','Nordik','Selva','Quillon','Harrow','Bexley','Marlow'];
+const MD=['Spark','Rally','Nova','Comet','Fury','Mirage','Tempest','Vortex','Apex','Zenith','Raptor','Cobra','Stratos','Falcon','Saber','Tornado','Phantom','Blaze','Orion','Titan','Lynx','Mamba','Quasar','Drift','Cascade','Vesper','Ember','Gale','Onyx','Pulse'];
+const TRM=['','','S','GT','RS','Turbo','Sport','R','Spec-R','Evo','Black','Superleggera','Competizione','X'];
+/* body: kg, wheelbase, width, length, drag area, downforce area at full progress, p-window [lo,hi], weight, emoji */
+const BODY=[
+ {b:'Hatchback',e:'🚗',kg:1250,L:2.55,w:1.78,len:4.0,cda:.72,cl:0,lo:0,hi:.55,wt:3,pw:.85,dr:0},
+ {b:'Sedan',e:'🚙',kg:1450,L:2.8,w:1.84,len:4.7,cda:.66,cl:0,lo:0,hi:.6,wt:3,pw:.9,dr:0},
+ {b:'Wagon',e:'🚙',kg:1550,L:2.8,w:1.85,len:4.8,cda:.74,cl:0,lo:.05,hi:.5,wt:2,pw:.88,dr:0},
+ {b:'Roadster',e:'🚘',kg:1150,L:2.45,w:1.75,len:3.95,cda:.68,cl:.1,lo:.1,hi:.75,wt:2,pw:1,dr:1},
+ {b:'Coupe',e:'🚘',kg:1350,L:2.7,w:1.82,len:4.5,cda:.66,cl:.25,lo:.15,hi:.8,wt:3,pw:1,dr:1},
+ {b:'Muscle car',e:'🚘',kg:1700,L:2.8,w:1.9,len:4.8,cda:.85,cl:.2,lo:.25,hi:.8,wt:2,pw:1.08,dr:1},
+ {b:'GT car',e:'🏎',kg:1450,L:2.7,w:1.9,len:4.6,cda:.72,cl:.6,lo:.35,hi:.9,wt:3,pw:1.05,dr:1},
+ {b:'Supercar',e:'🏎',kg:1400,L:2.7,w:1.95,len:4.6,cda:.74,cl:1.3,lo:.5,hi:1,wt:3,pw:1.12,dr:2},
+ {b:'Hypercar',e:'🚀',kg:1350,L:2.75,w:2,len:4.7,cda:.82,cl:2.2,lo:.7,hi:1,wt:3,pw:1.2,dr:2},
+ {b:'Formula racer',e:'🏁',kg:800,L:3.6,w:2,len:5.2,cda:1.35,cl:4.2,lo:.85,hi:1,wt:1.2,pw:0,dr:1,f:1}];
+/* engines: cylinders, rpm limit, sound waves, turbo flag, lowest/highest progress it appears at */
+const ENG=[
+ {n:'I3',cyl:3,rpm:6200,w1:'sawtooth',w2:'triangle',m2:.5,fl:700,lo:0,hi:.3},
+ {n:'I4',cyl:4,rpm:6600,w1:'sawtooth',w2:'square',m2:.5,fl:800,lo:0,hi:.5},
+ {n:'I4 Turbo',cyl:4,rpm:6800,w1:'sawtooth',w2:'square',m2:.5,fl:900,tb:1,lo:.05,hi:.6},
+ {n:'Flat-4',cyl:4,rpm:7000,w1:'square',w2:'sawtooth',m2:.5,fl:700,lo:.1,hi:.6},
+ {n:'V6',cyl:6,rpm:7000,w1:'sawtooth',w2:'triangle',m2:.5,fl:1000,lo:.1,hi:.8},
+ {n:'V6 Turbo',cyl:6,rpm:7200,w1:'sawtooth',w2:'square',m2:.5,fl:1100,tb:1,lo:.2,hi:.9},
+ {n:'Flat-6',cyl:6,rpm:8200,w1:'sawtooth',w2:'square',m2:.5,fl:1300,lo:.25,hi:.9},
+ {n:'V8',cyl:8,rpm:7600,w1:'sawtooth',w2:'square',m2:.5,fl:900,lo:.3,hi:1},
+ {n:'V8 Twin-turbo',cyl:8,rpm:7800,w1:'sawtooth',w2:'square',m2:.5,fl:1000,tb:1,lo:.45,hi:1},
+ {n:'V10',cyl:10,rpm:8800,w1:'sawtooth',w2:'sawtooth',m2:.5,fl:1700,lo:.5,hi:1},
+ {n:'V12',cyl:12,rpm:8600,w1:'triangle',w2:'sawtooth',m2:.5,fl:1500,lo:.55,hi:1},
+ {n:'Hybrid V6',cyl:6,rpm:9000,w1:'sawtooth',w2:'triangle',m2:.5,fl:1400,tb:1,lo:.7,hi:1},
+ {n:'Hybrid V8',cyl:8,rpm:8400,w1:'sawtooth',w2:'square',m2:.5,fl:1200,tb:1,lo:.7,hi:1}];
+const CARCACHE={};
+function carDef(n){n=Math.max(0,Math.floor(n)||0);if(CARCACHE[n])return CARCACHE[n];
+ const r=mulberry(n*7919+104729),p=1-Math.exp(-n/120),late=1+.5*Math.log(1+n/200);
+ /* body: weighted pick among bodies that fit this progress */
+ let bs=BODY.filter(x=>p>=x.lo&&p<=x.hi);if(!bs.length)bs=[BODY[8]];
+ let tot=0;bs.forEach(x=>tot+=x.wt);let q=r()*tot,B=bs[0];for(const x of bs){q-=x.wt;if(q<=0){B=x;break}}
+ if(B.f&&n%4!=3)B=BODY[8];
+ let es=ENG.filter(x=>p>=x.lo&&p<=x.hi);if(B.dr==2)es=es.filter(x=>x.cyl>=6);if(B.dr==0)es=es.filter(x=>x.cyl<=6&&!x.n.startsWith('Hybrid'));if(!es.length)es=[ENG[1]];
+ let E=es[Math.floor(r()*es.length)];if(B.f)E={n:'1.6 V6 Hybrid',cyl:6,rpm:12000,w1:'sawtooth',w2:'square',m2:.5,fl:2400,tb:1};
+ let kw=(80+1000*Math.pow(p,1.3))*(.93+.14*r())*B.pw*Math.min(1.12,late);if(B.f)kw=Math.min(980,640+300*p+n*.3);kw=clamp(kw,60,1100);
+ const turbo=!!E.tb,disp=B.f?1.6:Math.round(clamp(kw/(turbo?110:75),.8,E.cyl*.6)*10)/10;
+ const kg=B.f?800:B.kg*(1-.09*p-.04*(1-Math.exp(-n/400)))*(.95+.1*r());
+ const lay=B.dr==2||(kw>420&&!B.f)?'AWD':B.dr==0&&p<.55?'FWD':(B.dr==0?(r()<.5?'FWD':'AWD'):'RWD');
+ const tf=B.f?.65:lay=='FWD'?.5:lay=='RWD'?.6:.85+.1*p;
+ const cla=B.f?B.cl*(.95+.1*p):B.cl*Math.pow(p,1.1)*(.9+.2*r());
+ const mu=B.f?1.6:1+.3*p+(B.dr==2?.04:0)+.03*Math.log(1+n/200);
+ const hue=Math.floor(r()*360),sat=50+Math.floor(r()*40),li=38+Math.floor(r()*16);
+ const col='hsl('+hue+','+sat+'%,'+li+'%)',col2=r()<.5?'#f5f5f5':r()<.5?'#161616':'hsl('+((hue+170+Math.floor(r()*40))%360)+',80%,52%)';
+ const mk=MK[Math.floor(r()*MK.length)],md=MD[Math.floor(r()*MD.length)],tm=TRM[Math.floor(r()*TRM.length)];
+ const name=B.f?mk+' F'+(Math.floor(r()*90)+10):mk+' '+md+(tm?' '+tm:'');
+ return CARCACHE[n]=Object.assign({},{n:name,e:B.e,body:B.b,kw,kg:Math.round(kg),cda:B.cda+r()*.06+(cla>.5?.03:0),cla,mu,rpm:E.rpm,L:B.L,w:B.w,len:B.len,col,col2,stripe:Math.floor(r()*4),wing:cla>.9||(B.dr==2&&p>.6&&r()<.7),f:B.f?1:0,tf,eng:E,lay,
+  d:B.b+' · '+disp.toFixed(1)+'L '+E.n+' · '+lay,id:n+1})}
+const TI=new Proxy({},{get(t,k){return typeof k=='string'&&/^\d+$/.test(k)?carDef(+k):undefined}});
+
+function pfr(f){return f<.88?.3+.7*Math.pow(Math.max(f,0)/.88,1.4):Math.max(0,1-3*(f-.88))}
+function topTheory(s){let lo=10,hi=250;for(let i=0;i<50;i++){const v=(lo+hi)/2,f=s.kw*1000*.88/v-.5*RHO*s.cda*v*v-.012*s.kg*G;if(f>0)lo=v;else hi=v}return lo}
+function carSpec(ti,tn){tn=tn||{};const b=TI[ti],s=Object.assign({ti},b),a=tn.a||0;
+ s.kw=b.kw*(1+.04*(tn.e||0));s.mu=b.mu*(1+.03*(tn.t||0));s.cla=b.cla*(1+.1*a)+.12*a;s.cda=b.cda+.02*a;
+ s.vtop=topTheory(s);s.fd=s.rpm*.34/(s.vtop*1.02*GR[6]*9.549);return s}
+function mkCar(ti,tn,o){const s=carSpec(ti,tn);return Object.assign({sp:s,x:0,y:0,h:0,v:0,g:0,sh:0,sa:0,i:-1,d:0,ps:0,lps:0,lap:0,lapT0:0,laps:[],best:1e9,fin:0,rpm:900,sl:0,th:0,br:0,back:0,hit:0,gl:0,col:s.col,name:''},o||{})}
+/* one physics step: engine power curve + 7-speed auto gearbox, tyre friction circle, aero drag and downforce, surface grip */
+function stepCar(c,u,dt,T){
+ const s=c.sp,m=s.kg;let v=Math.max(0,c.v);
+ T.q(c);
+ const ad=Math.abs(c.d),hw=T.hw;let sg=1,sd=0;
+ if(ad>hw+1.1){sg=.5;sd=.3}else if(ad>hw)sg=.93;
+ const fdn=.5*RHO*s.cla*v*v,N=m*G+fdn,mu=s.mu*sg;
+ let rpm=v/.34*GR[c.g]*s.fd*9.549;
+ if(c.sh>0)c.sh-=dt;
+ else if(c.g<6&&rpm>s.rpm*.94){c.g++;c.sh=.16}
+ else if(c.g>0&&rpm<s.rpm*.5){c.g--;c.sh=.08}
+ rpm=Math.max(v/.34*GR[c.g]*s.fd*9.549,c.g==0?s.rpm*.3:s.rpm*.14);c.rpm=rpm;
+ let th=clamp(u.th,0,1),br=clamp(u.br,0,1);if(br>.05)th=0;if(rpm>=s.rpm)th=0;
+ const Fp=c.sh>0?0:th*pfr(rpm/s.rpm)*s.kw*1000*.88/Math.max(v,2.5),Ftr=mu*s.tf*(m*G+fdn);
+ const Fd=Math.min(Fp,Ftr),Fb=br*.98*mu*N,fx=clamp((Fd+Fb)/(mu*N),0,1);
+ const aLat=mu*N/m*Math.sqrt(Math.max(.2,1-fx*fx));
+ const Fr=.5*RHO*s.cda*v*v+.012*m*G+(v>.5?sd*m*G:0);
+ const st=clamp(u.st,-1.2,1.2),vv=Math.max(v,1.5),wmax=v*Math.tan(.55)/s.L;
+ const w=clamp(st*aLat/vv,-wmax,wmax),lat=Math.abs(w*v);let loss=0;
+ c.sl=(lat>.93*aLat||(fx>.97&&v>5))?1:0;c.gl=lat/G;
+ if(Math.abs(st)>.97&&lat>.9*aLat)loss=.05*aLat;
+ v+=((Fd-Fb-Fr)/m-loss)*dt;if(v<0)v=0;if(br>.5&&v<.2)v=0;
+ c.v=v;c.h+=w*dt;c.x+=Math.cos(c.h)*v*dt;c.y+=Math.sin(c.h)*v*dt;c.th=th;c.br=br;
+ T.q(c);const lim=hw+11;
+ if(Math.abs(c.d)>lim){const ex=Math.abs(c.d)-lim,sn=Math.sign(c.d),j=c.i;c.x-=T.nx[j]*ex*sn;c.y-=T.ny[j]*ex*sn;if(c.v>3)c.hit=c.v;c.v*=c.v>3?.35:.8;c.h+=wrapA(T.hd[j]-c.h)*.15}
+}
+const PCACHE={};
+function perf(ti,tn){const k=ti+JSON.stringify(tn||{});if(PCACHE[k])return PCACHE[k];
+ const T0={hw:99,nx:[0],ny:[0],hd:[0],q(c){c.d=0;c.i=0;c.ps=0}},c=mkCar(ti,tn),u={th:1,br:0,st:0};let t=0,t100=0,t200=0,pv=0;
+ while(t<120){stepCar(c,u,.01,T0);t+=.01;if(!t100&&c.v>=27.78)t100=t;if(!t200&&c.v>=55.56)t200=t;if(t>6&&Math.abs(c.v-pv)<.0004)break;pv=c.v}
+ const b=mkCar(ti,tn);b.v=27.78;let d=0,tb=0;while(b.v>.1&&tb<30){stepCar(b,{th:0,br:1,st:0},.01,T0);d+=b.v*.01;tb+=.01}
+ return PCACHE[k]={t100,t200,top:c.v*3.6,b100:d,kw:c.sp.kw,kg:c.sp.kg}}
+/* circuit generated from a seed: a closed loop of real-world length, corner radius >= 38 m, 13 m wide */
+function mkTrack(seed,len){
+ len=len||3600;const r=mulberry((seed>>>0)||7),asp=.62+.28*r(),ak=[],ph=[];let sa=0;
+ for(let k=2;k<=6;k++){ak[k]=(.35+.65*r())/Math.pow(k-1,.5);ph[k]=r()*TAU;sa+=ak[k]}
+ let amp=.5,T=null;
+ for(let tr=0;tr<40;tr++){
+  const M=1800,X=[],Y=[];
+  for(let q=0;q<M;q++){const th=q/M*TAU;let R=1;for(let k=2;k<=6;k++)R+=amp*ak[k]/sa*Math.cos(k*th+ph[k]);X.push(R*Math.cos(th));Y.push(R*asp*Math.sin(th))}
+  const cl=[0];for(let q=1;q<=M;q++){const a=q-1,b=q%M;cl.push(cl[q-1]+Math.hypot(X[b]-X[a],Y[b]-Y[a]))}
+  const L0=cl[M],sc=len/L0,N=Math.round(len/6),ds=len/N,x=[],y=[];
+  let q=0;for(let i=0;i<N;i++){const s=i*L0/N;while(cl[q+1]<s)q++;const f=(s-cl[q])/(cl[q+1]-cl[q]),a=q,b=(q+1)%M;x.push((X[a]+(X[b]-X[a])*f)*sc);y.push((Y[a]+(Y[b]-Y[a])*f)*sc)}
+  const hd=[],k=[],kk=[];let kmax=0;
+  for(let i=0;i<N;i++){const a=(i-1+N)%N,b=(i+1)%N;hd.push(Math.atan2(y[b]-y[a],x[b]-x[a]))}
+  for(let i=0;i<N;i++){const a=(i-2+N)%N,b=(i+2)%N;kk.push(wrapA(hd[b]-hd[a])/(4*ds))}
+  for(let i=0;i<N;i++){let s=0;for(let j=-2;j<=2;j++)s+=kk[(i+j+N)%N];k.push(s/5);kmax=Math.max(kmax,Math.abs(k[i]))}
+  T={N,ds,L:len,x,y,hd,k,kmax};if(kmax<1/38)break;amp*=.9}
+ T.nx=T.hd.map(h=>-Math.sin(h));T.ny=T.hd.map(h=>Math.cos(h));T.hw=6.5;
+ T.q=function(c){const N=this.N;let bj=0,bd=1e18;
+  if(c.i==null||c.i<0){for(let j=0;j<N;j++){const dx=c.x-this.x[j],dy=c.y-this.y[j],d=dx*dx+dy*dy;if(d<bd){bd=d;bj=j}}}
+  else for(let k=-24;k<=24;k++){const j=(c.i+k+N)%N,dx=c.x-this.x[j],dy=c.y-this.y[j],d=dx*dx+dy*dy;if(d<bd){bd=d;bj=j}}
+  const dx=c.x-this.x[bj],dy=c.y-this.y[bj],h=this.hd[bj],al=dx*Math.cos(h)+dy*Math.sin(h);
+  c.i=bj;c.d=dx*this.nx[bj]+dy*this.ny[bj];c.ps=(((bj*this.ds+al)%this.L)+this.L)%this.L};
+ T.grid=function(k){const row=k>>1,col=k&1,ps=this.L-7-9*row-(col?4.5:0),i=Math.round(ps/this.ds)%this.N,lat=col?2.3:-2.3;return{x:this.x[i]+this.nx[i]*lat,y:this.y[i]+this.ny[i]*lat,h:this.hd[i],ps}};
+ return T}
+/* AI driver: same car physics, speed plan from corner radius, pure-pursuit steering */
+function aiProfile(c,T,skill){const s=c.sp,N=T.N,vc=new Float32Array(N);
+ for(let i=0;i<N;i++){const kp=Math.abs(T.k[i]);let v=s.vtop*.99;
+  if(kp>1e-4){const den=kp-s.mu*.5*RHO*s.cla/s.kg;if(den>1e-5)v=Math.min(v,Math.sqrt(.92*s.mu*G/den))}
+  vc[i]=v*skill}
+ const ab=s.mu*G*.55*skill;
+ for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=(i+1)%N;vc[i]=Math.min(vc[i],Math.sqrt(vc[j]*vc[j]+2*ab*T.ds))}
+ return vc}
+function aiIn(c,T){const a=c.ai,s=c.sp,v=c.v,N=T.N,i=c.i<0?0:c.i;
+ const n=Math.max(2,Math.round((6+.28*v)/T.ds)),j=(i+n)%N,lane=a.lane*Math.max(0,1-Math.abs(T.k[j])*90);
+ const tx=T.x[j]+T.nx[j]*lane,ty=T.y[j]+T.ny[j]*lane,dx=tx-c.x,dy=ty-c.y,da=wrapA(Math.atan2(dy,dx)-c.h),Ld=Math.max(4,Math.hypot(dx,dy));
+ const ex=(c.d||0)-lane;const aAv=s.mu*(1+.5*RHO*s.cla*v*v/(s.kg*G))*G*.93,st=clamp(v*v*2*Math.sin(da)/Ld/Math.max(aAv,1)+(0*ex),-1,1);
+ const jj=(i+Math.ceil((.22*v+6)/T.ds))%N,vt=a.vc[jj],e=v-vt;let th=0,br=0;
+ if(e>.5)br=clamp(e/1.5,0,1);else th=clamp((vt-v)/3+.3,0,1);
+ if(Math.abs(st)>.6)th*=clamp(1.9-1.5*Math.abs(st),.1,1);
+ return{th,br,st}}
+function collide(a,b){let hit=0;
+ for(const ka of [.28,-.28])for(const kb of [.28,-.28]){
+  const ax=a.x+Math.cos(a.h)*a.sp.len*ka,ay=a.y+Math.sin(a.h)*a.sp.len*ka,bx=b.x+Math.cos(b.h)*b.sp.len*kb,by=b.y+Math.sin(b.h)*b.sp.len*kb,
+  dx=bx-ax,dy=by-ay,d=Math.hypot(dx,dy),rr=(a.sp.w+b.sp.w)*.5*.52;
+  if(d<rr&&d>1e-4){hit=1;const nx=dx/d,ny=dy/d,o=rr-d,ma=a.sp.kg,mb=b.sp.kg,tw=ma+mb;
+   a.x-=nx*o*mb/tw;a.y-=ny*o*mb/tw;b.x+=nx*o*ma/tw;b.y+=ny*o*ma/tw;
+   const va=[Math.cos(a.h)*a.v,Math.sin(a.h)*a.v],vb=[Math.cos(b.h)*b.v,Math.sin(b.h)*b.v],rv=(vb[0]-va[0])*nx+(vb[1]-va[1])*ny;
+   if(rv<0){const j=-1.15*rv/(1/ma+1/mb);va[0]-=j/ma*nx;va[1]-=j/ma*ny;vb[0]+=j/mb*nx;vb[1]+=j/mb*ny;
+    a.v=Math.max(0,va[0]*Math.cos(a.h)+va[1]*Math.sin(a.h));b.v=Math.max(0,vb[0]*Math.cos(b.h)+vb[1]*Math.sin(b.h))}}}
+ return hit}
+/*RC-PURE-END*/
+
+const rfmt=t=>{if(!(t>0)||t>5999)return '–:––.–––';const m=Math.floor(t/60),s=t-m*60;return m+':'+(s<10?'0':'')+s.toFixed(3)};
+CT.circuit=['Race circuit','🏁',7500,22,0,18,-4,0,'#d32f2f'];CRL.circuit='wrk';
+try{NAMESHAPE.unshift([/circuit|racetrack|speedway|raceway/i,'stadium','office','🏁'])}catch(e){}
+const hasC=()=>!!CITY&&CITY.g.some(b=>b&&b.t=='circuit');
+const cLvl=()=>{let l=1;if(CITY)CITY.g.forEach(b=>{if(b&&b.t=='circuit')l=Math.max(l,b.l||1)});return l};
+const RR=()=>{const R=CITY.race=CITY.race||{};R.min=+R.min||0;R.wins=+R.wins||0;R.races=+R.races||0;R.best=R.best||{};R.tune=R.tune||{};R.fee=R.fee||{};if(R.pick==null)R.pick=-1;return R};
+const thr=n=>3*n*(1+n/150),EQ=40;
+function ppCalc(){const R=RR();let nb=0;CITY.g.forEach(b=>{if(b)nb++});let rk=0;
+ try{const q=window.flioRank&&window.flioRank(),m=q&&/#(\d+) of (\d+)/.exec(q.r||'');if(m){const a=+m[1],n=+m[2];rk=n>1?15*(n-a)/(n-1):(DB?4:0)}}catch(e){}
+ const tm=R.min/60*2,mo=6*Math.log10(1+(CITY.earned||0)/200),lvp=nb*.45,wn=R.wins*1.5;
+ return{tm,mo,lv:lvp,rk,wn,tot:tm+mo+lvp+rk+wn}}
+const tierMax=p=>Math.max(0,Math.floor((-3+Math.sqrt(9+.08*Math.max(0,p)))/.04));
+const curTier=()=>{const R=RR(),mx=tierMax(ppCalc().tot);return R.pick<0?mx:Math.min(R.pick,mx)};
+const tnOf=ti=>RR().tune[ti]||{e:0,t:0,a:0};
+const homeSeed=()=>hashStr('race-'+(CITY.id||'x'));
+const RC={on:0},CTL=()=>({l:0,r:0,g:0,b:0});
+let NET=null,PANEL='',LAPS=3,BOARD=null,LOBBY=null;
+function lobHTML(){return LOBBY.length?LOBBY.map(l=>'<div class="row" style="margin:6px 0 0"><span style="flex:1;font-size:13px"><b>'+esc(l.hname)+'</b><br><span class="mut">'+esc(l.cname)+' circuit · code '+esc(l.code)+'</span></span><button class="p" data-c="'+esc(l.code)+'" onclick="RCX.joinc(this.dataset.c)">Join</button></div>').join(''):'<p class="mut">No open races right now. Host one and others can join it from here.</p>'}
+/* time spent in the game counts towards your car class */
+setInterval(()=>{try{if(!CITY||window.VIS||document.hidden||Date.now()-TB.lastAct>6e4)return;RR().min+=1/6}catch(e){}},10000);
+/* one circuit per city, drawn in the 2D view */
+const oCB=cBuild;
+cBuild=function(x,y,t){const k=t||CTYPE;if(k=='circuit'&&CITY&&!cB(x,y)&&hasC()){cMsg('🏁 Each city can have only one race circuit. Upgrade it for bigger prizes.');return false}return oCB.apply(this,arguments)};
+const oDB=cDrawB;
+cDrawB=function(c,x,y,b,L,N,t){
+ if(b.t!='circuit')return oDB.apply(this,arguments);
+ const q=cP(x+.5,y+.5);
+ c.fillStyle='rgba(0,0,0,.18)';c.beginPath();c.ellipse(q[0]+4,q[1]+2,TW*.7,TH*.75,0,0,7);c.fill();
+ box(c,x+.04,y+.04,.92,.92,2,'#58b85f',L);
+ c.save();c.translate(q[0],q[1]-3);c.strokeStyle=cSh('#33363d',L);c.lineWidth=9;c.beginPath();c.ellipse(0,0,TW*.62,TH*.62,0,0,7);c.stroke();
+ c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);c.restore();
+ box(c,x+.3,y+.1,.4,.12,6+2*b.l,'#d32f2f',L);
+ c.font='13px system-ui';c.textAlign='center';c.fillStyle='#fff';c.fillText('🏁',q[0],q[1]-22);
+ if(b.l>1){c.fillStyle='#ffc61a';c.font='bold 11px system-ui';c.fillText('★'.repeat(b.l-1),q[0],q[1]-34)}
+ return[q[0],q[1]-24]};
+const oCD=cDraw;cDraw=function(t,dt){if(RC.on)return;return oCD.apply(this,arguments)};
+/* ---------- race screen ---------- */
+const NAMES=['Rossi','Tanaka','Muller','Silva','Okafor','Novak','Dubois','Khan','Larsen','Garcia'],COLS=['#ff7043','#26c6da','#9ccc65','#ffee58','#ec407a','#7e57c2','#8d6e63','#eceff1'];
+function rcFit(){const c=document.getElementById('rcc');if(!c)return;RC.dpr=Math.min(2,window.devicePixelRatio||1);RC.W=innerWidth;RC.H=innerHeight;c.width=Math.round(RC.W*RC.dpr);c.height=Math.round(RC.H*RC.dpr)}
+addEventListener('resize',()=>{if(RC.on)rcFit()});
+const KMAP={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'g',w:'g',W:'g',ArrowDown:'b',s:'b',S:'b',' ':'b'};
+addEventListener('keydown',e=>{if(!RC.on)return;const k=KMAP[e.key];if(k){RC.ctl[k]=1;e.preventDefault()}});
+addEventListener('keyup',e=>{if(!RC.on)return;const k=KMAP[e.key];if(k)RC.ctl[k]=0});
+function rcOverlay(){
+ const d=document.createElement('div');d.id='rcg';
+ d.style.cssText='position:fixed;inset:0;z-index:340;background:#2f6f35;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden';
+ const bt=(k,t,st,w,h)=>'<button data-k="'+k+'" style="position:absolute;'+st+';width:'+w+'px;height:'+h+'px;font-size:26px;padding:0;touch-action:none;opacity:.8;border-radius:16px">'+t+'</button>',bo='bottom:calc(14px + env(safe-area-inset-bottom,0px))';
+ d.innerHTML='<canvas id="rcc" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none"></canvas>'+
+ '<div style="position:absolute;top:calc(6px + env(safe-area-inset-top,0px));right:6px;display:flex;gap:6px"><button onclick="RCX.reset()" style="padding:4px 9px;font-size:13px" title="Back on track (+5 s in races)">🔄</button><button onclick="RCX.exit()" style="padding:4px 9px;font-size:13px">✕ Exit</button></div>'+
+ bt('l','◀','left:10px;'+bo,74,74)+bt('r','▶','left:92px;'+bo,74,74)+bt('b','🛑','right:100px;'+bo,74,74)+bt('g','⛽','right:10px;'+bo,84,110);
+ document.body.appendChild(d);
+ d.querySelectorAll('[data-k]').forEach(e=>{const k=e.dataset.k;e.onpointerdown=ev=>{ev.preventDefault();RC.ctl[k]=1;try{e.setPointerCapture(ev.pointerId)}catch(x){}};['pointerup','pointercancel','lostpointercapture'].forEach(t=>e['on'+t]=()=>{RC.ctl[k]=0})})}
+function rcPaths(T){
+ const mk=off=>{const p=new Path2D();for(let i=0;i<T.N;i++){const x=T.x[i]+T.nx[i]*off,y=T.y[i]+T.ny[i]*off;i?p.lineTo(x,y):p.moveTo(x,y)}p.closePath();return p},hw=T.hw;
+ RC.P={c:mk(0),kl:mk(hw+.7),kr:mk(-hw-.7),wl:mk(hw+11),wr:mk(-hw-11)};
+ const r=mulberry(RC.seed^55),tr=[];
+ for(let i=0;i<T.N&&tr.length<110;i+=5){const side=r()<.5?1:-1,off=side*(hw+13+r()*38),x=T.x[i]+T.nx[i]*off,y=T.y[i]+T.ny[i]*off;let ok=1;
+  for(let j=0;j<T.N;j+=3){const dx=x-T.x[j],dy=y-T.y[j];if(dx*dx+dy*dy<(hw+13)*(hw+13)){ok=0;break}}
+  if(ok)tr.push({x,y,r:3+r()*3})}
+ RC.trees=tr;
+ let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(let i=0;i<T.N;i++){x0=Math.min(x0,T.x[i]);x1=Math.max(x1,T.x[i]);y0=Math.min(y0,T.y[i]);y1=Math.max(y1,T.y[i])}
+ RC.mm={x0,y0,sc:84/Math.max(x1-x0,y1-y0)}}
+function raceStart(o){
+ if(RC.on)return;
+ const R=RR(),seed=o.seed,T=mkTrack(seed,3600),ti=o.tier,tn=o.equal?{}:tnOf(ti);
+ Object.assign(RC,{on:1,mode:o.mode,T,cars:[],laps:o.laps||3,key:o.key,tname:o.name,equal:!!o.equal,rt:o.mode=='tt'?0:-3.4,acc:0,lt:0,ctl:CTL(),msg:'',msgT:0,skid:[],parts:[],finT:0,res:null,sendT:0,rec:[],recT:0,ghost:null,pen:0,o,seed,skT:0,bestAll:1e9,wrong:0});
+ const me=mkCar(ti,tn,{name:'You',isMe:1});RC.me=me;
+ const place=(c,p)=>{Object.assign(c,{x:p.x,y:p.y,h:p.h,ps:p.ps,lps:p.ps,i:-1})};
+ if(o.mode=='tt'){const i=Math.round((T.L-40)/T.ds)%T.N;place(me,{x:T.x[i],y:T.y[i],h:T.hd[i],ps:T.L-40});me.v=25;me.g=2;
+  if(R.ghost&&R.ghost.key==o.key)RC.ghost=R.ghost.pts}
+ else if(o.mode=='gp'){
+  const nm=NAMES.slice().sort(()=>Math.random()-.5),sk=[.97,.95,.93,.91,.89].sort(()=>Math.random()-.5);let k=0;
+  for(let s=0;s<6;s++){if(s==3){place(me,T.grid(s));RC.cars.push(me);continue}
+   const c=mkCar(Math.max(0,ti+Math.round((Math.random()-.5)*6)),{},{name:nm[k]});place(c,T.grid(s));c.ai={skill:sk[k%5],lane:(Math.random()-.5)*4,vc:null};c.ai.vc=aiProfile(c,T,c.ai.skill);RC.cars.push(c);k++}}
+ else{ /* online */
+  o.pl.forEach((p,s)=>{if(p.pid==PID){place(me,T.grid(s));me.name=p.name;RC.cars.push(me)}
+   else{const c=mkCar(o.equal?EQ:p.tier,{},{name:p.name,rem:1,pid:p.pid});place(c,T.grid(s));c.tx=c.x;c.ty=c.y;c.th=c.h;c.tv=0;RC.cars.push(c)}})}
+ if(o.mode=='tt')RC.cars.push(me);
+ RC.ca=me.h;RC.cx=me.x;RC.cy=me.y;
+ rcOverlay();rcFit();rcPaths(T);RC.ctx=document.getElementById('rcc').getContext('2d');
+ engOn();RC.raf=requestAnimationFrame(rcLoop)}
+function rcLoop(ts){
+ if(!RC.on)return;
+ const dt=Math.min(.1,(ts-(RC.lt||ts))/1000);RC.lt=ts;RC.acc+=dt;let n=0;
+ try{while(RC.acc>=1/120&&n++<20){rcStep(1/120);RC.acc-=1/120}rcDraw(dt)}catch(e){console.error(e)}
+ RC.raf=requestAnimationFrame(rcLoop)}
+const prog=c=>c.lap*RC.T.L+(c.lap==0&&c.ps>RC.T.L/2?c.ps-RC.T.L:c.ps);
+const order=()=>RC.cars.slice().sort((a,b)=>(a.fin&&b.fin)?a.fin-b.fin:a.fin?-1:b.fin?1:prog(b)-prog(a));
+function say(m){RC.msg=m;RC.msgT=3}
+function lapCheck(c){
+ const T=RC.T,L=T.L,d=c.ps-c.lps;c.lps=c.ps;
+ if(d>L/2){c.back++;return}
+ if(d>-L/2)return;
+ if(c.back>0){c.back--;return}
+ const t=RC.rt,n=c.lap+1;
+ if(n==1){c.lapT0=t}
+ else{const lt=t-c.lapT0;c.laps.push(lt);c.lapT0=t;
+  const valid=true;
+  if(lt<c.best&&valid){c.best=lt;if(c.isMe)onBest(lt)}
+  else if(c.isMe)say('Lap '+(n-1)+': '+rfmt(lt))}
+ c.lap=n;
+ if(RC.mode!='tt'&&n>RC.laps&&!c.fin){c.fin=t+(c.isMe?RC.pen:0);if(c.isMe)say('🏁 Chequered flag!')}}
+function onBest(lt){
+ const R=RR(),ms=Math.round(lt*1000),b=R.best[RC.key];
+ say('⚡ Best lap '+rfmt(lt));
+ if(!b||ms<b.ms){R.best[RC.key]={ms,tier:RC.me.sp.ti,name:RC.tname};
+  if(RC.mode=='tt'&&RC.rec.length>8)R.ghost={key:RC.key,ms,pts:RC.rec.slice()};cSave();
+  if(!RC.equal&&NAMELOCK&&DB)rpc('submit_lap',{p_key:RC.key,p_name:NAMELOCK,p_ms:ms,p_tier:RC.me.sp.ti,p_cname:String(RC.tname).slice(0,24)}).catch(()=>{})}
+ RC.rec=[];RC.recT=0}
+function rcStep(dt){
+ const T=RC.T,me=RC.me,cl=RC.ctl,go=RC.rt>=0;RC.rt+=dt;
+ const tgt=cl.r-cl.l,rate=tgt==0?7:3.6;me.sa+=clamp(tgt-me.sa,-rate*dt,rate*dt);
+ if(me.fin)stepCar(me,{th:0,br:.3,st:0},dt,T);
+ else if(!go){me.v=0;stepCar(me,{th:0,br:1,st:0},dt,T)}
+ else stepCar(me,{th:cl.g,br:cl.b,st:me.sa},dt,T);
+ RC.cars.forEach(c=>{
+  if(c.rem){const k=Math.min(1,dt*12);c.x+=(c.tx-c.x)*k;c.y+=(c.ty-c.y)*k;c.h+=wrapA(c.th-c.h)*k;c.tx+=Math.cos(c.th)*c.tv*dt;c.ty+=Math.sin(c.th)*c.tv*dt;c.v=c.tv;return}
+  if(c.isMe)return;
+  if(c.ai){const u=!go?{th:0,br:1,st:0}:aiIn(c,T);if(c.fin){u.th=0;u.br=.35}if(!go)c.v=0;stepCar(c,u,dt,T)}});
+ RC.cars.forEach(c=>{if(!c.rem)lapCheck(c)});
+ const L=RC.cars.filter(c=>!c.rem);
+ for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j],dx=a.x-b.x,dy=a.y-b.y;if(dx*dx+dy*dy<30&&collide(a,b)&&(a.isMe||b.isMe)){RC.shk=.25;if(!RC.cT||RC.rt-RC.cT>.5){RC.cT=RC.rt;buzz(60)}}}
+ if(RC.mode=='on')RC.cars.forEach(c=>{if(!c.rem||c.v<.5&&me.v<.5)return;const dx=me.x-c.x,dy=me.y-c.y;if(dx*dx+dy*dy>30)return;const gc=Object.assign({},c,{v:c.tv,h:c.th});if(collide(me,gc)){RC.shk=.25;if(!RC.cT||RC.rt-RC.cT>.5){RC.cT=RC.rt;buzz(60)}}});
+ if(me.hit>0){if(me.hit>8){say('💥 Impact!');buzz(120);RC.shk=.4}me.hit=0}
+ RC.skT-=dt;
+ if(RC.skT<=0){RC.skT=.04;RC.cars.forEach(c=>{if(c.rem||!c.sl||c.v<8)return;const cs=Math.cos(c.h),sn=Math.sin(c.h);
+  RC.skid.push([c.x-cs*1.3-sn*.8,c.y-sn*1.3+cs*.8,c.x-cs*1.5-sn*.8,c.y-sn*1.5+cs*.8],[c.x-cs*1.3+sn*.8,c.y-sn*1.3-cs*.8,c.x-cs*1.5+sn*.8,c.y-sn*1.5-cs*.8]);
+  if(RC.parts.length<50)RC.parts.push({x:c.x-cs*1.5,y:c.y-sn*1.5,l:1})});
+  if(RC.skid.length>700)RC.skid.splice(0,RC.skid.length-700)}
+ RC.parts.forEach(p=>p.l-=dt*1.4);RC.parts=RC.parts.filter(p=>p.l>0);
+ RC.recT+=dt;if(RC.mode=='tt'&&me.lap>=1&&RC.recT>=.15){RC.recT=0;RC.rec.push(+me.x.toFixed(1),+me.y.toFixed(1),+me.h.toFixed(2))}
+ if(NET){RC.sendT+=dt;if(RC.sendT>=.07){RC.sendT=0;netSend({t:'rs',pid:PID,x:me.x,y:me.y,h:me.h,v:me.v,lap:me.lap,ps:me.ps,fin:me.fin,br:me.br})}}
+ if(me.fin&&!RC.finT)RC.finT=RC.rt;
+ if(RC.finT&&!RC.res&&(RC.cars.every(c=>c.fin)||RC.rt-RC.finT>18))rcResults();
+ if(me.i>=0&&me.v>6)RC.wrong=Math.cos(wrapA(me.h-T.hd[me.i]))<-.3?1:0;else RC.wrong=0}
+/* ---------- drawing ---------- */
+const CAB={'Hatchback':[-.3,.2],'Sedan':[-.32,.2],'Wagon':[-.4,.16],'Roadster':[-.14,.08],'Coupe':[-.22,.1],'Muscle car':[-.2,.12],'GT car':[-.16,.08],'Supercar':[-.12,.04],'Hypercar':[-.14,.03]};
+function drawCar(g,c,al){
+ const s=c.sp,l=s.len,w=s.w,col=c.col||s.col;g.save();g.translate(c.x,c.y);g.rotate(c.h);g.globalAlpha=al==null?1:al;
+ g.fillStyle='rgba(0,0,0,.28)';g.fillRect(-l/2+.4,-w/2+.4,l,w);
+ if(s.f){g.fillStyle='#111';[[l*.28,-w*.5],[l*.28,w*.5-.6],[-l*.3,-w*.5],[-l*.3,w*.5-.6]].forEach(q=>g.fillRect(q[0]-.5,q[1],1.1,.7));g.fillStyle=col;g.fillRect(-l*.4,-w*.18,l*.85,w*.36);g.fillStyle=s.col2;g.fillRect(-l*.4,-w*.04,l*.85,w*.08);g.fillStyle='#222';g.fillRect(l*.38,-w*.55,.8,w*1.1);g.fillRect(-l*.5,-w*.45,.9,w*.9);g.fillStyle='#fff';g.fillRect(-l*.02,-w*.1,l*.14,w*.2)}
+ else{
+  g.fillStyle='#111';[[.3],[-.3]].forEach(q=>{g.fillRect(l*q[0]-.45,-w*.5-.1,.95,.5);g.fillRect(l*q[0]-.45,w*.5-.4,.95,.5)});
+  const nz=s.cla>1?.2:s.body=='Roadster'||s.body=='Coupe'||s.body=='GT car'?.27:.34;
+  g.beginPath();g.moveTo(-l/2,-w*.46);g.lineTo(l*.16,-w*.5);g.lineTo(l*.5,-w*nz);g.lineTo(l*.5,w*nz);g.lineTo(l*.16,w*.5);g.lineTo(-l/2,w*.46);g.closePath();g.fillStyle=col;g.fill();
+  if(s.stripe==1){g.fillStyle=s.col2;g.fillRect(-l/2,-w*.07,l,w*.14)}
+  else if(s.stripe==2){g.fillStyle=s.col2;g.fillRect(-l/2,-w*.16,l,w*.06);g.fillRect(-l/2,w*.1,l,w*.06)}
+  else if(s.stripe==3){g.fillStyle=s.col2;g.fillRect(-l/2,-w*.5,l*.45,w*.09);g.fillRect(-l/2,w*.41,l*.45,w*.09)}
+  const cb=CAB[s.body]||[-.2,.1],op=s.body=='Roadster';
+  g.fillStyle=op?'#222':'rgba(15,25,40,.88)';g.fillRect(l*cb[0],-w*(op?.26:.36),l*(cb[1]-cb[0]),w*(op?.52:.72));
+  if(!op){g.fillStyle='rgba(255,255,255,.3)';g.fillRect(l*cb[1]-.2,-w*.3,.25,w*.6)}
+  g.fillStyle='rgba(255,240,170,.9)';g.fillRect(l*.46,-w*nz,.3,w*.14);g.fillRect(l*.46,w*nz-w*.14,.3,w*.14);
+  if(s.wing){g.fillStyle='#161616';g.fillRect(-l/2-.35,-w*.48,.6,w*.96);g.fillStyle=s.col2;g.fillRect(-l/2-.35,-w*.48,.6,.25);g.fillRect(-l/2-.35,w*.48-.25,.6,.25)}}
+ if(c.br>.1){g.fillStyle='#ff1744';g.fillRect(-l/2,-w*.42,.35,.55);g.fillRect(-l/2,w*.42-.55,.35,.55)}
+ g.restore()}
+function carSVG(d){const col=d.col,c2=d.col2,w=d.w/d.len*86,s=d.stripe,nz=d.cla>1?.2:.3,cb=CAB[d.body]||[-.2,.1],X=a=>50+a*86,Y=a=>25+a*w;
+ const body=[[-.5,-.46],[.16,-.5],[.5,-nz],[.5,nz],[.16,.5],[-.5,.46]].map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ');
+ let o='<svg viewBox="0 0 100 50" width="190" height="95" style="max-width:100%"><rect x="'+X(.22)+'" y="'+Y(-.5)+'" width="9" height="'+(w*.18)+'" fill="#111"/><rect x="'+X(.22)+'" y="'+Y(.32)+'" width="9" height="'+(w*.18)+'" fill="#111"/><rect x="'+X(-.38)+'" y="'+Y(-.5)+'" width="9" height="'+(w*.18)+'" fill="#111"/><rect x="'+X(-.38)+'" y="'+Y(.32)+'" width="9" height="'+(w*.18)+'" fill="#111"/>';
+ if(d.f)return o+'<rect x="'+X(-.4)+'" y="'+Y(-.18)+'" width="'+(.85*86)+'" height="'+(w*.36)+'" fill="'+col+'"/><rect x="'+X(.38)+'" y="'+Y(-.55)+'" width="3" height="'+(w*1.1)+'" fill="#222"/><rect x="'+X(-.5)+'" y="'+Y(-.45)+'" width="3" height="'+(w*.9)+'" fill="#222"/></svg>';
+ o+='<polygon points="'+body+'" fill="'+col+'"/>';
+ if(s==1)o+='<rect x="'+X(-.5)+'" y="'+Y(-.07)+'" width="86" height="'+(w*.14)+'" fill="'+c2+'"/>';
+ else if(s==2)o+='<rect x="'+X(-.5)+'" y="'+Y(-.16)+'" width="86" height="'+(w*.06)+'" fill="'+c2+'"/><rect x="'+X(-.5)+'" y="'+Y(.1)+'" width="86" height="'+(w*.06)+'" fill="'+c2+'"/>';
+ else if(s==3)o+='<rect x="'+X(-.5)+'" y="'+Y(-.5)+'" width="39" height="'+(w*.09)+'" fill="'+c2+'"/><rect x="'+X(-.5)+'" y="'+Y(.41)+'" width="39" height="'+(w*.09)+'" fill="'+c2+'"/>';
+ o+='<rect x="'+X(cb[0])+'" y="'+Y(d.body=='Roadster'?-.26:-.36)+'" width="'+(86*(cb[1]-cb[0]))+'" height="'+(w*(d.body=='Roadster'?.52:.72))+'" fill="'+(d.body=='Roadster'?'#222':'#0f1928')+'" opacity=".9"/>';
+ if(d.wing)o+='<rect x="'+(X(-.5)-3)+'" y="'+Y(-.48)+'" width="6" height="'+(w*.96)+'" fill="#161616"/>';
+ return o+'</svg>'}
+function scr2(x,y){const a=-Math.PI/2-RC.ca,dx=x-RC.cx,dy=y-RC.cy,c=Math.cos(a),s=Math.sin(a);return[RC.W/2+(dx*c-dy*s)*RC.sc,RC.H*.68+(dx*s+dy*c)*RC.sc]}
+function rcDraw(dt){
+ const g=RC.ctx,W=RC.W,H=RC.H,T=RC.T,me=RC.me,P=RC.P;
+ RC.ca+=wrapA(me.h-RC.ca)*Math.min(1,dt*5);
+ RC.cx+=(me.x+Math.cos(me.h)*me.v*.22-RC.cx)*Math.min(1,dt*9);RC.cy+=(me.y+Math.sin(me.h)*me.v*.22-RC.cy)*Math.min(1,dt*9);
+ RC.sc=clamp(6.4-.05*me.v,3,6.4)*clamp(Math.min(W,H)/520,.7,1.35);
+ const sh=RC.shk>0?(RC.shk-=dt,(Math.random()-.5)*5):0;
+ g.setTransform(RC.dpr,0,0,RC.dpr,0,0);g.fillStyle='#3d8a3d';g.fillRect(0,0,W,H);
+ g.save();g.translate(W/2+sh,H*.68+sh);g.scale(RC.sc,RC.sc);g.rotate(-Math.PI/2-RC.ca);g.translate(-RC.cx,-RC.cy);
+ g.lineJoin='round';g.lineCap='butt';g.setLineDash([]);
+ g.strokeStyle='#c9b37a';g.lineWidth=2*(T.hw+9);g.stroke(P.c);
+ g.strokeStyle='#3b3d42';g.lineWidth=2*T.hw+.6;g.stroke(P.c);
+ [P.kl,P.kr].forEach(p=>{g.lineWidth=1.3;g.strokeStyle='#d32f2f';g.stroke(p);g.strokeStyle='#fff';g.setLineDash([2.2,2.2]);g.stroke(p);g.setLineDash([])});
+ [P.wl,P.wr].forEach(p=>{g.lineWidth=1.5;g.strokeStyle='#1565c0';g.stroke(p);g.strokeStyle='#fff';g.setLineDash([3,3]);g.stroke(p);g.setLineDash([])});
+ g.strokeStyle='rgba(15,15,15,.35)';g.lineWidth=.35;g.beginPath();RC.skid.forEach(s=>{g.moveTo(s[0],s[1]);g.lineTo(s[2],s[3])});g.stroke();
+ g.save();g.translate(T.x[0],T.y[0]);g.rotate(T.hd[0]);for(let r=0;r<2;r++)for(let k=0;k<11;k++){g.fillStyle=(r+k)%2?'#fff':'#111';g.fillRect(-1+r,-T.hw+k*1.18,1,1.18)}
+ g.fillStyle='#8d99ae';g.fillRect(-12,T.hw+14,26,7);g.fillStyle='#d32f2f';g.fillRect(-12,T.hw+14,26,2);g.restore();
+ RC.trees.forEach(t=>{const dx=t.x-RC.cx,dy=t.y-RC.cy;if(dx*dx+dy*dy>90000)return;g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.arc(t.x+1,t.y+1,t.r,0,7);g.fill();g.fillStyle='#1f6b2e';g.beginPath();g.arc(t.x,t.y,t.r,0,7);g.fill();g.fillStyle='#2f8a3f';g.beginPath();g.arc(t.x-.6,t.y-.6,t.r*.62,0,7);g.fill()});
+ if(RC.ghost&&me.lap>=1){const tt=(RC.rt-me.lapT0)/.15,i=Math.floor(tt),n=RC.ghost.length/3;if(i>=0&&i<n-1){const f=tt-i,a=i*3,b=a+3,gc={sp:me.sp,x:RC.ghost[a]+(RC.ghost[b]-RC.ghost[a])*f,y:RC.ghost[a+1]+(RC.ghost[b+1]-RC.ghost[a+1])*f,h:RC.ghost[a+2],col:'#90caf9',br:0};drawCar(g,gc,.45)}}
+ RC.parts.forEach(p=>{g.fillStyle='rgba(235,235,235,'+(p.l*.4)+')';g.beginPath();g.arc(p.x,p.y,1+(1-p.l)*2.2,0,7);g.fill()});
+ RC.cars.forEach(c=>{if(c!==me)drawCar(g,c,c.rem?.9:1)});drawCar(g,me);
+ g.restore();
+ g.textAlign='center';g.font='bold 11px system-ui';g.lineWidth=3;
+ RC.cars.forEach(c=>{if(c===me)return;const p=scr2(c.x,c.y);if(p[0]<0||p[0]>W||p[1]<0||p[1]>H)return;g.strokeStyle='rgba(0,0,0,.7)';g.fillStyle='#fff';g.strokeText(c.name,p[0],p[1]-16);g.fillText(c.name,p[0],p[1]-16)});
+ rcHud(g,W,H)}
+function rcHud(g,W,H){
+ const me=RC.me,T=RC.T,od=RC.mode=='tt'?[me]:order(),pos=od.indexOf(me)+1,rt=RC.rt,sf=env=>0;
+ const tx=(t,x,y,sz,al,col)=>{g.font='bold '+sz+'px system-ui';g.textAlign=al;g.lineWidth=3;g.strokeStyle='rgba(0,0,0,.65)';g.strokeText(t,x,y);g.fillStyle=col||'#fff';g.fillText(t,x,y)};
+ const top=Math.max(26,22+(parseFloat(getComputedStyle(document.documentElement).paddingTop)||0));
+ if(RC.mode!='tt')tx('P'+pos+'/'+od.length,12,top+4,28,'left','#ffd400');
+ tx(RC.mode=='tt'?'LAP '+Math.max(1,me.lap)+' · TIME TRIAL':'LAP '+Math.min(Math.max(me.lap,1),RC.laps)+'/'+RC.laps,12,top+26,15,'left');
+ const cur=me.lap>=1?rt-me.lapT0:0;
+ tx(rt>=0?rfmt(me.fin?me.fin:cur):'',12,top+46,15,'left');
+ tx('Best '+rfmt(me.best<1e8?me.best:0),12,top+64,13,'left','#9be7a0');
+ if(me.laps.length)tx('Last '+rfmt(me.laps[me.laps.length-1]),12,top+80,13,'left');
+ if(RC.mode!='tt'&&pos>1){const a=od[pos-2],gap=(prog(a)-prog(me))/Math.max(me.v,10);tx('+'+gap.toFixed(1)+'s '+a.name,12,top+98,12,'left','#ff8a80')}
+ /* speed + gear + rpm */
+ const sp=me.v*3.6,cx=W/2;
+ tx(Math.round(sp)+' km/h',cx,H-96-0,30,'center');
+ tx(me.g==0&&me.v<1?'N':String(me.g+1),cx,H-70,22,'center','#ffd400');
+ const bw=Math.min(190,W*.34),f=clamp(me.rpm/me.sp.rpm,0,1);g.fillStyle='rgba(0,0,0,.55)';g.fillRect(cx-bw/2,H-60,bw,10);g.fillStyle=f>.92?'#ff1744':f>.8?'#ffc107':'#4caf50';g.fillRect(cx-bw/2,H-60,bw*f,10);
+ tx(me.sp.e+' '+me.sp.n+(me.gl>0.2?' · '+me.gl.toFixed(1)+' g':''),cx,H-42,12,'center');
+ /* minimap */
+ const mm=RC.mm,mx=W-96,my=top+16;g.fillStyle='rgba(0,0,0,.4)';g.fillRect(mx-4,my-4,96,96);g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();
+ for(let i=0;i<T.N;i+=6){const x=mx+(T.x[i]-mm.x0)*mm.sc+4,y=my+(T.y[i]-mm.y0)*mm.sc+4;i?g.lineTo(x,y):g.moveTo(x,y)}g.closePath();g.stroke();
+ RC.cars.forEach(c=>{g.fillStyle=c===me?'#ffd400':c.col;g.beginPath();g.arc(mx+(c.x-mm.x0)*mm.sc+4,my+(c.y-mm.y0)*mm.sc+4,c===me?3.5:2.5,0,7);g.fill()});
+ /* countdown lights */
+ if(rt<0&&RC.mode!='tt'){const n=Math.ceil(-rt);for(let i=0;i<3;i++){g.fillStyle=(3-i)>=n&&rt>-3.05?'#ff1744':'#3a0a0a';g.beginPath();g.arc(cx-40+i*40,H*.18,14,0,7);g.fill()}}
+ else if(rt<1&&RC.mode!='tt')tx('GO!',cx,H*.2,44,'center','#69f0ae');
+ if(RC.msgT>0){RC.msgT-=1/60;tx(RC.msg,cx,H*.3,20,'center','#fff')}
+ if(RC.wrong)tx('⚠ WRONG WAY',cx,H*.38,24,'center','#ff5252');
+ if(me.i>=0&&Math.abs(me.d)>T.hw+1.1&&me.v>5)tx('Off track: slow',cx,H*.44,15,'center','#ffcc80');
+ engSet(me.rpm,me.th)}
+/* ---------- engine sound ---------- */
+function engOn(){if(!SND)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume();
+ const E=RC.me.sp.eng,o=AC.createOscillator(),o2=AC.createOscillator(),o3=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter(),tg=AC.createGain();o.type=E.w1;o2.type=E.w2;o3.type='sine';f.type='lowpass';f.frequency.value=E.fl;g.gain.value=0;tg.gain.value=0;
+ o.connect(f);o2.connect(f);f.connect(g);o3.connect(tg);tg.connect(g);g.connect(AC.destination);o.start();o2.start();o3.start();RC.snd={o,o2,o3,g,f,tg,E}}catch(e){RC.snd=null}}
+function engSet(rpm,th){const s=RC.snd;if(!s)return;try{const t=AC.currentTime,E=s.E,fr=rpm/60*E.cyl/2;s.o.frequency.setTargetAtTime(fr,t,.05);s.o2.frequency.setTargetAtTime(fr*E.m2,t,.05);s.o3.frequency.setTargetAtTime(1500+rpm*.4,t,.08);s.tg.gain.setTargetAtTime(E.tb?(th>.3?.18:.05):0,t,.1);s.g.gain.setTargetAtTime(.02+.05*th+E.cyl*.001,t,.08);s.f.frequency.setTargetAtTime(E.fl*.6+rpm*.25+th*500,t,.1)}catch(e){}}
+function engOff(){const s=RC.snd;RC.snd=null;if(!s)return;try{s.g.gain.value=0;s.o.stop();s.o2.stop();s.o3.stop()}catch(e){}}
+/* ---------- results and prizes ---------- */
+function rcResults(){
+ const me=RC.me,od=order(),pos=od.indexOf(me),R=RR(),ti=me.sp.ti;
+ const fast=Math.min(...RC.cars.map(c=>c.best)),fl=me.best<1e8&&me.best<=fast+1e-6&&RC.laps>=2;
+ let cash=Math.round(260*(1+ti*.12)*(1+.2*(cLvl()-1))*([1,.6,.4,.25,.15,.1][pos]||.05)*(RC.laps/3)*(fl?1.15:1));
+ if(od.length<2)cash=0;
+ CITY.cash+=cash;R.races++;if(pos==0&&od.length>1){R.wins++;CITY.karma=(CITY.karma||0)+60}else CITY.karma=(CITY.karma||0)+15;cSave();try{cStats()}catch(e){}
+ RC.res={pos,cash,fl};
+ const d=document.createElement('div');d.id='rcres';d.style.cssText='position:fixed;inset:0;z-index:350;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:14px';
+ d.innerHTML='<div class="box" style="width:min(100%,460px);margin:0;max-height:100%;overflow:auto"><div class="trophy" style="font-size:44px">'+(pos==0?'🏆':pos<3?'🥈':'🏁')+'</div><h2 style="text-align:center;margin:4px 0">'+(pos==0?'You won!':'You finished P'+(pos+1))+'</h2>'+
+ '<table><tr><th>#</th><th>Driver</th><th>Time</th><th>Best lap</th></tr>'+od.map((c,i)=>'<tr'+(c.isMe?' style="font-weight:800;color:var(--ac)"':'')+'><td>'+(i+1)+'</td><td>'+esc(c.name)+(c.rem?' 🌐':'')+'</td><td>'+(c.fin?rfmt(c.fin):'DNF')+'</td><td>'+(c.best<1e8?rfmt(c.best):'–')+'</td></tr>').join('')+'</table>'+
+ '<p style="margin:8px 0"><b>Prize: '+cMoney(cash)+'</b>'+(fl?' · ⚡ fastest lap bonus':'')+(RC.pen?' <span class="mut">(+'+RC.pen+' s penalty)</span>':'')+'</p><div class="row" style="flex-wrap:wrap">'+(NET?'':'<button class="p" onclick="RCX.again()">Race again</button>')+'<button onclick="RCX.exit()">Race centre</button></div></div>';
+ document.body.appendChild(d);try{beep(pos==0?'win':'flip')}catch(e){}}
+function rcEnd(){
+ RC.on=0;cancelAnimationFrame(RC.raf);engOff();
+ ['rcg','rcres'].forEach(i=>{const e=document.getElementById(i);if(e)e.remove()});
+ if(NET)netClose();
+ try{cStats();cPanel()}catch(e){}}
+/* ---------- online: live races between cities (peer to peer) ---------- */
+const meInfo=()=>({pid:PID,name:NAMELOCK||myName||'Racer',tier:curTier(),city:CITY.name});
+function netSend(o){try{if(!NET)return;if(NET.host)NET.conns.forEach(c=>{if(c.open)c.send(o)});else if(NET.conn&&NET.conn.open)NET.conn.send(o)}catch(e){}}
+let LOBT=0;
+function lobPost(){if(!DB||!NET||!NET.host)return;rpc('post_lobby',{p_code:NET.code,p_city:CITY.id,p_name:NAMELOCK||myName||'Racer',p_cname:CITY.name}).catch(()=>{});clearInterval(LOBT);LOBT=setInterval(()=>{if(NET&&NET.host&&!RC.on)lobPost();else clearInterval(LOBT)},60000)}
+function netClose(){try{if(NET&&NET.host&&DB)rpc('close_lobby',{p_code:NET.code}).catch(()=>{});clearInterval(LOBT);NET&&NET.peer&&NET.peer.destroy()}catch(e){}NET=null}
+async function netPeerOk(){if(typeof Peer==='undefined'&&window.__peerP)await window.__peerP;return typeof Peer!=='undefined'}
+async function netHost(){
+ if(!hasC())return;if(!await netPeerOk()){PANEL='Online play could not load. Check your connection.';return rcPaint()}
+ const code=String(Math.floor(1000+Math.random()*9000));let peer;
+ try{peer=new Peer('flio-race-'+code)}catch(e){PANEL='Could not start online play.';return rcPaint()}
+ NET={host:1,peer,conns:[],code,pl:[meInfo()],laps:LAPS,equal:0};
+ peer.on('open',()=>{lobPost();rcPaint()});
+ peer.on('error',e=>{PANEL=e.type=='unavailable-id'?'That code is taken. Try again.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
+ peer.on('connection',c=>{NET&&NET.conns.push(c);c.on('data',d=>netRecv(d||{},c));c.on('close',()=>{if(!NET||RC.on)return;NET.conns=NET.conns.filter(x=>x!==c);NET.pl=NET.pl.filter(p=>p.pid!=c.pid);netLob()})});
+ rcPaint()}
+async function netJoin(code){
+ if(!hasC())return;code=String(code||'').trim();if(!code){PANEL='Enter the 4-digit code first.';return rcPaint()}
+ if(!await netPeerOk()){PANEL='Online play could not load. Check your connection.';return rcPaint()}
+ let peer;try{peer=new Peer()}catch(e){PANEL='Could not start online play.';return rcPaint()}
+ NET={host:0,peer,code,pl:[],laps:3,equal:0};let ok=0;
+ peer.on('error',e=>{if(!NET)return;PANEL=e.type=='peer-unavailable'?'No race with that code. Check it and ask the host to open the lobby.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
+ peer.on('open',()=>{const c=peer.connect('flio-race-'+code,{reliable:true});if(!NET)return;NET.conn=c;
+  c.on('open',()=>{ok=1;c.send({t:'rj',p:meInfo()})});c.on('data',d=>netRecv(d||{},c));
+  c.on('close',()=>{if(NET&&!RC.on){PANEL='The host left.';netClose();rcPaint()}})});
+ setTimeout(()=>{if(NET&&!ok&&NET.code==code&&!NET.pl.length){PANEL='Could not reach that race.';netClose();rcPaint()}},12000);
+ rcPaint()}
+function netLob(){netSend({t:'rl',pl:NET.pl,laps:NET.laps,equal:NET.equal});rcPaint()}
+function netRecv(d,c){
+ if(!NET)return;
+ if(d.t=='rj'&&NET.host){if(NET.pl.length<4&&!NET.pl.some(p=>p.pid==d.p.pid)&&!RC.on){c.pid=d.p.pid;NET.pl.push({pid:d.p.pid,name:String(d.p.name||'Racer').slice(0,14),tier:clamp(Math.floor(+d.p.tier)||0,0,99999),city:String(d.p.city||'').slice(0,20)})}netLob()}
+ else if(d.t=='rl'&&!NET.host){NET.pl=d.pl;NET.laps=d.laps;NET.equal=d.equal;rcPaint()}
+ else if(d.t=='rgo'&&!NET.host){NET.pl=d.pl;startOnline(d)}
+ else if(d.t=='rs'){const r=RC.on&&RC.cars.find(x=>x.pid==d.pid);if(r){r.tx=+d.x;r.ty=+d.y;r.th=+d.h;r.tv=+d.v||0;r.lap=+d.lap||0;r.ps=+d.ps||0;r.br=+d.br||0;if(d.fin&&!r.fin){r.fin=+d.fin;r.best=r.best}}
+  if(NET.host)NET.conns.forEach(x=>{if(x!==c&&x.open)x.send(d)})}}
+function startOnline(d){
+ if(RC.on)return;
+ raceStart({mode:'on',seed:d.seed,name:d.name,key:d.key,laps:d.laps,tier:d.equal?EQ:meInfo().tier,equal:d.equal,pl:d.pl});closePanel()}
+function netStart(){
+ if(!NET||!NET.host||NET.pl.length<2)return;try{if(DB)rpc('close_lobby',{p_code:NET.code}).catch(()=>{});clearInterval(LOBT)}catch(e){}
+ const d={t:'rgo',seed:homeSeed(),name:CITY.name+' Circuit',key:CITY.id+'|t'+(NET.equal?1:0),laps:NET.laps,equal:NET.equal,pl:NET.pl};
+ netSend(d);startOnline(d)}
+/* ---------- race centre ---------- */
+function closePanel(){const e=document.getElementById('rcm');if(e)e.remove()}
+function rcPaint(){
+ let d=document.getElementById('rcm');if(!d)return;
+ d.firstElementChild.innerHTML=rcHTML();PANEL=''}
+function barPP(l,v,t){return '<div style="display:flex;justify-content:space-between"><span>'+l+'</span><b>'+v.toFixed(1)+' pts</b></div>'+cBar(v/Math.max(1,t),'#3fae5a')}
+function statLine(ti,tn){const p=perf(ti,tn),s=TI[ti];return Math.round(p.kw)+' kW · '+s.kg+' kg · 0–100 km/h '+p.t100.toFixed(1)+' s · top '+Math.round(p.top)+' km/h · 100–0 km/h '+Math.round(p.b100)+' m'}
+function rcHTML(){
+ const R=RR(),pp=ppCalc(),mx=tierMax(pp.tot),ti=curTier(),tn=tnOf(ti);
+ let h='<div class="row"><b style="flex:1;font-size:19px">🏁 Race centre</b><button onclick="RCX.close()">✕ Close</button></div>';
+ if(PANEL)h+='<div class="box" style="border-color:var(--ac)">'+esc(PANEL)+'</div>';
+ if(NET){
+  h+='<div class="box"><b>🌐 Online race</b><div style="font-size:38px;font-weight:800;letter-spacing:4px">'+esc(NET.code)+'</div><p class="mut">'+(NET.host?'Share this code. Other players open their Race centre, tap Join and type it. The race is on <b>'+esc(CITY.name)+'</b> circuit.':'Waiting for the host to start…')+'</p>'+
+  '<table>'+NET.pl.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(p.name)+(p.pid==PID?' (you)':'')+'</td><td>'+(NET.equal?'Equal car':TI[p.tier].e+' '+esc(TI[p.tier].n))+'</td></tr>').join('')+'</table>'+
+  (NET.host?'<div class="row" style="margin-top:8px"><span style="flex:1">Laps</span><select onchange="RCX.nlaps(+this.value)">'+[2,3,5].map(n=>'<option'+(NET.laps==n?' selected':'')+'>'+n+'</option>').join('')+'</select></div><div class="row"><span style="flex:1">Cars</span><select onchange="RCX.neq(+this.value)"><option value="0"'+(NET.equal?'':' selected')+'>Your own earned cars</option><option value="1"'+(NET.equal?' selected':'')+'>Equal cars (same car for everyone, no tuning)</option></select></div><button class="p" style="width:100%" onclick="RCX.nstart()"'+(NET.pl.length<2?' disabled':'')+'>🚦 Start race ('+NET.pl.length+' drivers)</button>':'<p class="mut">Laps: '+NET.laps+' · '+(NET.equal?'Equal cars':'Own earned cars')+'</p>')+
+  '<button style="margin-top:8px" onclick="RCX.nleave()">Leave</button></div>';
+  return h}
+ if(!hasC())return h+'<div class="box">Build a 🏁 <b>Race circuit</b> in your city to start racing: open the 🏗 menu in your city and pick <b>Race circuit</b>. Each city can have one.</div>';
+ /* garage */
+ const nx=thr(mx+1),cd=TI[ti];
+ h+='<div class="box"><b>🚘 Your garage</b> <span class="mut">'+(mx+1)+' car'+(mx?'s':'')+' unlocked · endless, earned by playing</span><div style="text-align:center;margin:4px 0">'+carSVG(cd)+'</div><div style="text-align:center"><b>'+esc(cd.n)+'</b> <span class="mut">#'+(ti+1)+'</span></div><div class="mut" style="text-align:center">'+esc(cd.d)+'</div><div class="mut" style="margin:4px 0;text-align:center">'+statLine(ti,tn)+'</div>'+
+  '<div class="row" style="justify-content:center"><button onclick="RCX.step(-10)" '+(ti<1?'disabled':'')+'>«</button><button onclick="RCX.step(-1)" '+(ti<1?'disabled':'')+'>◀</button><button onclick="RCX.step(1)" '+(ti>=mx?'disabled':'')+'>▶</button><button onclick="RCX.step(10)" '+(ti>=mx?'disabled':'')+'>»</button><button class="p" onclick="RCX.latest()" '+(R.pick<0?'disabled':'')+'>Newest</button></div></div>';
+ h+='<div class="box"><b>📊 Performance score: '+pp.tot.toFixed(1)+' pts</b><div class="mut">Next car (#'+(mx+2)+') at '+nx.toFixed(0)+' pts: '+esc(TI[mx+1].n)+' · '+esc(TI[mx+1].body)+'. New cars never stop: the more you play, the better they get.</div>'+
+  barPP('⏱ Time played ('+(R.min/60).toFixed(1)+' h)',pp.tm,pp.tot)+barPP('💰 Money earned',pp.mo,pp.tot)+barPP('🏙 City size',pp.lv,pp.tot)+barPP('🌍 World ranking',pp.rk,pp.tot)+barPP('🏆 Race wins ('+R.wins+')',pp.wn,pp.tot)+'</div>';
+ const lv=['e','t','a'],nm={e:['🔧 Engine','+4% power'],t:['🛞 Tyres','+3% grip'],a:['🪽 Aero','more downforce']};
+ h+='<div class="box"><b>🔧 Tuning for '+TI[ti].n+'</b>'+lv.map(k=>{const l=tn[k]||0,cost=Math.round(2000*(l+1)*(1+ti*.2));return '<div class="row" style="margin:6px 0 0"><span style="flex:1;font-size:13px">'+nm[k][0]+' <b>lv '+l+'/3</b><br><span class="mut">'+nm[k][1]+' per level</span></span><button '+(l>=3||CITY.cash<cost?'disabled':'class="p"')+' onclick="RCX.tune(\''+k+'\')">'+(l>=3?'MAX':cMoney(cost))+'</button></div>'}).join('')+'</div>';
+ /* races */
+ const hb=R.best[CITY.id+'|t'+ti];
+ h+='<div class="box"><b>🏎 Race at '+esc(CITY.name)+' circuit</b><div class="mut">Circuit level '+cLvl()+' · 3.6 km · '+(hb?'your record '+rfmt(hb.ms/1000):'no lap time yet')+'</div><div class="row" style="margin-top:8px"><span style="flex:1">Laps</span><select onchange="LAPS=+this.value">'+[2,3,5].map(n=>'<option'+(LAPS==n?' selected':'')+'>'+n+'</option>').join('')+'</select></div>'+
+  '<div class="row" style="flex-wrap:wrap"><button class="p" onclick="RCX.gp()">🏆 Grand Prix (vs 5 drivers)</button><button onclick="RCX.tt()">⏱ Time trial</button></div>'+
+  '<div class="row" style="flex-wrap:wrap"><button class="p" onclick="RCX.host()">🌐 Host online race</button><input id="rcj" placeholder="Code" inputmode="numeric" maxlength="4" style="max-width:80px"><button onclick="RCX.join()">Join</button></div><p class="mut">Online races are live between players on their own phones, on the host’s circuit. Cars can bump each other.</p></div>';
+ /* open online races */
+ h+='<div class="box"><b>⚔ Open online races</b> <span class="mut">players waiting for rivals</span><div id="rcl">'+(LOBBY?lobHTML():'')+'</div><button onclick="RCX.lobs()" style="margin-top:6px">🔄 Find open races</button></div>';
+ /* other circuits */
+ let oc=[];try{oc=world().filter(c=>!c.me).slice(0,12)}catch(e){}
+ h+='<div class="box"><b>🌍 Race in other cities</b>'+(oc.length?oc.slice(0,12).map(c=>'<div class="row" style="margin:6px 0 0"><span style="flex:1;font-size:13px"><b>'+esc(c.name)+'</b><br><span class="mut">'+(c.oname?esc(c.oname)+' · ':'')+'entry $150</span></span><button data-id="'+esc(c.id)+'" data-n="'+esc(c.name)+'" onclick="RCX.visit(this.dataset.id,this.dataset.n,0)">⏱ Trial</button><button class="p" data-id="'+esc(c.id)+'" data-n="'+esc(c.name)+'" onclick="RCX.visit(this.dataset.id,this.dataset.n,1)">🏆 GP</button></div>').join(''):'<p class="mut">No other cities yet. They appear here when other players join the world.</p>')+'<div class="mut" style="margin-top:6px">The entry fee goes to the owner. Lap records are kept per circuit and car class.</div></div>';
+ h+='<div class="box"><b>🥇 Lap records</b> <span class="mut">'+TI[ti].n+' on '+esc(CITY.name)+'</span><div id="rcb">'+(BOARD&&BOARD.k==CITY.id+'|t'+ti?boardHTML():'<button onclick="RCX.board()">Load records</button>')+'</div></div>';
+ h+='<div class="mut" style="padding:0 4px 10px">Drive with ◀ ▶ (steering), ⛽ (gas) and 🛑 (brake). Gears are automatic. Tyres lose grip on the kerbs and in the gravel, and the faster you go the wider the corner you need. Keyboard: arrows or WASD, space = brake.</div>';
+ return h}
+function boardHTML(){const L=BOARD.rows;return L.length?'<table>'+L.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td><td>'+rfmt(r.ms/1000)+'</td></tr>').join('')+'</table>':'<p class="mut">No records yet. Set the first one!</p>'}
+function rcOpenPanel(){
+ if(!CITY||window.VIS)return;closePanel();
+ const d=document.createElement('div');d.id='rcm';d.style.cssText='position:fixed;inset:0;z-index:330;background:rgba(0,0,0,.6);overflow:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px))';
+ d.innerHTML='<div style="max-width:520px;margin:auto;background:var(--bg);border:2px solid var(--bd);border-radius:14px;padding:10px"></div>';
+ document.body.appendChild(d);rcPaint()}
+function feeFor(id,name){const R=RR(),t=Date.now();if(R.fee[id]&&t-R.fee[id]<6e5)return true;
+ if(CITY.cash<150){PANEL='Entry costs $150 and you have '+cMoney(CITY.cash)+'.';rcPaint();return false}
+ CITY.cash-=150;R.fee[id]=t;cSave();try{cStats()}catch(e){}
+ if(DB)rpc('city_event',{p_to:id,p_kind:'help',p_amt:100,p_from:'🎁 '+CITY.name+' racers'}).catch(()=>{});return true}
+const GOTO=o=>{closePanel();raceStart(o)};
+window.RCX={
+ open:rcOpenPanel,close(){closePanel();if(NET&&!RC.on)netClose()},
+ step(d){const R=RR(),mx=tierMax(ppCalc().tot);R.pick=clamp((R.pick<0?mx:R.pick)+d,0,mx);rcPaint()},
+ latest(){RR().pick=-1;rcPaint()},
+ pick(i){RR().pick=i;rcPaint()},
+ tune(k){const R=RR(),ti=curTier(),t=Object.assign({e:0,t:0,a:0},tnOf(ti)),l=t[k],cost=Math.round(2000*(l+1)*(1+ti*.2));if(l>=3||CITY.cash<cost)return;CITY.cash-=cost;t[k]=l+1;R.tune[ti]=t;cSave();try{cStats()}catch(e){}rcPaint()},
+ tt(){const ti=curTier();GOTO({mode:'tt',seed:homeSeed(),name:CITY.name+' Circuit',key:CITY.id+'|t'+ti,laps:99,tier:ti})},
+ gp(){const ti=curTier();GOTO({mode:'gp',seed:homeSeed(),name:CITY.name+' Circuit',key:CITY.id+'|t'+ti,laps:LAPS,tier:ti})},
+ visit(id,name,gp){if(!feeFor(id,name))return;const ti=curTier();GOTO({mode:gp?'gp':'tt',seed:hashStr('race-'+id),name:name+' Circuit',key:id+'|t'+ti,laps:gp?LAPS:99,tier:ti})},
+ host:netHost,joinc(c){netJoin(c)},
+ lobs(){const e=document.getElementById('rcl');if(e)e.textContent='Searching…';(DB?rpc('list_lobbies',{}):Promise.reject()).then(r=>{LOBBY=(Array.isArray(r)?r:[]).filter(l=>!NET)}).catch(()=>{LOBBY=[];PANEL='Open races are not set up yet. The game owner needs to run the updated SQL once.'}).then(rcPaint)},
+join(){const e=document.getElementById('rcj');netJoin(e&&e.value)},
+ nlaps(n){if(NET&&NET.host){NET.laps=n;netLob()}},neq(n){if(NET&&NET.host){NET.equal=n;netLob()}},
+ nstart:netStart,nleave(){netClose();rcPaint()},
+ board(){const ti=curTier(),k=CITY.id+'|t'+ti,e=document.getElementById('rcb');if(e)e.textContent='Loading…';
+  (DB?rpc('lap_board',{p_key:k}):Promise.reject()).then(r=>{BOARD={k,rows:Array.isArray(r)?r:[]}}).catch(()=>{BOARD={k,rows:[]};PANEL='Records are not set up yet. The game owner needs to run the updated SQL once.'}).then(rcPaint)},
+ reset(){const me=RC.me,T=RC.T;if(!RC.on||RC.rt<0)return;T.q(me);const i=me.i;me.x=T.x[i];me.y=T.y[i];me.h=T.hd[i];me.v=0;me.g=0;me.i=-1;me.back=0;me.lps=me.ps;
+  if(RC.mode=='tt'){me.lap=0;me.lapT0=0;RC.rec=[];say('Back on track. Lap cancelled.')}else if(!me.fin){RC.pen+=5;say('Back on track: +5 s penalty')}},
+ exit(){const had=RC.on,tt=RC.mode=='tt'&&RC.me&&RC.me.best<1e8?RC.me.best:0;if(had)rcEnd();const r=document.getElementById('rcres');if(r)r.remove();if(tt)try{cMsg('⏱ Best lap '+rfmt(tt))}catch(e){}rcOpenPanel()},
+ again(){const o=RC.o;rcEnd();if(o)raceStart(o)}};
+/* ---------- entry points inside the city ---------- */
+const oPR=cPanel;
+cPanel=function(){oPR.apply(this,arguments);try{const pn=document.getElementById('cpn');if(!pn||!CITY||window.VIS)return;
+ const has=hasC(),ti=has?curTier():0;
+ const bx=[...pn.children].find(e=>/^\s*🏗 Build/.test(e.textContent));
+ const html='<div class="box"><b>🏁 Race centre</b><div class="mut" style="margin:4px 0">'+(has?'Your car: '+TI[ti].e+' '+TI[ti].n+'. Race for prize money, set lap records, or race other cities.':'Build a Race circuit to race the cars you earn by playing.')+'</div>'+(has?'<button class="p" style="width:100%" onclick="cTogPanel(0);RCX.open()">🏁 Open Race centre</button>':'<button style="width:100%" onclick="CTYPE=\'circuit\';CSEL=null;cTogPanel(0);cPanel();cMsg(\'Selected Race circuit. Tap an empty plot.\')">Select Race circuit ('+cMoney(CT.circuit[2])+')</button>')+'</div>';
+ if(bx)bx.insertAdjacentHTML('afterend',html);else pn.insertAdjacentHTML('beforeend',html)}catch(e){}};
+setInterval(()=>{try{const v=document.getElementById('cvw');let b=document.getElementById('rcb2');
+ if(scr!='city'||!CITY||window.VIS||!v||!hasC()||RC.on){if(b)b.remove();return}
+ if(!b){b=document.createElement('button');b.id='rcb2';b.textContent='🏁';b.title='Race centre';b.style.cssText='position:absolute;right:10px;bottom:138px;z-index:3;width:54px;height:54px;border-radius:50%;font-size:26px;padding:0;background:#d32f2f;border-color:#d32f2f;box-shadow:0 2px 8px rgba(0,0,0,.4)';b.onclick=()=>RCX.open();v.appendChild(b)}}catch(e){}},2000);
+}catch(err){try{console.warn('Flio racing failed to start',err)}catch(_){}}
+})();
+
 
 /* ---------- core: runs for everyone (new buildings + mods) ---------- */
 const CT_ORIG=new Set(Object.keys(CT));
