@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.10.22">
+<meta name="flio-version" content="1.10.23">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"],"park":["Park","🌳",200,1.5,0,15,0,25,"#3fae5a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":true,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516773120,"timeStart":1793520240000,"timeEnd":0,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{"bg":"#5a6496","ac":"#c7bf67","fg":"#ffffff","bk":"#ffff00"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":false,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516285015,"timeStart":1793519940000,"timeEnd":1793516285015,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/"},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -48,6 +48,10 @@ details.fold>summary::after{content:"▾";margin-left:auto;opacity:.6;transition
 details.fold[open]>summary::after{transform:rotate(180deg)}
 details.fold>.fb{padding:0 14px 12px}
 details.fold .box{border:0;padding:0;margin:0;background:none}
+
+#lfrows details.fold{border:0;border-top:2px solid var(--bd);border-radius:0;margin:0;background:none}
+#lfrows details.fold>summary{padding:11px 2px}
+#lfrows details.fold>.fb{padding:0 2px 12px}
 </style></head><body>
 <div class="hd"><h1 id="ttl" style="margin:4px 0 12px">🔒 Flio</h1><button id="snd" onclick="toggleSnd()" style="padding:4px 10px;height:36px" aria-label="Sound">🔊</button></div><div id="vlbl" style="font:600 11px system-ui;opacity:.5;margin:-8px 0 6px 2px"></div>
 <div id="app"></div>
@@ -183,8 +187,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.10.22',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
-const CHANGES=[['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.10.23',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const CHANGES=[['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim()||String((typeof CFG!='undefined'&&CFG.upd)||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -291,17 +295,17 @@ function timeNote(){try{if(TB.open||(scr!='setup'&&scr!='city'))return;var c=tbC
  else if(c.end&&ls('flio_tb_seen',0)==c.end&&ls('flio_tb_end',0)!=c.end)tbPop('<b style="font-size:18px">⏱ The play bonus event has ended</b><p>Thanks for playing! Watch for the next one.</p>',function(){lset('flio_tb_end',c.end)})}catch(e){}}
 TB.pc=0;setTimeout(tbPoll,2500);document.addEventListener('visibilitychange',function(){if(document.visibilityState=='visible')tbPoll()});setInterval(function(){tbTick();timeNote();if(++TB.pc%60==0)tbPoll()},1000);
 function setup(){
- scr='setup';phase='setup';DAILY=null;
+ scr='setup';phase='setup';DAILY=null;try{lfRestore()}catch(e){}
  if(myName&&(!seats[0].n||/^Player \d$/i.test(seats[0].n)))seats[0].n=myName;
  if(NAMELOCK&&seats[0].t=='h')seats[0].n=NAMELOCK;
- const E_=err;app.innerHTML=(err?`<div class="box" style="border-color:#ff4d6d;background:rgba(255,77,109,.18)"><b>⚠️ ${esc(err)}</b></div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+nameBox()+cityBox()+streakBox()+timeBox()+dailyBox()+
+ const E_=err;app.innerHTML=(err?`<div class="box" style="border-color:#ff4d6d;background:rgba(255,77,109,.18)"><b>⚠️ ${esc(err)}</b></div>`:'')+'<div id="updbn">'+updBanner()+'</div>'+lfBox()+(newbie()?'':nameBox())+cityBox()+streakBox()+timeBox()+dailyBox()+
  '<div class="box"><b>🎯 Game options</b><div class="row" style="margin-top:8px"><span style="flex:1">Match length</span><select onchange="MT=+this.value;lset(\'lockflip_mt\',MT)">'+[[0,'Endless']].concat(CFG.matchOpts.map(n=>[n,'First to '+n])).map(o=>'<option value="'+o[0]+'"'+(MT==o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div><div class="row"><span style="flex:1">⚡ Power cards</span><select onchange="PW=+this.value;lset(\'lockflip_pw\',PW)"><option value="1"'+(PW?' selected':'')+'>On</option><option value="0"'+(PW?'':' selected')+'>Off</option></select></div><p class="mut">For the games below. The daily challenge never uses power cards.</p></div>'+
  '<div class="box"><b>🌐 Casual online</b><p class="mut">Each player uses their own phone. One creates a table and shares the 4-digit code.</p><div class="row"><input id="on" placeholder="Your name" maxlength="14" value="'+esc(NAMELOCK||myName)+'"'+(NAMELOCK?' readonly':'')+'></div><div class="row"><button class="p" onclick="goOnline(true)">Create table</button><input id="oc" placeholder="Code" inputmode="numeric" maxlength="6" style="max-width:90px"><button onclick="goOnline(false)">Join</button></div><button class="p" style="width:100%" onclick="randomMatch()">🎲 Random match (play people worldwide)</button></div>'+
  '<div class="box"><b>Same device (pass &amp; play)</b><div style="height:8px"></div>'+
  seats.map((s,i)=>`<div class="row"><input id="n${i}" value="${esc(s.n)}" maxlength="14"><select id="t${i}"><option value="h"${s.t=='h'?' selected':''}>Human</option><option value="b"${s.t=='b'?' selected':''}>Computer</option><option value="o"${s.t=='o'?' selected':''}>Empty</option></select></div>`).join('')+
  '<button class="p" onclick="start()">Start game</button><p class="mut" id="err"></p></div>'+
  '<div class="box"><b>How to play</b><p class="mut">Everyone has cards 0–9, face down. The Locker secretly picks a trap number. Take turns flipping one of your cards to add its value. Flip the trap and the round ends and your round score is 0. Rank bonus: +5, +3, +1. The Locker gets +3 if the trap catches someone. Totals carry over between rounds until someone reaches the match target.</p><p class="mut"><b>🏪 Business Showdown:</b> after any round, the host (or the single device) taps Run a business, online or pass &amp; play. Your total score becomes starting cash. Over 6 quarters you type in your own price, marketing and quality spend, staff count and loan amount, and compete with every player for customers. Random events, taxes and interest apply. Highest net worth wins.</p><p class="mut"><b>⚡ Power cards:</b> everyone gets 2 each round. Use one before you flip, once per turn. ⏭ Skip passes your turn. ✖2 Double counts your next flip twice. 🛡 Shield saves you from one trap hit. ❄️ Freeze makes the next player lose a turn.</p></div>'+updBox()+board()+setupBox();
- try{foldHome()}catch(e){}err='';if(E_){try{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}catch(e){}}
+ try{foldHome()}catch(e){}try{tutAuto()}catch(e){}err='';if(E_){try{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}catch(e){}}
 }
 
 /* ---- simple layout: boxes fold into one-line rows ---- */
@@ -321,14 +325,73 @@ function foldHome(){try{if(!app)return;[...app.children].forEach(el=>{try{
  if(el.id==='tbbox'){if(el.textContent.trim())foldUnit(el,'⏱ Play-time bonus',1);return}
  if(el.tagName!=='DIV'||!el.classList.contains('box'))return;
  const b=[...el.children].find(c=>c.tagName==='B')||el.querySelector('b'),t=b?b.textContent.trim():'';
- if(!t||/^(👤|🌆|⚠)/.test(t)||el.querySelector('[onclick*="dsClaim"]'))return;
+ if(!t||/^(👤|🌆|⚠|🔒)/.test(t)||el.querySelector('[onclick*="dsClaim"]'))return;
  if(b&&b.parentNode===el)b.remove();
- foldUnit(el,t,0)}catch(e){}})}catch(e){}}
+ foldUnit(el,t,0)}catch(e){}});const rows=document.getElementById('lfrows');if(rows)[...app.children].forEach(el=>{if(el.tagName==='DETAILS'&&el.classList.contains('fold')){const sm=el.querySelector('summary'),t=sm?sm.textContent:'';if(LFT.indexOf(t)>=0){el.classList.add('sub');rows.appendChild(el)}}})}catch(e){}}
 function foldPanel(){try{const pn=document.getElementById('cpn');if(!pn)return;[...pn.children].forEach(el=>{try{
  if(el.tagName!=='DIV'||!el.classList.contains('box')||el.classList.contains('mut'))return;
  const b=[...el.children].find(c=>c.tagName==='B'),t=b?b.textContent.trim():'';
  if(!t||/^(🏗|🌙 Welcome|📰|🤝)/.test(t)||/ level \d\/3/.test(t))return;
  b.remove();foldUnit(el,t,0)}catch(e){}})}catch(e){}}
+
+/* ===== v1.10.22: Lock & Flip box, first game, tutorial, privacy screen ===== */
+const LFT=['📅 Daily challenge','🎯 Game options','🌐 Casual online','Same device (pass & play)','How to play'];
+let __ftmp=null;
+function newbie(){try{return !(NAMELOCK||CITY||ls('flio_g1',0)||Object.keys(lb()).length)}catch(e){return false}}
+function lfRestore(){if(__ftmp){MT=__ftmp.mt;PW=__ftmp.pw;__ftmp=null}}
+function lfBox(){
+ const nb=newbie();
+ return '<div class="box" id="lfbox"><b style="font-size:19px">🔒 Lock &amp; Flip</b><p class="mut" style="margin:4px 0 8px">Flip your cards, collect points and avoid the secret trap number.</p>'+
+ (nb?'<button class="p" style="width:100%;padding:14px;font-size:17px" onclick="quickPlay()">▶ Play your first game</button><button style="width:100%;margin-top:8px" onclick="tutOpen()">📖 How to play</button><p class="mut" style="margin:8px 0 0">You will pick your player name after your first game.</p>'
+  :'<div class="row" style="margin:0 0 6px"><button class="p" style="flex:1" onclick="quickPlay()">▶ Play vs computer</button><button onclick="tutOpen()">📖 How to play</button></div>')+
+ '<div id="lfrows" style="margin-top:6px"></div></div>';
+}
+function quickPlay(){
+ try{tutClose()}catch(e){}
+ const nb=newbie();
+ if(nb&&!__ftmp){__ftmp={mt:MT,pw:PW};MT=0;PW=0}
+ const nm=NAMELOCK||((myName&&!/^Player \d$/i.test(myName))?myName:'You');
+ const st=[{n:nm,t:'h'},{n:'Computer',t:'b'},{n:'Computer 2',t:'b'}];
+ ONL=null;DAILY=null;P=st.map(x=>({name:x.n,bot:x.t=='b',total:0}));
+ locker=nb?1:0;round=0;gid++;scr='game';newRound();
+}
+function claimBox(){return (NAMELOCK||DAILY)?'':nameBox()}
+function lockCover(){
+ if(ONL||P.filter(p=>!p.bot).length<2)return;
+ const nx=P[turn],who=nx&&!nx.bot?nx.name:'';
+ const d=document.createElement('div');d.id='flcover';d.style.cssText='position:fixed;inset:0;z-index:450;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center';
+ d.innerHTML='<div class="box" style="max-width:380px;width:100%;margin:0"><div style="font-size:64px">🔒</div><h2 style="margin:6px 0">Number locked!</h2><p class="mut">Nobody can see it. '+(who?'Pass the device to <b>'+esc(who)+'</b>.':'Continue the game.')+'</p><button class="p" style="width:100%" onclick="document.getElementById(\'flcover\').remove()">'+(who?'I’m '+esc(who)+', continue':'Continue')+'</button></div>';
+ document.body.appendChild(d)}
+const TUT=[
+ ['🔒','Welcome to Lock & Flip','A quick card game for 2 to 4 players. You can play against the computer, on one phone, or online. Learn it in a minute, then play your first game.'],
+ ['🃏','Your cards','Everyone has ten face-down cards numbered 0 to 9. On your turn, tap one card to flip it. Its number is added to your score for the round.'],
+ ['🔒','The Locker and the trap','Each round one player is the Locker. The Locker secretly locks one number from 0 to 9. That is the trap. The other players are never told which number it is.'],
+ ['💥','Do not flip the trap!','Take turns flipping one card. If you flip the trap number, the round ends and your round score becomes 0. Flip safely to keep adding points.'],
+ ['🏆','Points and bonuses','When the round ends, players are ranked by round score. 1st, 2nd and 3rd place get +5, +3 and +1 bonus points. The Locker gets +3 if the trap catches someone. Totals carry over until someone reaches the match target.'],
+ ['⚡','Power cards','Each round everyone gets 2 power cards. Use one before you flip, once per turn. ⏭ Skip your turn. ✖2 Double your next flip. 🛡 Shield saves you from one trap hit. ❄️ Freeze makes the next player lose a turn.'],
+ ['🎲','Twists and daily challenge','From round 2 a random twist can change the rules. The 📅 daily challenge gives everyone the same cards once a day, and the 🔥 daily bonus rewards you for coming back.'],
+ ['🌐','Ways to play','Play against the computer, pass and play on one phone, or online: create a table and share the 4-digit code, or tap Random match to meet players worldwide.'],
+ ['🏷','Your name and rankings','After your first game you can claim a unique player name. Your points then appear in the world ranking and the daily leaderboard.'],
+ ['🏪','Business Showdown','After any round you can run a business. Over 6 quarters you set price, marketing, quality, staff and loans. The highest net worth wins, and your money can start your city.'],
+ ['🌆','Your city','Build homes, shops, power and roads. Your city keeps earning even when the game is closed. Open 📦 mystery chests, spin the 🎡 lucky wheel, claim daily gifts and climb the 🌍 world ranking. Tap 🎮 inside your city for the Play Hub.'],
+ ['▶','Ready to play?','Let us start with one quick game. It uses easy settings: no power cards and just one round.']
+];
+let TUTI=0;
+function tutOpen(){TUTI=0;tutPaint()}
+function tutClose(){try{lset('flio_tut',1)}catch(e){}const d=document.getElementById('fltut');if(d)d.remove()}
+function tutGo(k){TUTI=Math.max(0,Math.min(TUT.length-1,TUTI+k));tutPaint()}
+function tutEnd(){tutClose();if(newbie())quickPlay()}
+function tutPaint(){
+ let d=document.getElementById('fltut');
+ if(!d){d=document.createElement('div');d.id='fltut';d.style.cssText='position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))';document.body.appendChild(d)}
+ const s=TUT[TUTI],last=TUTI==TUT.length-1;
+ d.innerHTML='<div class="box" style="max-width:420px;width:100%;margin:0;text-align:center;max-height:100%;overflow:auto"><div style="display:flex;justify-content:space-between;align-items:center"><span class="mut">'+(TUTI+1)+' / '+TUT.length+'</span><button onclick="tutClose()" style="padding:6px 12px">Skip</button></div>'+
+ '<div style="font-size:64px;line-height:1.25">'+s[0]+'</div><h2 style="margin:4px 0 8px">'+s[1]+'</h2><p style="line-height:1.5;margin:0 0 14px">'+s[2]+'</p>'+
+ '<div style="display:flex;gap:6px;justify-content:center;margin-bottom:14px">'+TUT.map((x,i)=>'<span style="width:8px;height:8px;border-radius:50%;background:'+(i==TUTI?'var(--ac)':'var(--bd)')+';opacity:'+(i==TUTI?1:.35)+'"></span>').join('')+'</div>'+
+ '<div class="row" style="margin:0;justify-content:center">'+(TUTI>0?'<button onclick="tutGo(-1)">◀ Back</button>':'')+(last?'<button class="p" style="flex:1" onclick="tutEnd()">'+(newbie()?'▶ Play my first game':'Done')+'</button>':'<button class="p" style="flex:1" onclick="tutGo(1)">Next ▶</button>')+'</div></div>'}
+function tutAuto(){
+ if(scr!='setup'||ls('flio_tut',0)||!newbie()||location.hash=='#owner'||document.getElementById('fltut'))return;
+ setTimeout(()=>{try{if(scr=='setup'&&!document.getElementById('fltut')&&!ls('flio_tut',0))tutOpen()}catch(e){}},500)}
 function saveName(nm){if(NAMELOCK&&nm!==NAMELOCK)nm=NAMELOCK;myName=nm;lset('lockflip_name',nm)}
 function start(){
  seats=seats.map((s,i)=>({n:$('#n'+i).value.trim()||'Player '+(i+1),t:$('#t'+i).value}));
@@ -418,7 +481,7 @@ function newRound(){
 }
 function pickTrap(n){
   if(ONL&&!ONL.host){send({t:'trap',pid:PID,n});return}
- trap=n;beginPlay();
+ trap=n;beginPlay();try{lockCover()}catch(e){}
 }
 function beginPlay(){phase='play';pwUsed=false;turn=(locker+1)%P.length;sync();botCheck()}
 function canMove(i){return P[i].cards.some(c=>!c.o&&!(i==locker&&c.v==trap))}
@@ -839,6 +902,7 @@ function submitScore(n,pts){
  flushQueue().then(loadWorld);
 }
 function onOver(){
+ try{lset('flio_g1',1)}catch(e){}
  if(DAILY){dailyDone();return}
  const mine=ONL?[ONL.me]:V.P.map((p,i)=>p.b?-1:i).filter(i=>i>=0);
  const db=lb();
@@ -1047,7 +1111,7 @@ function render(){
   if(DAILY)h+=dailyResult();
   else h+='<div class="box">'+(fin?'<div class="trophy">🏆</div><h2 style="text-align:center;margin:4px 0 10px">'+esc(V.P[V.mw].n)+' wins the match!</h2>':'')+(V.mt&&!fin&&topT>=V.mt?'<p class="mut">Tied at the top — play on!</p>':'')+'<b>Round result</b><table><tr><th>#</th><th>Player</th><th>Score</th><th>Bonus</th></tr>'+V.res.map(x=>`<tr><td>${x.r}</td><td>${esc(V.P[x.i].n)}${V.P[x.i].h?' 💥':''}</td><td>${x.s}</td><td>+${x.b}</td></tr>`).join('')+'</table><div style="height:10px"></div>'+
   (host?(fin?'<button class="p" onclick="rematch()">Play again</button> ':'<button class="p" onclick="nextRound()">Next round</button> '):'<span class="mut">Waiting for the host…</span> ')+
-  (ONL?'<button onclick="leave()">Leave</button>'+(host?' <button class="p" onclick="bizStart()">🏪 Run a business</button>':''):'<button onclick="setup()">New game</button> <button class="p" onclick="bizStart()">🏪 Run a business</button>')+'</div>'+board();
+  (ONL?'<button onclick="leave()">Leave</button>'+(host?' <button class="p" onclick="bizStart()">🏪 Run a business</button>':''):'<button onclick="setup()">New game</button> <button class="p" onclick="bizStart()">🏪 Run a business</button>')+'</div>'+claimBox()+board();
  }
  PREV={g:V.g,rd:V.rd,o:cur};
  app.innerHTML=h;
