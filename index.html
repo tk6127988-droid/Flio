@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.11.2">
+<meta name="flio-version" content="1.11.3">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"light":{},"dark":{"bg":"#5a6496","ac":"#c7bf67","fg":"#ffffff","bk":"#ffff00"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":false,"timeEvery":3,"timeAmt":50,"timeCap":30,"timeId":1793516285015,"timeStart":1793519940000,"timeEnd":1793516285015,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":1000,"matMax":2000},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"dark":{"bg":"#07161f","fg":"#f4fbff","card":"#0f2a38","mut":"#9fc7d6","ac":"#e8590c","ok":"#3ddc97","bd":"#1f8fa8","bk":"#0e7490"},"light":{"bg":"#eefaff","fg":"#0b2530","card":"#ffffff","mut":"#3f5f6d","ac":"#b85c00","ok":"#0a8f5a","bd":"#0b4f66","bk":"#0e7490"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":true,"timeEvery":3,"timeAmt":200,"timeCap":30,"timeId":1793771057782,"timeStart":0,"timeEnd":0,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":1000,"matMax":2000},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -187,7 +187,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.11.2',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const VER='1.11.3',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
 const CHANGES=[['1.11.0','🏁 Race circuit: build one in your city. Endless unique cars (designs, engines and engine sounds) are earned from time played, money, city size, world ranking and wins. Realistic car physics, Grand Prix vs 5 drivers, time trial with ghost, tuning, lap records, races in other cities and live online races with collisions.'],['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -3232,6 +3232,145 @@ applyCfg();runMods();
 {const oPF=cPanel;cPanel=function(){const r=oPF.apply(this,arguments);try{foldPanel()}catch(e){}return r}}
 
 
+/* ---------- CO-OP CITY: two players pool money and build one city together, with live chat ---------- */
+let CO=null,COCH=[],COUNREAD=0,COCHOPEN=false;const CO_K='flio_coop_v1';
+const coEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const coMe=()=>NAMELOCK||myName||'Player';
+function coPack(c){const g=[];c.g.forEach((b,i)=>{if(b)g.push([i,b])});return Object.assign({},c,{g:null,gs:g})}
+function coUnpack(p,into){const n=p.n||96,g=Array(n*n).fill(null);(p.gs||[]).forEach(a=>{g[a[0]]=a[1]});const o=Object.assign({},p,{g});delete o.gs;if(into){Object.keys(into).forEach(k=>{if(!(k in o))delete into[k]});Object.assign(into,o);return into}return o}
+const coLive=()=>!!CO&&(CO.host?(CO.conns||[]).some(c=>c.open):!!(CO.conn&&CO.conn.open));
+function coSend(o,ex){try{if(!CO)return;if(CO.host)(CO.conns||[]).forEach(c=>{if(c.open&&c!==ex)c.send(o)});else if(CO.conn&&CO.conn.open)CO.conn.send(o)}catch(e){}}
+function coTo(c,o){try{if(c&&c.open)c.send(o)}catch(e){}}
+function coStore(){if(!CO||!CO.city)return;lset(CO_K,{city:coPack(CO.city),put:CO.put,names:CO.names,code:CO.code})}
+function coSnap(){coSend({t:'cs',city:coPack(CO.city),put:CO.put,names:CO.names})}
+function coInView(){return CO&&CITY&&CITY===CO.city}
+function coRefresh(full){if(scr=='city'&&coInView()){try{cStats();if(full)cPanel()}catch(e){}}coBox()}
+/* run an action on the shared city, then send only what it changed */
+function coAct(fn,a){
+ if(!coInView())return fn.apply(null,a);
+ const C=CITY,pre=C.g.map(b=>b?JSON.stringify(b):''),c0=C.cash,m0=C.mat||0,r=fn.apply(null,a),ch=[];
+ C.g.forEach((b,i)=>{const s=b?JSON.stringify(b):'';if(s!==pre[i])ch.push([i,b||null])});
+ const dc=C.cash-c0,dm=(C.mat||0)-m0;
+ if(coLive()&&(ch.length||dc||dm))coSend({t:'cop',ch,dc,dm,by:coMe()});
+ return r}
+function coApply(d){const C=CO.city;(d.ch||[]).forEach(a=>{C.g[a[0]]=a[1]});C.cash+=d.dc||0;if(C.mat!=null)C.mat+=d.dm||0}
+function coOn(d,c){
+ if(!CO)return;
+ if(d.t=='cj'&&CO.host){
+  if((CO.conns||[]).filter(x=>x.open&&x.pid).length>=3||(CO.conns||[]).some(x=>x!==c&&x.pid==d.pid)){coTo(c,{t:'cno'});return}c.pid=d.pid;
+  const put=Math.max(0,Math.floor(+d.put)||0);CO.names[d.pid]=String(d.name||'Player').slice(0,14);CO.put[d.pid]=(CO.put[d.pid]||0)+put;CO.guest=d.pid;
+  CO.city.cash+=put;coStore();coSnap();coSys(CO.names[d.pid]+' joined and added '+cMoney(put)+' 🤝');coRefresh(1)}
+ else if(d.t=='cs'&&!CO.host){
+  const first=!CO.city;if(first&&CO.pend){if(CITY){CITY.cash=Math.max(0,CITY.cash-CO.pend);cSave()}CO.pend=0}
+  if(CO.city)coUnpack(d.city,CO.city);else CO.city=coUnpack(d.city);CO.put=d.put;CO.names=d.names;coStore();
+  if(first){coSys('Connected! You are building together 🤝');CO.ready=1;coMenu()}coRefresh(first)}
+ else if(d.t=='cno'&&!CO.host){coFail('That city already has two players.')}
+ else if(d.t=='cop'){
+  if(CO.host){if(CO.city.cash+(d.dc||0)<0){coSnap();return}coApply(d);coStore();coSnap();coRefresh(1)}
+  else if(CO.city){coApply(d);coRefresh(1)}}
+ else if(d.t=='ca'&&CO.host){const n=Math.max(0,Math.floor(+d.amt)||0);if(n&&CO.names[d.pid]){CO.city.cash+=n;CO.put[d.pid]=(CO.put[d.pid]||0)+n;coStore();coSnap();coSys(CO.names[d.pid]+' added '+cMoney(n)+' 💰');coRefresh(1)}}
+ else if(d.t=='cw'&&CO.host){const pid=c.pid,sh=coShare(pid),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[pid]=0;coTo(c,{t:'cwr',amt});coStore();coSnap()}
+ else if(d.t=='cwr'&&!CO.host){coCashed(d.amt)}
+ else if(d.t=='chat'){coChatAdd(d.n,d.m,0);if(CO.host)coSend(d,c)}
+ else if(d.t=='bye'){coSys((d.n||'A player')+' left the session.');if(CO.host){if(c){c.pid=null;CO.conns=CO.conns.filter(x=>x!==c)}coSnap()}else if(d.host){CO.conn=null}coBox();coChatPaint()}}
+function coShare(pid){const t=Object.values(CO.put).reduce((a,b)=>a+b,0)||1;return (CO.put[pid]||0)/t}
+function coCashed(amt){if(!amt){coSys('Nothing to withdraw.');return}try{if(!CITY||coInView()){const o=ls('flio_city_v1',null);if(o){o.cash+=amt;lset('flio_city_v1',o)}}else{CITY.cash+=amt;cSave()}}catch(e){}coSys('You took '+cMoney(amt)+' back to your own city 💸');coBox()}
+function coSys(m){coChatAdd('',m,1)}
+function coChatAdd(n,m,sys){COCH.push({n:String(n||'').slice(0,14),m:String(m).slice(0,300),s:sys});if(COCH.length>80)COCH.shift();if(!COCHOPEN&&!sys)COUNREAD++;coChatPaint()}
+function coChatSend(){const i=document.getElementById('cochi');if(!i)return;const m=i.value.trim();if(!m)return;i.value='';
+ if(coLive())coSend({t:'chat',n:coMe(),m});else if(ONL&&ONL.R){send({t:'chat',n:coMe(),m,pid:PID});}
+ coChatAdd(coMe(),m,0);i.focus()}
+function coChatPaint(){
+ let b=document.getElementById('cochb');
+ const live=coLive()||(ONL&&ONL.seats&&ONL.seats.length>1);
+ if(!live&&!COCHOPEN){if(b)b.remove();return}
+ if(!b){b=document.createElement('div');b.id='cochb';b.style.cssText='position:fixed;right:10px;bottom:'+(scr=='city'?'64px':'10px')+';z-index:90;font-size:13px;max-width:min(92vw,330px)';document.body.appendChild(b)}
+ b.style.bottom=scr=='city'?'64px':'10px';
+ const log=COCH.slice(-40).map(x=>x.s?'<div style="opacity:.7;text-align:center">'+coEsc(x.m)+'</div>':'<div><b>'+coEsc(x.n)+':</b> '+coEsc(x.m)+'</div>').join('');
+ const bd=document.getElementById('cochl');const keep=bd?bd.scrollTop:0,stick=!bd||bd.scrollTop+bd.clientHeight>=bd.scrollHeight-30;
+ const hasIn=document.getElementById('cochi'),val=hasIn?hasIn.value:'',foc=hasIn&&document.activeElement===hasIn;
+ b.innerHTML=COCHOPEN?'<div style="background:var(--card);color:var(--fg);border:2px solid var(--bd);border-radius:12px;width:min(92vw,330px);padding:8px;box-shadow:0 4px 18px rgba(0,0,0,.35)"><div class="row" style="margin-bottom:4px"><b style="flex:1">💬 Chat</b><button style="padding:2px 8px" onclick="coChatTog()">✕</button></div><div id="cochl" style="height:150px;overflow-y:auto;background:var(--bg);border-radius:8px;padding:6px;margin-bottom:6px;font-weight:600">'+(log||'<div class="mut">Say hi to your partner 👋</div>')+'</div><div class="row" style="margin:0"><input id="cochi" maxlength="300" placeholder="Type a message…" onkeydown="if(event.key===\'Enter\')coChatSend()"><button class="p" onclick="coChatSend()">Send</button></div></div>':'<button class="p" style="border-radius:999px;padding:10px 14px" onclick="coChatTog()">💬 Chat'+(COUNREAD?' <span style="background:#fff;color:var(--ac);border-radius:9px;padding:0 6px">'+COUNREAD+'</span>':'')+'</button>';
+ const l=document.getElementById('cochl');if(l)l.scrollTop=stick?l.scrollHeight:keep;
+ const ni=document.getElementById('cochi');if(ni){ni.value=val;if(foc)ni.focus()}}
+function coChatTog(){COCHOPEN=!COCHOPEN;if(COCHOPEN)COUNREAD=0;const b=document.getElementById('cochb');if(b)b.remove();coChatPaint();if(COCHOPEN){const i=document.getElementById('cochi');if(i)i.focus()}}
+/* ---- connection ---- */
+async function coPeerOk(){if(typeof Peer==='undefined'&&window.__peerP)await window.__peerP;return typeof Peer!=='undefined'}
+function coFail(m){coClose(1);coMsg=m;coMenu()}
+let coMsg='';
+function coClose(quiet){try{coSend({t:'bye',n:coMe(),host:CO&&CO.host?1:0})}catch(e){}try{CO&&CO.peer&&CO.peer.destroy()}catch(e){}const c=CO&&CO.city;CO=null;if(!quiet)coChatPaint();coBox()}
+function coPut(){const e=document.getElementById('coput');const v=Math.floor(+(e&&e.value)||0);return Math.max(0,Math.min(v,coAvail()))}
+const coAvail=()=>CITY&&!coInView()?Math.floor(CITY.cash):3000;
+async function coHost(){
+ if(!NAMELOCK&&!myName){coMsg='Choose your player name first (top of the home page).';return coMenu()}
+ if(!await coPeerOk()){coMsg='Online play could not load. Check your connection.';return coMenu()}
+ const put=coPut(),code=String(Math.floor(1000+Math.random()*9000)),sv=ls(CO_K,null);let peer;
+ try{peer=new Peer('flio-coop-'+code)}catch(e){coMsg='Could not start online play.';return coMenu()}
+ const city=sv&&sv.city?coUnpack(sv.city):(wildNew(coMe()+' & Co',0));
+ CO={host:1,peer,code,city,put:sv&&sv.put?sv.put:{},names:sv&&sv.names?sv.names:{},guest:null,conn:null,conns:[]};
+ CO.names[PID]=coMe();CO.put[PID]=(CO.put[PID]||0)+put;CO.city.cash+=put;
+ if(put&&CITY&&!coInView()){CITY.cash-=put;cSave()}
+ coMsg='';peer.on('open',()=>{CO.ready=1;coStore();coMenu()});
+ peer.on('error',e=>{coFail(e.type=='unavailable-id'?'That code is taken. Try again.':'Connection problem: '+(e.type||'unknown'))});
+ peer.on('connection',c=>{CO.conns.push(c);c.on('data',d=>coOn(d||{},c));c.on('close',()=>{if(CO){const nm=c.pid&&CO.names[c.pid];CO.conns=CO.conns.filter(x=>x!==c);if(nm)coSys(nm+' disconnected.');c.pid=null;coBox();coChatPaint()}})});
+ coMenu()}
+async function coJoin(){
+ if(!NAMELOCK&&!myName){coMsg='Choose your player name first (top of the home page).';return coMenu()}
+ const code=((document.getElementById('cocode')||{}).value||'').trim();if(!code){coMsg='Enter the 4-digit code first.';return coMenu()}
+ if(!await coPeerOk()){coMsg='Online play could not load. Check your connection.';return coMenu()}
+ const put=coPut();let peer;try{peer=new Peer()}catch(e){coMsg='Could not start online play.';return coMenu()}
+ CO={host:0,peer,code,city:null,put:{},names:{},pend:put,conn:null};let ok=0;
+ peer.on('error',e=>coFail(e.type=='peer-unavailable'?'No co-op city with that code. Ask your partner to open the co-op menu first.':'Connection problem: '+(e.type||'unknown')));
+ peer.on('open',()=>{const c=peer.connect('flio-coop-'+code,{reliable:true});CO.conn=c;c.on('open',()=>{ok=1;c.send({t:'cj',pid:PID,name:coMe(),put})});c.on('data',d=>coOn(d||{}));c.on('close',()=>{if(CO){coSys('The host closed the session.');CO.conn=null;coBox();coChatPaint()}})});
+ setTimeout(()=>{if(CO&&!ok&&CO.peer===peer)coFail('Could not reach that city.')},12000);coMenu()}
+/* ---- UI ---- */
+function coView(){if(!CO||!CO.city)return;if(!coInView()){CO.mine=CITY;CITY=CO.city;GN=CITY.n;try{wildUp&&0}catch(e){}}coMenuClose();cityOpen()}
+function coBack(){if(CO&&CO.mine!==undefined&&coInView()){const m=CO.mine;CO.mine=undefined;try{cSave()}catch(e){}CITY=m;if(CITY)GN=CITY.n||GN}}
+function coMenuClose(){const e=document.getElementById('comod');if(e)e.remove()}
+function coMenu(){
+ let d=document.getElementById('comod');if(!d){d=document.createElement('div');d.id='comod';d.style.cssText='position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:12px';document.body.appendChild(d)}
+ const av=coAvail();let h='<div class="box" style="width:min(100%,420px);max-height:92vh;overflow-y:auto;margin:0"><div class="row"><b style="flex:1;font-size:18px">🤝 Build a city together</b><button onclick="coMenuClose()">✕</button></div>';
+ if(coMsg)h+='<div class="box" style="border-color:var(--ac)">'+coEsc(coMsg)+'</div>';
+ if(CO&&CO.ready&&CO.city){
+  const ids=Object.keys(CO.names),tot=Object.values(CO.put).reduce((a,b)=>a+b,0);
+  h+='<p class="mut">'+(CO.host?'Code to share: <b style="font-size:26px;letter-spacing:3px;color:var(--fg)">'+coEsc(CO.code)+'</b>':'Joined city <b>'+coEsc(CO.code)+'</b>')+'</p><p><b>🏙 '+coEsc(CO.city.name)+'</b> · 💰 '+cMoney(CO.city.cash)+'</p><table>'+ids.map(p=>'<tr><td>'+coEsc(CO.names[p])+(p==PID?' (you)':'')+'</td><td>put in '+cMoney(CO.put[p]||0)+'</td><td>'+Math.round(100*(CO.put[p]||0)/(tot||1))+'%</td></tr>').join('')+'</table><p class="mut">'+(coLive()?'🟢 '+(CO.host?(CO.conns.filter(x=>x.open&&x.pid).length+1)+' players online':'Connected')+'. Money, buildings and chat are shared live.':'⚪ Waiting for players'+(CO.host?' (up to 4) to enter the code…':' …'))+'</p>';
+  h+='<div class="row"><span style="flex:1">➕ Add more money (yours: '+cMoney(coPers()?coPers().cash:0)+')</span></div><div class="row"><input id="coadd" type="number" min="1" placeholder="Amount"><button class="p" onclick="coAdd()">Add</button></div>';h+='<button class="p" style="width:100%;margin-bottom:6px" onclick="coView()">🏗 Open shared city</button>';
+  h+='<button style="width:100%;margin-bottom:6px" onclick="coChatTog();coMenuClose()">💬 Open chat</button>';
+  h+='<button style="width:100%;margin-bottom:6px" onclick="coWithdraw()">💸 Take my share of the money back</button><button style="width:100%" onclick="coClose();coMenuClose()">Leave session</button>'}
+ else if(CO){h+='<p class="mut">Connecting…</p><button onclick="coClose();coMenu()">Cancel</button>'}
+ else{
+  h+='<p class="mut">Pool your money into <b>one shared city</b>. Up to 4 players. You all build, upgrade and sell in the same live city and split the work. Chat while you play.</p>'+
+  '<div class="row"><span style="flex:1">💰 My contribution (max '+cMoney(av)+')'+(CITY&&!coInView()?'':'<br><span class="mut">starter money, no city yet</span>')+'</span><input id="coput" type="number" min="0" max="'+av+'" value="'+Math.floor(av/2)+'" style="max-width:120px"></div>'+
+  '<button class="p" style="width:100%;margin-bottom:10px" onclick="coHost()">🏗 Start a shared city (get a code)</button>'+
+  '<div class="row"><input id="cocode" inputmode="numeric" maxlength="4" placeholder="Partner’s 4-digit code"><button class="p" onclick="coJoin()">Join</button></div>'+
+  (ls(CO_K,null)?'<p class="mut">You have a saved shared city. Starting a new session reopens it.</p>':'')}
+ d.innerHTML=h+'</div>';coMsg=''}
+const coPers=()=>coInView()?CO.mine:CITY;
+function coAdd(){const n=Math.floor(+((document.getElementById('coadd')||{}).value)||0),p=coPers();
+ if(!CO||!CO.ready||!CO.city)return;
+ if(!p){coMsg='You need your own city with money first.';return coMenu()}
+ if(n<=0||n>Math.floor(p.cash)){coMsg='You can add up to '+cMoney(p.cash)+' from your own city.';return coMenu()}
+ if(!CO.host&&!(CO.conn&&CO.conn.open)){coMsg='Not connected to the host.';return coMenu()}
+ p.cash-=n;lset('flio_city_v1',p);
+ if(CO.host){CO.city.cash+=n;CO.put[PID]=(CO.put[PID]||0)+n;coStore();coSnap();coSys('You added '+cMoney(n)+' 💰')}
+ else{coSend({t:'ca',amt:n,pid:PID});coSys('You added '+cMoney(n)+' 💰')}
+ coRefresh(1);coMenu()}
+function coWithdraw(){if(!CO||!CO.ready)return;if(CO.host){const sh=coShare(PID),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[PID]=0;coStore();coSnap();coCashed(amt);coMenu()}else if(coLive())coSend({t:'cw'});else coSys('Not connected to the host.')}
+function coBox(){const d=document.getElementById('comod');if(d&&CO)coMenu()}
+/* ---- hooks ---- */
+(function(){
+ ['cBuild','cUp','cSell'].forEach(n=>{const o=window[n];if(typeof o!='function')return;window[n]=function(){return coAct(o,arguments)}});
+ const oSv=window.cSave;window.cSave=function(){if(CO&&CO.city&&CITY===CO.city){lset('flio_city_v1_unused_',0);try{localStorage.removeItem('flio_city_v1_unused_')}catch(e){}coStore();return}return oSv.apply(this,arguments)};
+ const oBk=window.cityBack;window.cityBack=function(){coBack();return oBk.apply(this,arguments)};
+ const oCB=window.cityBox;window.cityBox=function(){return oCB.apply(this,arguments)+'<div class="box"><b>🤝 Build a city together</b><p class="mut">Pool money with a friend and build one shared city. Includes live chat.</p><button class="p" onclick="coMenu()">Start / join co-op city</button>'+(CO&&CO.city?' <button onclick="coView()">Open shared city</button>':'')+'</div>'};
+ const oPn=window.cPanel;window.cPanel=function(){const r=oPn.apply(this,arguments);try{const pn=document.getElementById('cpn');if(pn&&!pn.querySelector('#copn')){const x=document.createElement('div');x.id='copn';x.className='box';x.innerHTML='<b>🤝 Co-op</b> <span class="mut">'+(coInView()?'shared city · '+(coLive()?'🟢 players online':'⚪ nobody else online'):'pool money with a friend')+'</span><div class="row" style="margin-top:4px"><button onclick="coMenu()">'+(CO?'Co-op menu':'Build together')+'</button>'+(coLive()||COCH.length?'<button onclick="coChatTog()">💬 Chat</button>':'')+'</div>';pn.appendChild(x)}}catch(e){}return r};
+ /* chat on normal online tables too */
+ const oRv=window.recv;window.recv=function(d){if(d&&d.t=='chat'&&ONL){if(d.pid==PID)return;coChatAdd(d.n,d.m,0);if(ONL.host)try{ONL.R.emit('m',d)}catch(e){}return}return oRv.apply(this,arguments)};
+ setInterval(()=>{if(CO&&CO.host&&CO.city&&!coInView()){const t=CITY,g=GN;CITY=CO.city;GN=CITY.n;try{cTick()}catch(e){}CITY=t;GN=g}
+  if(CO&&CO.host&&coLive()&&CO.city)coSnap();
+  else if(CO&&CO.city&&!CO.host&&coInView()){try{cTick()}catch(e){}}
+  if(CO&&CO.city&&coInView())coRefresh(0);
+  if(ONL&&ONL.seats&&ONL.seats.length>1&&!document.getElementById('cochb'))coChatPaint()},4000);
+})();
 </script>
 <script>
 /* Non-blocking library loader: the game starts even if a CDN is slow or blocked. */
