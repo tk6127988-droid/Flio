@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.11.4">
+<meta name="flio-version" content="1.11.5">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"dark":{"bg":"#07161f","fg":"#f4fbff","card":"#0f2a38","mut":"#9fc7d6","ac":"#e8590c","ok":"#3ddc97","bd":"#1f8fa8","bk":"#0e7490"},"light":{"bg":"#eefaff","fg":"#0b2530","card":"#ffffff","mut":"#3f5f6d","ac":"#b85c00","ok":"#0a8f5a","bd":"#0b4f66","bk":"#0e7490"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":true,"timeEvery":3,"timeAmt":200,"timeCap":30,"timeId":1793771057782,"timeStart":0,"timeEnd":0,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":1000,"matMax":2000},"auth":null}</script>
 
@@ -69,6 +69,28 @@ let seats=ls('lockflip_seats',null)||[{n:'Player 1',t:'h'},{n:'Computer',t:'b'},
 let P=[],locker=0,trap=null,turn=0,phase='setup',res=null,round=0,gid=0,V=null;
 let ONL=null,scr='setup',DB=null,UID=null,WORLD=null,scored='',err='',SEC=null,myName=ls('lockflip_name','');
 const PID=Math.random().toString(36).slice(2,9);
+/* ===== YOUR OWN TURN SERVER (paste your 3 values between the quotes; leave empty to use the free public ones) =====
+   urls: one or more addresses separated by commas, e.g. 'turn:global.relay.metered.ca:80,turn:global.relay.metered.ca:443,turns:global.relay.metered.ca:443?transport=tcp'
+   username and credential: from your TURN provider (Metered, Twilio, etc.) */
+const MY_TURN={urls:'turn:global.relay.metered.ca:80,turn:global.relay.metered.ca:80?transport=tcp,turn:global.relay.metered.ca:443,turns:global.relay.metered.ca:443?transport=tcp',username:'7fe081e0e960b599b4d65692',credential:'NlRmWvmuHPm+Dx3m'};
+const MYICE=(()=>{const u=String(MY_TURN.urls||'').split(',').map(x=>x.trim()).filter(Boolean);if(!u.length)return [];
+ const o=[{urls:'stun:stun.relay.metered.ca:80'},{urls:u,username:MY_TURN.username,credential:MY_TURN.credential}];
+ (MY_TURN.alt||[]).forEach(c=>o.push({urls:u.filter(x=>/:80$|^turns:/.test(x)),username:MY_TURN.username,credential:c}));return o})();
+const PEERCFG={debug:0,config:{iceServers:[...MYICE,{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turns:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}]}};
+const PKP=p=>{try{p.on('disconnected',()=>setTimeout(()=>{try{if(!p.destroyed&&p.disconnected)p.reconnect()}catch(e){}},1500))}catch(e){}return p};
+/* ===== FREE 20 GB/month TURN (Open Relay by Metered): paste your app name (the part before .metered.live) and your API key between the quotes. Leave empty to skip. ===== */
+const OPENRELAY_APP='flio-game',OPENRELAY_KEY='de9ab4e02b8e9093749a2a9c68fa1ad9bc88';
+window.__orP=(function(){if(!OPENRELAY_KEY||!OPENRELAY_APP)return Promise.resolve();const K='flio_orelay';
+ const use=l=>{try{if(Array.isArray(l)&&l.length)PEERCFG.config.iceServers.unshift(...l)}catch(e){}};
+ try{const c=JSON.parse(localStorage.getItem(K)||'null');if(c&&Date.now()-c.t<6*3600e3&&c.k===OPENRELAY_APP+OPENRELAY_KEY&&Array.isArray(c.l)){use(c.l);return Promise.resolve()}}catch(e){}
+ return new Promise(res=>{try{const ac=typeof AbortController!='undefined'?new AbortController():null,to=setTimeout(()=>{try{ac&&ac.abort()}catch(e){}res()},5000);
+  fetch('https://'+encodeURIComponent(OPENRELAY_APP)+'.metered.live/api/v1/turn/credentials?apiKey='+encodeURIComponent(OPENRELAY_KEY),ac?{signal:ac.signal}:{}).then(r=>r.json()).then(l=>{clearTimeout(to);if(Array.isArray(l)&&l.length){use(l);try{localStorage.setItem(K,JSON.stringify({t:Date.now(),k:OPENRELAY_APP+OPENRELAY_KEY,l}))}catch(e){}}res()}).catch(()=>{clearTimeout(to);res()})}catch(e){res()}})})();
+/* ===== CLOUDFLARE TURN (1000 GB/month free): paste your Worker address between the quotes, e.g. https://flio-ice.yourname.workers.dev ===== */
+const FLIO_ICE_URL='';
+window.__cfP=(function(){if(!FLIO_ICE_URL)return Promise.resolve();const K='flio_cfice';
+ const use=l=>{try{if(Array.isArray(l)&&l.length)PEERCFG.config.iceServers.unshift(...l)}catch(e){}};
+ try{const c=JSON.parse(localStorage.getItem(K)||'null');if(c&&c.u===FLIO_ICE_URL&&Date.now()-c.t<3*3600e3&&Array.isArray(c.l)){use(c.l);return Promise.resolve()}}catch(e){}
+ return new Promise(res=>{const to=setTimeout(res,5000);try{fetch(FLIO_ICE_URL).then(r=>r.json()).then(d=>{clearTimeout(to);const l=Array.isArray(d)?d:(d&&d.iceServers?(Array.isArray(d.iceServers)?d.iceServers:[d.iceServers]):[]);if(l.length){use(l);try{localStorage.setItem(K,JSON.stringify({t:Date.now(),u:FLIO_ICE_URL,l}))}catch(e){}}res()}).catch(()=>{clearTimeout(to);res()})}catch(e){clearTimeout(to);res()}})})();
 let NAMELOCK=ls('flio_namelock',null),NERR='',NNAME='';
 const TOK=(()=>{let t=ls('flio_tok',null);if(!t||String(t).length<8){t=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);lset('flio_tok',t)}return t})();
 if(NAMELOCK)myName=NAMELOCK;
@@ -187,8 +209,8 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.11.4',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
-const CHANGES=[['1.11.0','🏁 Race circuit: build one in your city. Endless unique cars (designs, engines and engine sounds) are earned from time played, money, city size, world ranking and wins. Realistic car physics, Grand Prix vs 5 drivers, time trial with ghost, tuning, lap records, races in other cities and live online races with collisions.'],['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
+const VER='1.11.5',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const CHANGES=[['1.11.1','🤝 Co-op: drag/pan no longer freezes, the room code is remembered (you rejoin automatically, the host keeps the same code), automatic reconnect, lighter syncing for stable play, better connection (STUN/TURN).'],['1.11.0','🏁 Race circuit: build one in your city. Endless unique cars (designs, engines and engine sounds) are earned from time played, money, city size, world ranking and wins. Realistic car physics, Grand Prix vs 5 drivers, time trial with ghost, tuning, lap records, races in other cities and live online races with collisions.'],['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
 function updUrl(){let u=String(ls(UPD_K,'')||'').trim()||String((typeof CFG!='undefined'&&CFG.upd)||'').trim();if(!u&&/^https?:/.test(location.protocol))u=location.href.split('#')[0].split('?')[0];return u}
@@ -412,7 +434,7 @@ async function goOnline(host){
  let peer,done=false;
  const fail=m=>{if(done)return;done=true;try{peer&&peer.destroy()}catch(e){}ONL=null;err=m;setup()};
  const R={emit(t,d){conns.forEach(c=>{try{if(c.open)c.send(d)}catch(e){}});return Promise.resolve()},leave(){try{peer.destroy()}catch(e){}return Promise.resolve()}};
- try{peer=host?new Peer(id):new Peer()}catch(e){return fail('Couldn’t start online play.')}
+ try{peer=PKP(host?new Peer(id,PEERCFG):new Peer(undefined,PEERCFG))}catch(e){return fail('Couldn’t start online play.')}
  if(host)setTimeout(()=>fail('Couldn’t connect to the online server. Check your internet and try again.'),12000);
  peer.on('error',e=>{
   if(e.type=='unavailable-id')fail('That code is already in use. Try again.');
@@ -1459,15 +1481,15 @@ function rmScan(nm,slots){return new Promise(res=>{
    if(joined&&c===m)recv(d)});
   m.on('close',()=>{if(joined&&c===m&&ONL&&ONL.R===R){err='The host left the table.';leave()}});
  };
- try{peer=new Peer()}catch(e){return res('none')}
+ try{peer=PKP(new Peer(undefined,PEERCFG))}catch(e){return res('none')}
  peer.on('error',e=>{if(joined||fin)return;if(e.type=='peer-unavailable')next();else end('none')});
  peer.on('open',next);to=setTimeout(()=>end('none'),9000);
 })}
 function rmHost(slot,nm){return new Promise(res=>{
  const conns=[];let peer,fin=false;
  const R={emit(t,d){conns.forEach(c=>{try{if(c.open)c.send(d)}catch(e){}});return Promise.resolve()},leave(){try{peer.destroy()}catch(e){}return Promise.resolve()}};
- try{peer=new Peer('lockflip-rm'+slot)}catch(e){return res(false)}
- peer.on('error',e=>{if(!fin){fin=true;try{peer.destroy()}catch(x){}res(false)}else if(ONL&&ONL.R===R){err='Connection problem: '+(e.type||'unknown')+'.';leave()}});
+ try{peer=PKP(new Peer('lockflip-rm'+slot,PEERCFG))}catch(e){return res(false)}
+ peer.on('error',e=>{if(!fin){fin=true;try{peer.destroy()}catch(x){}res(false)}else if(ONL&&ONL.R===R&&!/^(network|server-error|socket-error|socket-closed|webrtc)$/.test(e.type||'')){err='Connection problem: '+(e.type||'unknown')+'.';leave()}});
  peer.on('open',()=>{fin=true;ONL={host:true,code:'rm'+slot,R,me:0,mt:MT,pw:PW,seats:[{pid:PID,name:nm}],rm:1,t0:Date.now(),tc:Date.now()};scr='lobby';P=[];phase='setup';V=null;SEC=null;render();rmWatch();res(true)});
  peer.on('connection',c=>{conns.push(c);c.on('data',d=>{d=d||{};
   if(d.t=='join'){if(!ONL||P.length||(ONL.seats.length>=4&&!ONL.seats.some(s=>s.pid==d.pid))){try{c.send({t:'full'})}catch(e){}return}ONL.tc=Date.now()}
@@ -3055,18 +3077,18 @@ async function netPeerOk(){if(typeof Peer==='undefined'&&window.__peerP)await wi
 async function netHost(){
  if(!hasC())return;if(!await netPeerOk()){PANEL='Online play could not load. Check your connection.';return rcPaint()}
  const code=String(Math.floor(1000+Math.random()*9000));let peer;
- try{peer=new Peer('flio-race-'+code)}catch(e){PANEL='Could not start online play.';return rcPaint()}
+ try{peer=PKP(new Peer('flio-race-'+code,PEERCFG))}catch(e){PANEL='Could not start online play.';return rcPaint()}
  NET={host:1,peer,conns:[],code,pl:[meInfo()],laps:LAPS,equal:0};
  peer.on('open',()=>{lobPost();rcPaint()});
- peer.on('error',e=>{PANEL=e.type=='unavailable-id'?'That code is taken. Try again.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
+ peer.on('error',e=>{if(NET&&/^(network|server-error|socket-error|socket-closed)$/.test(e.type||'')){try{peer.reconnect()}catch(x){}return}PANEL=e.type=='unavailable-id'?'That code is taken. Try again.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
  peer.on('connection',c=>{NET&&NET.conns.push(c);c.on('data',d=>netRecv(d||{},c));c.on('close',()=>{if(!NET||RC.on)return;NET.conns=NET.conns.filter(x=>x!==c);NET.pl=NET.pl.filter(p=>p.pid!=c.pid);netLob()})});
  rcPaint()}
 async function netJoin(code){
  if(!hasC())return;code=String(code||'').trim();if(!code){PANEL='Enter the 4-digit code first.';return rcPaint()}
  if(!await netPeerOk()){PANEL='Online play could not load. Check your connection.';return rcPaint()}
- let peer;try{peer=new Peer()}catch(e){PANEL='Could not start online play.';return rcPaint()}
+ let peer;try{peer=PKP(new Peer(undefined,PEERCFG))}catch(e){PANEL='Could not start online play.';return rcPaint()}
  NET={host:0,peer,code,pl:[],laps:3,equal:0};let ok=0;
- peer.on('error',e=>{if(!NET)return;PANEL=e.type=='peer-unavailable'?'No race with that code. Check it and ask the host to open the lobby.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
+ peer.on('error',e=>{if(!NET)return;if(/^(network|server-error|socket-error|socket-closed)$/.test(e.type||'')){try{peer.reconnect()}catch(x){}return}PANEL=e.type=='peer-unavailable'?'No race with that code. Check it and ask the host to open the lobby.':'Connection problem: '+(e.type||'unknown');netClose();rcPaint()});
  peer.on('open',()=>{const c=peer.connect('flio-race-'+code,{reliable:true});if(!NET)return;NET.conn=c;
   c.on('open',()=>{ok=1;c.send({t:'rj',p:meInfo()})});c.on('data',d=>netRecv(d||{},c));
   c.on('close',()=>{if(NET&&!RC.on){PANEL='The host left.';netClose();rcPaint()}})});
@@ -3234,16 +3256,22 @@ applyCfg();runMods();
 
 
 /* ---------- CO-OP CITY: two players pool money and build one city together, with live chat ---------- */
-let CO=null,COCH=[],COUNREAD=0,COCHOPEN=false;const CO_K='flio_coop_v1';
+let CO=null,COCH=[],COUNREAD=0,COCHOPEN=false;const CO_K='flio_coop_v1',CO_S='flio_coop_sess';
+const COPID=(()=>{let v=ls('flio_coop_pid',null);if(!v||String(v).length<5){v=PID;lset('flio_coop_pid',v)}return v})();
 const coEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const coMe=()=>NAMELOCK||myName||'Player';
 function coPack(c){const g=[];c.g.forEach((b,i)=>{if(b)g.push([i,b])});return Object.assign({},c,{g:null,gs:g})}
-function coUnpack(p,into){const n=p.n||96,g=Array(n*n).fill(null);(p.gs||[]).forEach(a=>{g[a[0]]=a[1]});const o=Object.assign({},p,{g});delete o.gs;if(into){Object.keys(into).forEach(k=>{if(!(k in o))delete into[k]});Object.assign(into,o);return into}return o}
+function coUnpack(p,into){const n=p.n||96,g=Array(n*n).fill(null);(p.gs||[]).forEach(a=>{g[a[0]]=a[1]});const o=Object.assign({},p,{g});delete o.gs;if(into){const fx=into.fx,fz=into.fz,t=into.t;Object.keys(into).forEach(k=>{if(!(k in o))delete into[k]});Object.assign(into,o);if(fx!=null){into.fx=fx;into.fz=fz}if(t!=null)into.t=t;return into}return o}
 const coLive=()=>!!CO&&(CO.host?(CO.conns||[]).some(c=>c.open):!!(CO.conn&&CO.conn.open));
 function coSend(o,ex){try{if(!CO)return;if(CO.host)(CO.conns||[]).forEach(c=>{if(c.open&&c!==ex)c.send(o)});else if(CO.conn&&CO.conn.open)CO.conn.send(o)}catch(e){}}
 function coTo(c,o){try{if(c&&c.open)c.send(o)}catch(e){}}
-function coStore(){if(!CO||!CO.city)return;lset(CO_K,{city:coPack(CO.city),put:CO.put,names:CO.names,code:CO.code})}
-function coSnap(){coSend({t:'cs',city:coPack(CO.city),put:CO.put,names:CO.names})}
+let coST=0;
+function coStoreNow(){if(!CO||!CO.city||!CO.host)return;lset(CO_K,{city:coPack(CO.city),put:CO.put,names:CO.names,code:CO.code})}
+function coStore(now){if(!CO||!CO.city||!CO.host)return;if(now){clearTimeout(coST);coST=0;coStoreNow();return}if(coST)return;coST=setTimeout(()=>{coST=0;coStoreNow()},1500)}
+const coSnapMsg=()=>({t:'cs',city:coPack(CO.city),put:CO.put,names:CO.names});
+function coSnap(){if(CO&&CO.city)coSend(coSnapMsg())}
+function coInfo(){if(CO&&CO.host&&CO.city)coSend({t:'ci',put:CO.put,names:CO.names,cash:CO.city.cash})}
+function coChk(C){const g=C&&C.g;if(!g)return 0;let h=7;for(let i=0;i<g.length;i++){const b=g[i];if(b){const s=String(b.t)+':'+(b.l||0);let k=i*31+(b.l||0)*13;for(let j=0;j<s.length;j++)k=(k*33+s.charCodeAt(j))|0;h=(h*31+k)|0}}return h}
 function coInView(){return CO&&CITY&&CITY===CO.city}
 function coRefresh(full){if(scr=='city'&&coInView()){try{cStats();if(full)cPanel()}catch(e){}}coBox()}
 /* run an action on the shared city, then send only what it changed */
@@ -3257,23 +3285,38 @@ function coAct(fn,a){
 function coApply(d){const C=CO.city;(d.ch||[]).forEach(a=>{C.g[a[0]]=a[1]});C.cash+=d.dc||0;if(C.mat!=null)C.mat+=d.dm||0}
 function coOn(d,c){
  if(!CO)return;
+ if(c)c.last=Date.now();else CO.lastRx=Date.now();
  if(d.t=='cj'&&CO.host){
-  if((CO.conns||[]).filter(x=>x.open&&x.pid).length>=3||(CO.conns||[]).some(x=>x!==c&&x.pid==d.pid)){coTo(c,{t:'cno'});return}c.pid=d.pid;
-  const put=Math.max(0,Math.floor(+d.put)||0);CO.names[d.pid]=String(d.name||'Player').slice(0,14);CO.put[d.pid]=(CO.put[d.pid]||0)+put;CO.guest=d.pid;
-  CO.city.cash+=put;coStore();coSnap();coSys(CO.names[d.pid]+' joined and added '+cMoney(put)+' 🤝');coRefresh(1)}
+  const dup=(CO.conns||[]).filter(x=>x!==c&&x.pid==d.pid);
+  dup.forEach(x=>{x.pid=null;try{x.close()}catch(e){}});CO.conns=(CO.conns||[]).filter(x=>dup.indexOf(x)<0);
+  if((CO.conns||[]).filter(x=>x.open&&x.pid).length>=3){coTo(c,{t:'cno'});return}
+  const had=!!CO.names[d.pid];c.pid=d.pid;
+  const put=Math.max(0,Math.floor(+d.put)||0);CO.names[d.pid]=String(d.name||'Player').slice(0,14);CO.put[d.pid]=(CO.put[d.pid]||0)+put;CO.guest=d.pid;CO.city.cash+=put;
+  coStore(1);coTo(c,coSnapMsg());coSend({t:'ci',put:CO.put,names:CO.names,cash:CO.city.cash},c);
+  coSys(CO.names[d.pid]+(had&&!put?' reconnected 🔄':' joined'+(put?' and added '+cMoney(put):'')+' 🤝'));coRefresh(1)}
  else if(d.t=='cs'&&!CO.host){
   const first=!CO.city;if(first&&CO.pend){if(CITY){CITY.cash=Math.max(0,CITY.cash-CO.pend);cSave()}CO.pend=0}
-  if(CO.city)coUnpack(d.city,CO.city);else CO.city=coUnpack(d.city);CO.put=d.put;CO.names=d.names;coStore();
-  if(first){coSys('Connected! You are building together 🤝');CO.ready=1;coMenu()}coRefresh(first)}
- else if(d.t=='cno'&&!CO.host){coFail('That city already has two players.')}
+  if(CO.city)coUnpack(d.city,CO.city);else CO.city=coUnpack(d.city);CO.put=d.put;CO.names=d.names;CO.joined=1;CO.bad=0;
+  if(first){lset(CO_S,{role:'guest',code:CO.code});lset('flio_coop_last',CO.code);coSys(CO.auto?'Reconnected — you are building together 🤝':'Connected! You are building together 🤝');CO.ready=1;if(CO.auto)coBox();else coMenu()}
+  else coSys('Back in sync ✔');
+  coRefresh(first)}
+ else if(d.t=='cno'&&!CO.host){try{localStorage.removeItem(CO_S)}catch(e){}coFail('That city already has the maximum number of players.')}
+ else if(d.t=='hb'&&!CO.host&&CO.city){
+  if(d.cash!=null)CO.city.cash=d.cash;if(d.earned!=null)CO.city.earned=d.earned;
+  if(d.chk!=null){if(d.chk!=coChk(CO.city)){CO.bad=(CO.bad||0)+1;if(CO.bad>=2){CO.bad=0;coSend({t:'cq'})}}else CO.bad=0}
+  coRefresh(0)}
+ else if(d.t=='ci'&&!CO.host){if(d.put)CO.put=d.put;if(d.names)CO.names=d.names;if(CO.city&&d.cash!=null)CO.city.cash=d.cash;coRefresh(1)}
+ else if(d.t=='ack'&&!CO.host){if(CO.city&&d.cash!=null)CO.city.cash=d.cash;coRefresh(0)}
+ else if(d.t=='cq'&&CO.host){coTo(c,coSnapMsg())}
+ else if(d.t=='pg'){}
  else if(d.t=='cop'){
-  if(CO.host){if(CO.city.cash+(d.dc||0)<0){coSnap();return}coApply(d);coStore();coSnap();coRefresh(1)}
+  if(CO.host){if(CO.city.cash+(d.dc||0)<0){coTo(c,coSnapMsg());return}coApply(d);coStore();coSend(d,c);coTo(c,{t:'ack',cash:CO.city.cash});coRefresh(1)}
   else if(CO.city){coApply(d);coRefresh(1)}}
- else if(d.t=='ca'&&CO.host){const n=Math.max(0,Math.floor(+d.amt)||0);if(n&&CO.names[d.pid]){CO.city.cash+=n;CO.put[d.pid]=(CO.put[d.pid]||0)+n;coStore();coSnap();coSys(CO.names[d.pid]+' added '+cMoney(n)+' 💰');coRefresh(1)}}
- else if(d.t=='cw'&&CO.host){const pid=c.pid,sh=coShare(pid),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[pid]=0;coTo(c,{t:'cwr',amt});coStore();coSnap()}
+ else if(d.t=='ca'&&CO.host){const pid=(c&&c.pid)||d.pid,n=Math.max(0,Math.floor(+d.amt)||0);if(n&&CO.names[pid]){CO.city.cash+=n;CO.put[pid]=(CO.put[pid]||0)+n;coStore();coInfo();coSys(CO.names[pid]+' added '+cMoney(n)+' 💰');coRefresh(1)}}
+ else if(d.t=='cw'&&CO.host){const pid=c&&c.pid;if(!pid)return;const sh=coShare(pid),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[pid]=0;coTo(c,{t:'cwr',amt});coStore();coInfo();coRefresh(1)}
  else if(d.t=='cwr'&&!CO.host){coCashed(d.amt)}
  else if(d.t=='chat'){coChatAdd(d.n,d.m,0);if(CO.host)coSend(d,c)}
- else if(d.t=='bye'){coSys((d.n||'A player')+' left the session.');if(CO.host){if(c){c.pid=null;CO.conns=CO.conns.filter(x=>x!==c)}coSnap()}else if(d.host){CO.conn=null}coBox();coChatPaint()}}
+ else if(d.t=='bye'){coSys((d.n||'A player')+' left the session.');if(CO.host){if(c){c.pid=null;CO.conns=CO.conns.filter(x=>x!==c)}coInfo()}coBox();coChatPaint()}}
 function coShare(pid){const t=Object.values(CO.put).reduce((a,b)=>a+b,0)||1;return (CO.put[pid]||0)/t}
 function coCashed(amt){if(!amt){coSys('Nothing to withdraw.');return}try{if(!CITY||coInView()){const o=ls('flio_city_v1',null);if(o){o.cash+=amt;lset('flio_city_v1',o)}}else{CITY.cash+=amt;cSave()}}catch(e){}coSys('You took '+cMoney(amt)+' back to your own city 💸');coBox()}
 function coSys(m){coChatAdd('',m,1)}
@@ -3295,34 +3338,84 @@ function coChatPaint(){
  const ni=document.getElementById('cochi');if(ni){ni.value=val;if(foc)ni.focus()}}
 function coChatTog(){COCHOPEN=!COCHOPEN;if(COCHOPEN)COUNREAD=0;const b=document.getElementById('cochb');if(b)b.remove();coChatPaint();if(COCHOPEN){const i=document.getElementById('cochi');if(i)i.focus()}}
 /* ---- connection ---- */
-async function coPeerOk(){if(typeof Peer==='undefined'&&window.__peerP)await window.__peerP;return typeof Peer!=='undefined'}
-function coFail(m){coClose(1);coMsg=m;coMenu()}
+async function coPeerOk(){if(typeof Peer==='undefined'&&window.__peerP)await window.__peerP;try{await window.__orP;await window.__cfP}catch(e){}return typeof Peer!=='undefined'}
+function coFail(m){const q=CO&&CO.auto&&!document.getElementById('comod');coClose(1);if(q){coMsg='';return}coMsg=m;coMenu()}
 let coMsg='';
-function coClose(quiet){try{coSend({t:'bye',n:coMe(),host:CO&&CO.host?1:0})}catch(e){}try{CO&&CO.peer&&CO.peer.destroy()}catch(e){}const c=CO&&CO.city;CO=null;if(!quiet)coChatPaint();coBox()}
+function coClose(quiet){try{coSend({t:'bye',n:coMe(),host:CO&&CO.host?1:0})}catch(e){}const p=CO&&CO.peer;try{clearTimeout(CO&&CO.rt)}catch(e){}if(p)p._x=1;CO=null;setTimeout(()=>{try{p&&p.destroy()}catch(e){}},300);if(!quiet)coChatPaint();coBox()}
+function coLeave(){try{localStorage.removeItem(CO_S)}catch(e){}coClose();coMenuClose()}
 function coPut(){const e=document.getElementById('coput');const v=Math.floor(+(e&&e.value)||0);return Math.max(0,Math.min(v,coAvail()))}
 const coAvail=()=>CITY&&!coInView()?Math.floor(CITY.cash):3000;
-async function coHost(){
- if(!NAMELOCK&&!myName){coMsg='Choose your player name first (top of the home page).';return coMenu()}
- if(!await coPeerOk()){coMsg='Online play could not load. Check your connection.';return coMenu()}
- const put=coPut(),code=String(Math.floor(1000+Math.random()*9000)),sv=ls(CO_K,null);let peer;
- try{peer=new Peer('flio-coop-'+code)}catch(e){coMsg='Could not start online play.';return coMenu()}
+const COTRANS=/^(network|server-error|socket-error|socket-closed|disconnected)$/;
+function coRecover(peer){
+ if(!CO||CO.peer!==peer||peer._rc||peer._x)return;peer._rc=1;CO.rn=(CO.rn||0)+1;
+ setTimeout(()=>{if(!CO||CO.peer!==peer)return;
+  try{if(peer.destroyed){if(CO.host)CO.conns=[];CO.conn=null;clearTimeout(CO.rt);if(CO.host)coHostPeer(0);else coGuestPeer()}
+   else if(peer.disconnected){peer._rc=0;peer.reconnect()}else peer._rc=0}catch(e){peer._rc=0}},Math.min(15000,2000*CO.rn))}
+async function coHost(auto){
+ if(!NAMELOCK&&!myName){if(auto)return;coMsg='Choose your player name first (top of the home page).';return coMenu()}
+ if(CO)return;
+ if(!await coPeerOk()){if(auto)return;coMsg='Online play could not load. Check your connection.';return coMenu()}
+ if(CO)return;
+ const put=auto?0:coPut(),ss=ls(CO_S,null),sv=ls(CO_K,null),
+  code=(ss&&ss.role=='host'&&/^\d{4}$/.test(String(ss.code)))?String(ss.code):String(Math.floor(1000+Math.random()*9000));
  const city=sv&&sv.city?coUnpack(sv.city):(wildNew(coMe()+' & Co',0));
- CO={host:1,peer,code,city,put:sv&&sv.put?sv.put:{},names:sv&&sv.names?sv.names:{},guest:null,conn:null,conns:[]};
- CO.names[PID]=coMe();CO.put[PID]=(CO.put[PID]||0)+put;CO.city.cash+=put;
+ CO={host:1,peer:null,code,city,put:sv&&sv.put?sv.put:{},names:sv&&sv.names?sv.names:{},guest:null,conn:null,conns:[],auto:auto?1:0};
+ CO.names[COPID]=coMe();CO.put[COPID]=(CO.put[COPID]||0)+put;CO.city.cash+=put;
  if(put&&CITY&&!coInView()){CITY.cash-=put;cSave()}
- coMsg='';peer.on('open',()=>{CO.ready=1;coStore();coMenu()});
- peer.on('error',e=>{coFail(e.type=='unavailable-id'?'That code is taken. Try again.':'Connection problem: '+(e.type||'unknown'))});
- peer.on('connection',c=>{CO.conns.push(c);c.on('data',d=>coOn(d||{},c));c.on('close',()=>{if(CO){const nm=c.pid&&CO.names[c.pid];CO.conns=CO.conns.filter(x=>x!==c);if(nm)coSys(nm+' disconnected.');c.pid=null;coBox();coChatPaint()}})});
- coMenu()}
-async function coJoin(){
- if(!NAMELOCK&&!myName){coMsg='Choose your player name first (top of the home page).';return coMenu()}
- const code=((document.getElementById('cocode')||{}).value||'').trim();if(!code){coMsg='Enter the 4-digit code first.';return coMenu()}
- if(!await coPeerOk()){coMsg='Online play could not load. Check your connection.';return coMenu()}
- const put=coPut();let peer;try{peer=new Peer()}catch(e){coMsg='Could not start online play.';return coMenu()}
- CO={host:0,peer,code,city:null,put:{},names:{},pend:put,conn:null};let ok=0;
- peer.on('error',e=>coFail(e.type=='peer-unavailable'?'No co-op city with that code. Ask your partner to open the co-op menu first.':'Connection problem: '+(e.type||'unknown')));
- peer.on('open',()=>{const c=peer.connect('flio-coop-'+code,{reliable:true});CO.conn=c;c.on('open',()=>{ok=1;c.send({t:'cj',pid:PID,name:coMe(),put})});c.on('data',d=>coOn(d||{}));c.on('close',()=>{if(CO){coSys('The host closed the session.');CO.conn=null;coBox();coChatPaint()}})});
- setTimeout(()=>{if(CO&&!ok&&CO.peer===peer)coFail('Could not reach that city.')},12000);coMenu()}
+ coMsg='';coHostPeer(0);if(!auto)coMenu()}
+function coHostPeer(tries){
+ let peer;try{peer=PKP(new Peer('flio-coop-'+CO.code,PEERCFG))}catch(e){return coFail('Could not start online play.')}
+ CO.peer=peer;
+ peer.on('open',()=>{if(!CO||CO.peer!==peer)return;const was=CO.ready;CO.ready=1;CO.rn=0;lset(CO_S,{role:'host',code:CO.code});coStore(1);if(was)coSys('Back online ✔');if(CO.auto)coBox();else coMenu();coChatPaint()});
+ peer.on('connection',c=>{if(!CO||CO.peer!==peer){try{c.close()}catch(e){}return}
+  c.t0=Date.now();c.last=Date.now();CO.conns.push(c);c.on('data',d=>coOn(d||{},c));c.on('error',()=>{});
+  c.on('close',()=>{if(CO){const nm=c.pid&&CO.names[c.pid];CO.conns=CO.conns.filter(x=>x!==c);if(nm)coSys(nm+' disconnected.');c.pid=null;coBox();coChatPaint()}})});
+ peer.on('error',e=>{if(!CO||CO.peer!==peer)return;
+  if(e.type=='unavailable-id'){peer._x=1;try{peer.destroy()}catch(x){}
+   if(tries<6)setTimeout(()=>{if(CO&&CO.peer===peer)coHostPeer(tries+1)},3500);
+   else coFail('That code is still in use (maybe another tab is open). Close it and try again in a minute.');return}
+  if(COTRANS.test(e.type||'')){coRecover(peer);return}
+  coSys('Connection hiccup ('+(e.type||'unknown')+')')});
+ peer.on('close',()=>{coRecover(peer)})}
+async function coJoin(codeArg,auto){
+ if(!NAMELOCK&&!myName){if(auto)return;coMsg='Choose your player name first (top of the home page).';return coMenu()}
+ if(CO)return;
+ const code=String(typeof codeArg=='string'||typeof codeArg=='number'?codeArg:((document.getElementById('cocode')||{}).value||'')).trim();
+ if(!/^\d{4}$/.test(code)){if(auto)return;coMsg='Enter the 4-digit code first.';return coMenu()}
+ if(!await coPeerOk()){if(auto)return;coMsg='Online play could not load. Check your connection.';return coMenu()}
+ if(CO)return;
+ const put=auto?0:coPut();
+ CO={host:0,peer:null,code,city:null,put:{},names:{},pend:put,conn:null,auto:auto?1:0,tries:0};
+ coGuestPeer();if(!auto)coMenu()}
+function coGuestPeer(){
+ let peer;try{peer=PKP(new Peer(undefined,PEERCFG))}catch(e){return coFail('Could not start online play.')}
+ CO.peer=peer;const code=CO.code;
+ const retry=()=>{if(!CO||CO.peer!==peer||peer.destroyed)return;clearTimeout(CO.rt);CO.tries=(CO.tries||0)+1;CO.rt=setTimeout(connect,Math.min(15000,1500*CO.tries))};
+ function connect(){
+  if(!CO||CO.peer!==peer||peer.destroyed)return;
+  if(CO.conn&&CO.conn.open)return;
+  if(peer.disconnected){try{peer.reconnect()}catch(e){}clearTimeout(CO.rt);CO.rt=setTimeout(connect,2500);return}
+  let c,op=0;try{c=peer.connect('flio-coop-'+code,{reliable:true})}catch(e){return retry()}
+  CO.conn=c;
+  const lost=()=>{if(c._h)return;c._h=1;clearTimeout(to);if(!CO||CO.peer!==peer)return;if(CO.conn===c)CO.conn=null;
+   if(op){coSys('Connection lost — reconnecting…');CO.tries=0}
+   coBox();coChatPaint();
+   if(!op&&!CO.joined&&!CO.auto)return coFail('Could not reach that city.');
+   retry()};
+  const to=setTimeout(()=>{if(!op){try{c.close()}catch(e){}lost()}},12000);
+  c._lost=lost;
+  c.on('open',()=>{op=1;clearTimeout(to);CO.tries=0;CO.lastRx=Date.now();c.send({t:'cj',pid:COPID,name:coMe(),put:CO.joined?0:(CO.pend||0)});coBox();coChatPaint()});
+  c.on('data',d=>{if(CO&&CO.conn===c)CO.lastRx=Date.now();coOn(d||{})});
+  c.on('close',lost);c.on('error',()=>{})}
+ CO.go=connect;
+ peer.on('open',()=>{if(!CO||CO.peer!==peer)return;CO.rn=0;connect()});
+ peer.on('error',e=>{if(!CO||CO.peer!==peer)return;
+  if(e.type=='peer-unavailable'){if(CO.conn&&!CO.conn.open){CO.conn._h=1;CO.conn=null}
+   if(!CO.joined&&!CO.auto)return coFail('No co-op city with that code. Ask your partner to open the co-op menu first.');
+   retry();return}
+  if(COTRANS.test(e.type||'')){coRecover(peer);return}
+  retry()});
+ peer.on('close',()=>{coRecover(peer)})}
 /* ---- UI ---- */
 function coView(){if(!CO||!CO.city)return;if(!coInView()){CO.mine=CITY;CITY=CO.city;GN=CITY.n;try{wildUp&&0}catch(e){}}coMenuClose();cityOpen()}
 function coBack(){if(CO&&CO.mine!==undefined&&coInView()){const m=CO.mine;CO.mine=undefined;try{cSave()}catch(e){}CITY=m;if(CITY)GN=CITY.n||GN}}
@@ -3333,10 +3426,10 @@ function coMenu(){
  if(coMsg)h+='<div class="box" style="border-color:var(--ac)">'+coEsc(coMsg)+'</div>';
  if(CO&&CO.ready&&CO.city){
   const ids=Object.keys(CO.names),tot=Object.values(CO.put).reduce((a,b)=>a+b,0);
-  h+='<p class="mut">'+(CO.host?'Code to share: <b style="font-size:26px;letter-spacing:3px;color:var(--fg)">'+coEsc(CO.code)+'</b>':'Joined city <b>'+coEsc(CO.code)+'</b>')+'</p><p><b>🏙 '+coEsc(CO.city.name)+'</b> · 💰 '+cMoney(CO.city.cash)+'</p><table>'+ids.map(p=>'<tr><td>'+coEsc(CO.names[p])+(p==PID?' (you)':'')+'</td><td>put in '+cMoney(CO.put[p]||0)+'</td><td>'+Math.round(100*(CO.put[p]||0)/(tot||1))+'%</td></tr>').join('')+'</table><p class="mut">'+(coLive()?'🟢 '+(CO.host?(CO.conns.filter(x=>x.open&&x.pid).length+1)+' players online':'Connected')+'. Money, buildings and chat are shared live.':'⚪ Waiting for players'+(CO.host?' (up to 4) to enter the code…':' …'))+'</p>';
+  h+='<p class="mut">'+(CO.host?'Code to share: <b style="font-size:26px;letter-spacing:3px;color:var(--fg)">'+coEsc(CO.code)+'</b>':'Joined city <b>'+coEsc(CO.code)+'</b>')+'</p><p><b>🏙 '+coEsc(CO.city.name)+'</b> · 💰 '+cMoney(CO.city.cash)+'</p><table>'+ids.map(p=>'<tr><td>'+coEsc(CO.names[p])+(p==COPID?' (you)':'')+'</td><td>put in '+cMoney(CO.put[p]||0)+'</td><td>'+Math.round(100*(CO.put[p]||0)/(tot||1))+'%</td></tr>').join('')+'</table><p class="mut">'+(coLive()?'🟢 '+(CO.host?(CO.conns.filter(x=>x.open&&x.pid).length+1)+' players online':'Connected')+'. Money, buildings and chat are shared live.':'⚪ Waiting for players'+(CO.host?' (up to 4) to enter the code…':' …'))+'</p>';
   h+='<div class="row"><span style="flex:1">➕ Add more money (yours: '+cMoney(coPers()?coPers().cash:0)+')</span></div><div class="row"><input id="coadd" type="number" min="1" placeholder="Amount"><button class="p" onclick="coAdd()">Add</button></div>';h+='<button class="p" style="width:100%;margin-bottom:6px" onclick="coView()">🏗 Open shared city</button>';
   h+='<button style="width:100%;margin-bottom:6px" onclick="coChatTog();coMenuClose()">💬 Open chat</button>';
-  h+='<button style="width:100%;margin-bottom:6px" onclick="coWithdraw()">💸 Take my share of the money back</button><button style="width:100%" onclick="coClose();coMenuClose()">Leave session</button>'}
+  h+='<button style="width:100%;margin-bottom:6px" onclick="coWithdraw()">💸 Take my share of the money back</button><button style="width:100%" onclick="coLeave()">Leave session</button>'}
  else if(CO){h+='<p class="mut">Connecting…</p><button onclick="coClose();coMenu()">Cancel</button>'}
  else{
   h+='<p class="mut">Pool your money into <b>one shared city</b>. Up to 4 players. You all build, upgrade and sell in the same live city and split the work. Chat while you play.</p>'+
@@ -3352,10 +3445,10 @@ function coAdd(){const n=Math.floor(+((document.getElementById('coadd')||{}).val
  if(n<=0||n>Math.floor(p.cash)){coMsg='You can add up to '+cMoney(p.cash)+' from your own city.';return coMenu()}
  if(!CO.host&&!(CO.conn&&CO.conn.open)){coMsg='Not connected to the host.';return coMenu()}
  p.cash-=n;lset('flio_city_v1',p);
- if(CO.host){CO.city.cash+=n;CO.put[PID]=(CO.put[PID]||0)+n;coStore();coSnap();coSys('You added '+cMoney(n)+' 💰')}
- else{coSend({t:'ca',amt:n,pid:PID});coSys('You added '+cMoney(n)+' 💰')}
+ if(CO.host){CO.city.cash+=n;CO.put[COPID]=(CO.put[COPID]||0)+n;coStore();coInfo();coSys('You added '+cMoney(n)+' 💰')}
+ else{coSend({t:'ca',amt:n,pid:COPID});coSys('You added '+cMoney(n)+' 💰')}
  coRefresh(1);coMenu()}
-function coWithdraw(){if(!CO||!CO.ready)return;if(CO.host){const sh=coShare(PID),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[PID]=0;coStore();coSnap();coCashed(amt);coMenu()}else if(coLive())coSend({t:'cw'});else coSys('Not connected to the host.')}
+function coWithdraw(){if(!CO||!CO.ready)return;if(CO.host){const sh=coShare(COPID),amt=Math.floor(CO.city.cash*sh);CO.city.cash-=amt;CO.put[COPID]=0;coStore();coInfo();coCashed(amt);coMenu()}else if(coLive())coSend({t:'cw'});else coSys('Not connected to the host.')}
 function coBox(){const d=document.getElementById('comod');if(d&&CO)coMenu()}
 /* ---- hooks ---- */
 (function(){
@@ -3366,11 +3459,28 @@ function coBox(){const d=document.getElementById('comod');if(d&&CO)coMenu()}
  const oPn=window.cPanel;window.cPanel=function(){const r=oPn.apply(this,arguments);try{const pn=document.getElementById('cpn');if(pn&&!pn.querySelector('#copn')){const x=document.createElement('div');x.id='copn';x.className='box';x.innerHTML='<b>🤝 Co-op</b> <span class="mut">'+(coInView()?'shared city · '+(coLive()?'🟢 players online':'⚪ nobody else online'):'pool money with a friend')+'</span><div class="row" style="margin-top:4px"><button onclick="coMenu()">'+(CO?'Co-op menu':'Build together')+'</button>'+(coLive()||COCH.length?'<button onclick="coChatTog()">💬 Chat</button>':'')+'</div>';pn.appendChild(x)}}catch(e){}return r};
  /* chat on normal online tables too */
  const oRv=window.recv;window.recv=function(d){if(d&&d.t=='chat'&&ONL){if(d.pid==PID)return;coChatAdd(d.n,d.m,0);if(ONL.host)try{ONL.R.emit('m',d)}catch(e){}return}return oRv.apply(this,arguments)};
- setInterval(()=>{if(CO&&CO.host&&CO.city&&!coInView()){const t=CITY,g=GN;CITY=CO.city;GN=CITY.n;try{cTick()}catch(e){}CITY=t;GN=g}
-  if(CO&&CO.host&&coLive()&&CO.city)coSnap();
-  else if(CO&&CO.city&&!CO.host&&coInView()){try{cTick()}catch(e){}}
+ setInterval(()=>{
+  const now=Date.now();
+  if(CO&&CO.host&&CO.city&&!coInView()){const t=CITY,g=GN;CITY=CO.city;GN=CITY.n;try{cTick()}catch(e){}CITY=t;GN=g}
+  if(CO&&CO.host){
+   CO.conns=(CO.conns||[]).filter(c=>{if(c.open&&c.last&&now-c.last>25000){c.pid=null;try{c.close()}catch(e){}return false}return c.open||now-(c.t0||now)<20000});
+   if(CO.city&&coLive())coSend({t:'hb',cash:CO.city.cash,earned:CO.city.earned,chk:coChk(CO.city)})}
+  else if(CO&&CO.conn&&CO.conn.open){
+   coSend({t:'pg'});
+   if(CO.lastRx&&now-CO.lastRx>20000){const c=CO.conn;try{c.close()}catch(e){}c._lost&&c._lost()}
+   else if(CO.city&&coInView()){try{cTick()}catch(e){}}}
   if(CO&&CO.city&&coInView())coRefresh(0);
   if(ONL&&ONL.seats&&ONL.seats.length>1&&!document.getElementById('cochb'))coChatPaint()},4000);
+ /* wake up / network back: reconnect straight away */
+ const coWake=()=>{if(!CO||(document.hidden))return;const p=CO.peer;try{if(p&&p.disconnected&&!p.destroyed)p.reconnect();if(!CO.host&&CO.go&&!(CO.conn&&CO.conn.open)){CO.tries=0;clearTimeout(CO.rt);CO.rt=setTimeout(CO.go,800)}}catch(e){}};
+ document.addEventListener('visibilitychange',coWake);addEventListener('online',coWake);
+ addEventListener('pagehide',()=>{try{coStore(1)}catch(e){}});
+ /* remember the session: host keeps the same code, partner rejoins by itself (no typing again) */
+ let coTry=0;
+ const coResume=()=>{try{if(CO)return;const ss=ls(CO_S,null);if(!ss||!ss.role)return;
+  if(!(NAMELOCK||myName)){if(++coTry<6)setTimeout(coResume,4000);return}
+  if(ss.role=='host')coHost(1);else if(ss.role=='guest'&&ss.code)coJoin(String(ss.code),1)}catch(e){}};
+ setTimeout(coResume,2500);
 })();
 </script>
 <script>
