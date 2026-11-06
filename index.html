@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="flio-version" content="1.11.8">
+<meta name="flio-version" content="1.11.9">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"dark":{"bg":"#07161f","fg":"#f4fbff","card":"#0f2a38","mut":"#9fc7d6","ac":"#e8590c","ok":"#3ddc97","bd":"#1f8fa8","bk":"#0e7490"},"light":{"bg":"#eefaff","fg":"#0b2530","card":"#ffffff","mut":"#3f5f6d","ac":"#b85c00","ok":"#0a8f5a","bd":"#0b4f66","bk":"#0e7490"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":true,"timeEvery":3,"timeAmt":200,"timeCap":30,"timeId":1793771057782,"timeStart":0,"timeEnd":0,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":5000,"matMax":10000},"auth":null}</script>
+<script id="flio-cfg" type="application/json">{"cfg":{"title":"🔒 Flio","bonus":[5,3,1,0],"lockerBonus":3,"botMs":750,"pwCount":2,"pwSet":["skip","dbl","shd","frz","pek"],"matchOpts":[40,75,120],"bizCash":1000,"bizMul":50,"bizQ":6,"theme":{"dark":{"bg":"#07161f","fg":"#f4fbff","card":"#0f2a38","mut":"#9fc7d6","ac":"#e8590c","ok":"#3ddc97","bd":"#1f8fa8","bk":"#0e7490"},"light":{"bg":"#eefaff","fg":"#0b2530","card":"#ffffff","mut":"#3f5f6d","ac":"#b85c00","ok":"#0a8f5a","bd":"#0b4f66","bk":"#0e7490"}},"ct":{"house":["House","🏠",100,3,4,0,-1,0,"#e8845a"]},"csz":null,"cup":null,"cvl":null,"vt":{},"texts":{},"nb":[{"k":"theatre","n":"Theatre","e":"🎬","cost":15000,"inc":100,"hs":0,"jb":100,"pw":-3,"sv":500,"col":"#ff6b6b","role":"svc"}],"mods":[],"lfCash":1,"dayBonus":200,"timeOn":true,"timeEvery":3,"timeAmt":200,"timeCap":30,"timeId":1793771057782,"timeStart":0,"timeEnd":0,"streak":3,"twists":true,"events":true,"fund":{"on":true,"min":500,"max":100000,"hours":48,"maxAct":1,"karma":0.5,"mat":1,"bonus":10},"upd":"https://tk6127988-droid.github.io/Flio/","buyMax":100000,"matMax":1000000},"auth":null}</script>
 
 
 <title>Flio</title>
@@ -209,7 +209,7 @@ function saveLb(o){try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const send=o=>{try{ONL.R.emit('m',o).catch(()=>{})}catch(e){}};
 /* ---------- updates & backup ---------- */
-const VER='1.11.8',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
+const VER='1.11.9',UPD_K='flio_update_url',UPD_A='flio_update_auto';(function(){var e=document.getElementById('vlbl');if(e)e.textContent='v'+VER})();
 const CHANGES=[['1.11.2','🧊 If the 3D view cannot start, the game now says so and the 🧊 button loads 3D on demand (no more silent flat 2D map). Shared city fixes.'],['1.11.1','🤝 Co-op: drag/pan no longer freezes, the room code is remembered (you rejoin automatically, the host keeps the same code), automatic reconnect, lighter syncing for stable play, better connection (STUN/TURN).'],['1.11.0','🏁 Race circuit: build one in your city. Endless unique cars (designs, engines and engine sounds) are earned from time played, money, city size, world ranking and wins. Realistic car physics, Grand Prix vs 5 drivers, time trial with ghost, tuning, lap records, races in other cities and live online races with collisions.'],['1.10.22','New Lock & Flip box, first game before name claim, a one-time tutorial for new players, and a privacy screen after a number is locked on a shared device.'],['1.10.21','Mystery chests every 10 minutes, a next-city ranking target, and a simpler home screen and city menu with folding rows.'],['1.9.0','Food supply chain: Farms, Food plants and Food markets. People need food to work, so every other building now depends on the chain. New Supply chain panel shows what is missing.'],['1.8.0','Play Hub: daily gift calendar, lucky wheel, memory mini game, 26 mayor missions, levels, city perks, 8 monuments and floating balloon bonuses.'],['1.7.0','Daily quests with a streak bonus, achievements, and hidden gold gems to find on the endless land.'],['1.6.0','Build my city now starts on endless natural land (lakes, mountains, plateaus, forests). Drag to explore. No starting road or buildings.'],['1.5.1','Cars, buses, trucks and bikes now drive along the roads you build.'],['1.5.0','Unique player names, find players and send money, roads, natural landscape (lakes, mountains, forests) and real world day and night.'],['1.4.0','Building shapes follow their names, start a city instantly, and big money shown as K/M/B.'],['1.3.0','New features and improvements.'],['1.2.0','Game balance, buildings, vehicles and colour updates.'],['1.1.0','Your world, daily and business rank now show automatically. Added in-game updates and save backup.'],['1.0.0','First version.']];
 let UPD={latest:null,html:null,msg:''};
 const vNew=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0}return false};
@@ -1281,9 +1281,17 @@ function cPanel(){
  else{const sp=cS(s.t),i=CSEL.y*GN+CSEL.x,ef=E.eff[i]||0,up=s.l<3?sp.cost*CUP[s.l+1]:0;
   h+=`<div class="box"><b>${sp.emoji} ${esc(sp.name)} · level ${s.l}/3</b><div style="margin:4px 0">Efficiency <b style="color:${cl(ef)}">${Math.round(ef*100)}%</b> · earns ${cMoney(sp.inc*CM[s.l]*ef*(E.act&&E.act[i]!=null?E.act[i]:1))}/min <span class="mut">(max ${cMoney(sp.inc*CM[s.l])})</span></div>${cBar(ef,cl(ef))}<div class="mut">${esc(E.msg[i]||'Working well.')}</div><div class="row" style="margin-top:6px">${s.l<3&&sp.role!='road'?`<button class="p" onclick="cUp()">⬆ Upgrade ${cMoney(up)}</button>`:'<span class="mut">Max level</span>'}<button onclick="cSell()">Sell +${cMoney(sp.cost*CVL[s.l]/2)}</button></div></div>`}
  h+=`<div class="box"><b>📊 City health</b><div class="mut">👥 ${Math.round(E.R)} residents · 💼 ${Math.round(E.J)} jobs for ${Math.round(E.W)} workers</div><div style="margin-top:4px">💼 Employment ${Math.round(E.emp*100)}%</div>${cBar(E.emp,cl(E.emp))}<div>⚡ Power ${Math.round(E.pwS)} / ${Math.round(E.pwD)} used</div>${cBar(E.pwD>0?E.pwS/E.pwD:1,cl(E.pwD>0?E.pwS/E.pwD:1))}<div>😊 Happiness ${Math.round(E.hp*100)}%</div>${cBar(E.hp,cl(E.hp))}`+(E.warn.length?E.warn.slice(0,4).map(w=>'<div class="mut" style="margin-top:3px">'+esc(w)+'</div>').join(''):'<div class="mut">✅ Your city is balanced.</div>')+'</div>';
- h+=`<div class="box"><b>🗺 ${CITY.wild?'Endless land':'Land '+GN+'×'+GN}</b> <span class="mut">${CITY.wild?'(drag to explore, build anywhere)':'('+GN*GN+' plots)'}</span>`+(CITY.wild?'':GN<12?`<button class="p" style="width:100%;margin-top:6px" onclick="cExpand()">Buy land → ${GN+1}×${GN+1} for ${cMoney(cLand(GN))}</button>`:'<div class="mut">Maximum size reached.</div>')+`</div><div class="mut" style="padding:0 4px 8px">Your city keeps earning while the game is closed (up to 3 days).</div>`;
+ h+=`<div class="box"><b>🗺 ${CITY.wild?'Endless land':'Land '+GN+'×'+GN}</b> <span class="mut">${CITY.wild?'(drag to explore, build anywhere)':'('+GN*GN+' plots)'}</span>`+(CITY.wild?'':GN<12?`<button class="p" style="width:100%;margin-top:6px" onclick="cExpand()">Buy land → ${GN+1}×${GN+1} for ${cMoney(cLand(GN))}</button>`:'<div class="mut">Maximum size reached.</div>')+(CITY.wild&&!window.VIS&&!(typeof coInView=='function'&&coInView())?`<button style="width:100%;margin-top:6px" onclick="cNewLand()">🎲 Don't like this land? Start on new terrain</button>`:'')+`</div><div class="mut" style="padding:0 4px 8px">Your city keeps earning while the game is closed (up to 3 days).</div>`;
  const keep=pn.scrollTop;pn.innerHTML=h;pn.scrollTop=keep;pn.style.display=CPO?'block':'none';cChip();
 }
+/* New land: re-roll the terrain (lakes, mountains, forests). Your money stays; buildings are removed only if you confirm. */
+function cNewLand(){
+ if(!CITY||!CITY.wild||window.VIS||(typeof coInView=='function'&&coInView()))return;
+ const nb=CITY.g.filter(b=>b).length;
+ if(nb&&!confirm('Start on new terrain?\n\nThis removes your '+nb+' building'+(nb>1?'s':'')+' (no refund) and gives you a brand new landscape. Your money, level and progress stay.'))return;
+ CITY.seed=Math.floor(Math.random()*2147483646)+1;CITY.tr=null;CITY.tf={};CITY.g=Array(CITY.n*CITY.n).fill(null);CITY.fx=CITY.n/2;CITY.fz=CITY.n/2;CITY.hit=0;CSEL=null;
+ try{landEns()}catch(e){}
+ cSave();try{cEco()}catch(e){}cPanel();try{cStats()}catch(e){}cMsg('🎲 New land ready! Not happy? Tap it again for another one.');try{beep('flip')}catch(e){}}
 const cLand=n=>60*(n+1)*(n+1);
 function cExpand(){const n=CITY.n;if(n>=12)return;const c=cLand(n);if(CITY.cash<c){cMsg('Land costs '+cMoney(c)+'; you have '+cMoney(CITY.cash)+'.');return}
  CITY.cash-=c;const m=n+1,g=Array(m*m).fill(null);for(let y=0;y<n;y++)for(let x=0;x<n;x++)g[y*m+x]=CITY.g[y*n+x];CITY.g=g;CITY.n=m;GN=m;cSave();cPanel();cMsg('Land expanded to '+m+'×'+m+'!');cStats();beep('flip')}
@@ -2008,11 +2016,48 @@ function mkB(b,gx,gy){
  else{bx(g,.7,H,.7,c,0,0,0,rw(H));bx(g,.4,.12,.4,'#444444',0,H,0)}
  return g;
 }
-function clr(g){while(g.children.length){const o=g.children[0];g.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose()})}}
+function clr(g){while(g.children.length){const o=g.children[0];g.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.isInstancedMesh){try{n.dispose()}catch(e){}}})}}
+
+/* === Flio perf: buildings of the same type+level share ONE draw call (instancing), so thousands of buildings stay smooth === */
+let IBK=null;
+function ibBegin(){IBK={}}
+function ibKey(b,x,y){
+ const s=cS(b.t);
+ if(s.role=='road'){const n=GN,isR=(a,c)=>{if(!CITY.wild&&(a<0||c<0||a>=n||c>=n))return true;const q=cB(a,c);return !!q&&cS(q.t).role=='road'};return 'road|'+(isR(x+1,y)?1:0)+(isR(x-1,y)?1:0)+(isR(x,y+1)?1:0)+(isR(x,y-1)?1:0)}
+ return b.t+'|'+b.l}
+function ibAdd(b,x,y,px,py,pz){
+ if(!IBK)return false;
+ try{
+  const k=ibKey(b,x,y);let e=IBK[k];
+  if(!e){const g=mkB(b,x,y),parts=[];g.updateMatrixWorld(true);
+   g.children.forEach(m=>{if(m.isMesh){m.updateMatrix();parts.push({m,mat:m.matrix.clone()})}});
+   if(!parts.length)return false;
+   e=IBK[k]={parts,cells:[],pos:[]}}
+  e.cells.push([x,y]);e.pos.push([px,py,pz]);return true
+ }catch(err){return false}}
+function ibFlush(){
+ if(!IBK)return;const D=new THREE.Matrix4(),T=new THREE.Matrix4();
+ for(const k in IBK){const e=IBK[k],n=e.cells.length;
+  e.parts.forEach(p=>{
+   const im=new THREE.InstancedMesh(p.m.geometry,p.m.material,n);
+   for(let i=0;i<n;i++){T.makeTranslation(e.pos[i][0],e.pos[i][1],e.pos[i][2]);D.multiplyMatrices(T,p.mat);im.setMatrixAt(i,D)}
+   im.instanceMatrix.needsUpdate=true;im.castShadow=!!p.m.castShadow;im.receiveShadow=!!p.m.receiveShadow;im.frustumCulled=false;im.userData.cells=e.cells;bg.add(im)})}
+ IBK=null}
+const _th={};let _tn=1;
+let GBC=0;
+function gHash(){const g=CITY.g;let h=0,h2=7,c=0;for(let i=0;i<g.length;i++){const b=g[i];if(b){c++;let t=_th[b.t];if(!t)t=_th[b.t]=_tn++;h=(Math.imul(h,31)+i*7+t*131+b.l)|0;h2=(Math.imul(h2,16777619)^(i*3+t*17+b.l*5+1))|0}}GBC=c;return h+'.'+h2+'.'+c+'~'}
+let SHF=99,SHK='';
+function cellAt3(x,y){
+ if(!R||!CA||!root||!window.THREE)return null;rc=rc||new THREE.Raycaster();rc.setFromCamera({x:x/CW*2-1,y:-y/CH*2+1},CA);
+ const r=rc.ray;if(r.direction.y>-1e-4)return null;const t=-r.origin.y/r.direction.y;
+ let gx=Math.floor(r.origin.x+r.direction.x*t-root.position.x),gy=Math.floor(r.origin.z+r.direction.z*t-root.position.z);
+ if(CITY.wild){gx=((gx%GN)+GN)%GN;gy=((gy%GN)+GN)%GN}else if(gx<0||gy<0||gx>=GN||gy>=GN)return null;
+ return [gx,gy]}
+window.flio3={on(){return !!(R&&M3&&R.domElement.style.display!='none')},busy(){return drv>=0||ad>=0},cell:cellAt3};
 
 const RAD=18;let wcx=1e9,wcz=1e9;
 function buildW(){
- clr(tg);clr(bg);apc=null;const fx=CITY.fx,fz=CITY.fz,cx=Math.round(fx),cz=Math.round(fz),N=GN;wcx=cx;wcz=cz;root.position.set(-fx,0,-fz);
+ clr(tg);clr(bg);apc=null;ibBegin();const fx=CITY.fx,fz=CITY.fz,cx=Math.round(fx),cz=Math.round(fz),N=GN;wcx=cx;wcz=cz;root.position.set(-fx,0,-fz);
  if(lastN!=-1){view.dist=15;lastN=-1}
  if(fl)fl.visible=false;
  const D=new THREE.Object3D(),mt=(x,y,z,a,b,c)=>{D.position.set(x,y,z);D.scale.set(a,b,c);D.updateMatrix();return D.matrix.clone()},
@@ -2021,10 +2066,10 @@ function buildW(){
   if(dx*dx+dz*dz>RAD*RAD)continue;
   const x=cx+dx,y=cz+dz,k=landAt(x,y),ux=((x%N)+N)%N,uy=((y%N)+N)%N,px=x+.5,pz=y+.5,r=i=>landRnd(sd+i,ux,uy);
   if(k=='w'){I.w.push([mt(px,.012,pz,1,1,1)]);continue}
-  if(k=='p'){I.p.push([mt(px,.1,pz,1,.2,1),(ux*7+uy*3)%2?'#c8b684':'#bba978']);if(cB(x,y)){const b=cB(x,y);if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(px,.215,pz);g.userData.cell=[x,y];bg.add(g)}continue}
+  if(k=='p'){I.p.push([mt(px,.1,pz,1,.2,1),(ux*7+uy*3)%2?'#c8b684':'#bba978']);if(cB(x,y)){const b=cB(x,y);if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};if(!ibAdd(b,x,y,px,.215,pz)){const g=mkB(b,x,y);g.position.set(px,.215,pz);g.userData.cell=[x,y];bg.add(g)}}continue}
   const b=cB(x,y);
   I.g.push([mt(px,.015,pz,1,1,1),k=='m'?'#7d8573':k=='f'?'#4c9a56':((ux+uy)%2?'#68bf6e':'#5fb566')]);
-  if(b){if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(px,.015,pz);g.userData.cell=[x,y];bg.add(g);continue}
+  if(b){if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};if(!ibAdd(b,x,y,px,.015,pz)){const g=mkB(b,x,y);g.position.set(px,.015,pz);g.userData.cell=[x,y];bg.add(g)}continue}
   if(tres(x,y))I.x.push([mt(px,.24,pz,1,1.3,1)]);
   if(k=='m'){[[0,0,.9+r(3)*.8,.5],[.18,-.14,.55+r(4)*.4,.32]].forEach(q=>{const h=q[2],rr=q[3],hc=h*.36;I.m.push([mt(px+q[0],h/2,pz+q[1],rr*2,h,rr*2)]);I.s.push([mt(px+q[0],h-hc/2,pz+q[1],rr*.72,hc,rr*.72)])})}
   else if(k=='f'){for(let i=0;i<2;i++){const tx=px+(r(i)-.5)*.7,tz=pz+(r(9+i)-.5)*.7,h=.28+r(20+i)*.2;I.t.push([mt(tx,.06,tz,.05,.12,.05)]);[[.16,h],[.12,h*.75]].forEach((q,j)=>I.c.push([mt(tx,.1+q[1]/2+j*.12,tz,q[0]*2,q[1],q[0]*2),i%2?'#2f8a4d':'#2a7a45']))}}
@@ -2039,29 +2084,29 @@ function buildW(){
  mk(new THREE.CylinderGeometry(.5,.7,1,6),L(0x5b3d22),I.t,false,false);
  mk(new THREE.ConeGeometry(.5,1,8),L(0xffffff),I.c,true,false);
  mk(new THREE.OctahedronGeometry(.12),new THREE.MeshLambertMaterial({color:0xffd400,emissive:0xb58300}),I.x,false,false);
- acD=1;occ=CITY.g.map(b=>b?b.t:null);
+ ibFlush();acD=1;occ=CITY.g.map(b=>b?b.t:null);
  const q=dl.shadow.camera,e=15;q.left=q.bottom=-e;q.right=q.top=e;q.near=1;q.far=110;q.updateProjectionMatrix();
 }
 function panW(dx,dy){const k=view.dist*.69/Math.max(120,CH),a=view.az,se=Math.max(.35,Math.sin(view.el)),rx=Math.cos(a),rz=-Math.sin(a),fx=-Math.sin(a),fz=-Math.cos(a);CITY.fx+=(-rx*dx+fx*dy/se)*k;CITY.fz+=(-rz*dx+fz*dy/se)*k}
 
 function build3(){
  if(CITY.wild)return buildW();if(fl)fl.visible=true;
- const n=GN;clr(tg);clr(bg);apc=null;root.position.set(-n/2,0,-n/2);
+ const n=GN;clr(tg);clr(bg);apc=null;ibBegin();root.position.set(-n/2,0,-n/2);
  if(lastN&&lastN!=n)view.dist*=(n*1.5+6)/(lastN*1.5+6);lastN=n;
  bx(tg,n+1.56,.2,n+1.56,'#4b4f5c',n/2,-.2,n/2);
  for(let q=0;q<4;q++)for(let i=0;i<=Math.floor((n+1.2)/.5);i++){const u=-.6+i*.5,hz=q%2==0,f=q==0||q==3?-.54:n+.54;bx(tg,hz?.22:.03,.01,hz?.03:.22,'#ffffff',hz?u:f,0,hz?f:u)}
  const rd=new THREE.Mesh(new THREE.PlaneGeometry(n+.6,n+.6).rotateX(-Math.PI/2),pm('#c9ccd3'));rd.position.set(n/2,.005,n/2);rd.receiveShadow=true;tg.add(rd);
  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
   const t=new THREE.Mesh(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),tileMat3(x,y));t.position.set(x+.5,.015,y+.5);t.receiveShadow=true;t.userData.cell=[x,y];tg.add(t);
-  const b=cB(x,y);if(!b){addTerr3(x,y);continue}if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};const g=mkB(b,x,y);g.position.set(x+.5,.015,y+.5);g.userData.cell=[x,y];bg.add(g)}
- acD=1;occ=CITY.g.map(b=>b?b.t:null);fl.scale.set(n+1.6,1,n+1.6);fl.position.x=fl.position.z=n/2;
+  const b=cB(x,y);if(!b){addTerr3(x,y);continue}if(cS(b.t).role=='airport'&&!apc)apc={x,y,l:b.l};if(!ibAdd(b,x,y,x+.5,.015,y+.5)){const g=mkB(b,x,y);g.position.set(x+.5,.015,y+.5);g.userData.cell=[x,y];bg.add(g)}}
+ ibFlush();acD=1;occ=CITY.g.map(b=>b?b.t:null);fl.scale.set(n+1.6,1,n+1.6);fl.position.x=fl.position.z=n/2;
  const q=dl.shadow.camera,e=n*.75+2;q.left=q.bottom=-e;q.right=q.top=e;q.near=1;q.far=110;q.updateProjectionMatrix();
 }
 function init3(){
  if(!window.THREE||R)return;const v=document.getElementById('cvw');if(!v)return;
  try{R=new THREE.WebGLRenderer({antialias:true})}catch(e){R=null;return}
  const cv=R.domElement;cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;display:block';v.insertBefore(cv,v.firstChild);
- R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.15;
+ R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.shadowMap.autoUpdate=false;R.shadowMap.needsUpdate=true;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.15;
  S=new THREE.Scene();S.fog=new THREE.Fog(0x88aadd,45,130);CA=new THREE.PerspectiveCamera(38,1,.1,4000);
  hl=new THREE.HemisphereLight(0xcfe3ff,0x5db56a,.6);S.add(hl);
  dl=new THREE.DirectionalLight(0xfff1d0,1);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);dl.shadow.bias=-.0006;S.add(dl);S.add(dl.target);
@@ -2075,7 +2120,7 @@ function init3(){
  if(!view.dist)view.dist=GN*1.5+6;fxInit();
  const pp={};let mv=0,t0=0,pd=0,pa=0;const an=()=>{const a=Object.values(pp);return a.length>1?Math.atan2(a[1][1]-a[0][1],a[1][0]-a[0][0]):0};const d2=()=>{const a=Object.values(pp);return a.length>1?Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]):0};
  cCan.onpointerdown=e=>{if(!M3||!R)return cTap(e);if(drv>=0||ad>=0)return;try{cCan.setPointerCapture(e.pointerId)}catch(x){}pp[e.pointerId]=[e.offsetX,e.offsetY];if(Object.keys(pp).length==1){mv=0;t0=performance.now()}else{mv=99;pd=d2();pa=an()}};
- cCan.onpointermove=e=>{const p=pp[e.pointerId];if(!p)return;const x=e.offsetX,y=e.offsetY;if(Object.keys(pp).length==1){if(CITY.wild&&!e.shiftKey)panW(x-p[0],y-p[1]);else{view.az-=(x-p[0])*.008;view.el+=(y-p[1])*.006}mv+=Math.abs(x-p[0])+Math.abs(y-p[1]);pp[e.pointerId]=[x,y]}else{pp[e.pointerId]=[x,y];const d=d2();if(pd&&d)view.dist*=pd/d;pd=d;const A=an();if(CITY.wild&&pa)view.az-=A-pa;pa=A}};
+ cCan.onpointermove=e=>{const p=pp[e.pointerId];if(!p)return;const x=e.offsetX,y=e.offsetY;if(Object.keys(pp).length==1){if(CITY.wild&&!e.shiftKey)panW(x-p[0],y-p[1]);else{view.az+=(x-p[0])*.008;view.el+=(y-p[1])*.006}mv+=Math.abs(x-p[0])+Math.abs(y-p[1]);pp[e.pointerId]=[x,y]}else{pp[e.pointerId]=[x,y];const d=d2();if(pd&&d)view.dist*=pd/d;pd=d;const A=an();if(CITY.wild&&pa)view.az+=A-pa;pa=A}};
  cCan.onpointerup=cCan.onpointercancel=e=>{if(!pp[e.pointerId])return;delete pp[e.pointerId];if(!Object.keys(pp).length&&mv<8&&e.type=='pointerup'&&performance.now()-t0<500)tap3(e.offsetX,e.offsetY);else if(!Object.keys(pp).length&&CITY&&CITY.wild)cSave();pd=0;pa=0};
  cCan.addEventListener('wheel',e=>{if(!M3)return;e.preventDefault();if(drv>=0||ad>=0)cz=Math.max(.5,Math.min(3,cz*Math.exp(e.deltaY*.0012)));else view.dist*=Math.exp(e.deltaY*.0012)},{passive:false});
 }
@@ -2210,7 +2255,7 @@ function tap3(x,y){
  if(drv<0&&ad<0){let bi=-1,bd=34;A3.forEach((a,i)=>{const p=pj(a.x,a.y+.1,a.z);if(p){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i}}});if(bi>=0)return enterA(bi)}
  if(drv<0&&ad<0){let bi=-1,bd=28;C3.forEach((m,i)=>{const p=pj(m.position.x,.1,m.position.z);if(p){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i}}});if(bi>=0)return enter(bi)}
  rc=rc||new THREE.Raycaster();rc.setFromCamera({x:x/CW*2-1,y:-y/CH*2+1},CA);
- let gx,gy;if(CITY.wild){const hb=rc.intersectObjects([bg],true)[0];let o=hb&&hb.object;while(o&&!o.userData.cell)o=o.parent;if(o){gx=o.userData.cell[0];gy=o.userData.cell[1]}else{const r=rc.ray;if(r.direction.y>-1e-4)return;const t=-r.origin.y/r.direction.y;gx=Math.floor(r.origin.x+r.direction.x*t-root.position.x);gy=Math.floor(r.origin.z+r.direction.z*t-root.position.z)}gx=((gx%GN)+GN)%GN;gy=((gy%GN)+GN)%GN}else{const h=rc.intersectObjects([tg,bg],true)[0];if(!h)return;let o=h.object;while(o&&!o.userData.cell)o=o.parent;if(!o)return;[gx,gy]=o.userData.cell}
+ let gx,gy;if(CITY.wild){const hb=rc.intersectObjects([bg],true)[0];let o=hb&&hb.object,ic=null;if(o&&o.userData.cells&&hb.instanceId!=null)ic=o.userData.cells[hb.instanceId];else while(o&&!o.userData.cell)o=o.parent;if(ic||o){if(ic){gx=ic[0];gy=ic[1]}else{gx=o.userData.cell[0];gy=o.userData.cell[1]}}else{const r=rc.ray;if(r.direction.y>-1e-4)return;const t=-r.origin.y/r.direction.y;gx=Math.floor(r.origin.x+r.direction.x*t-root.position.x);gy=Math.floor(r.origin.z+r.direction.z*t-root.position.z)}gx=((gx%GN)+GN)%GN;gy=((gy%GN)+GN)%GN}else{const h=rc.intersectObjects([tg,bg],true)[0];if(!h)return;let o=h.object,ic=null;if(o.userData.cells&&h.instanceId!=null)ic=o.userData.cells[h.instanceId];else while(o&&!o.userData.cell)o=o.parent;if(ic){[gx,gy]=ic}else{if(!o)return;[gx,gy]=o.userData.cell}}
 if(cB(gx,gy)){CSEL={x:gx,y:gy};cMsg('');cTogPanel(1);return cPanel()}CSEL=null;cBuild(gx,gy);
 }
 function draw3(t,dt){
@@ -2218,7 +2263,7 @@ function draw3(t,dt){
  const h=cHour(),lt=Math.max(0,Math.min(1,Math.sin((h-6)/12*Math.PI)*1.5+.35)),N=1-lt,ps=(h-6)/12,up=ps>=0&&ps<=1,pn=((h+6)%24)/12;
  if(w0!=CW||h0!=CH||d0!=cD){w0=CW;h0=CH;d0=cD;R.setPixelRatio(cD);R.setSize(CW,CH,false);CA.aspect=CW/CH;CA.updateProjectionMatrix()}
  if(CITY.hit&&CITY.hit!=lh){lh=CITY.hit;if(Date.now()-CITY.hit<2e4)fxStart(t)}
- const sg=(landAt(0,0),GN)+'|'+CITY.g.map(b=>b?b.t+b.l:'-').join()+CITY.custom.map(d=>d.id+d.col+d.size).join()+'|'+(CITY.tf?Object.keys(CITY.tf).length:0)+'|'+(window.VIS?'v':(CITY.tr?CITY.tr.join(''):''));if(CITY.wild&&Math.hypot(CITY.fx-wcx,CITY.fz-wcz)>3)sig='';if(sg!=sig){sig=sg;build3()}
+ const sg=(landAt(0,0),GN)+'|'+gHash()+CITY.custom.map(d=>d.id+d.col+d.size).join()+'|'+(CITY.tf?Object.keys(CITY.tf).length:0)+'|'+(window.VIS?'v':(CITY.tr?CITY.tr.join(''):''));if(CITY.wild&&Math.hypot(CITY.fx-wcx,CITY.fz-wcz)>3)sig='';if(sg!=sig){sig=sg;build3();SHF=99}
  const tp=cMix([10,14,46],[88,165,232],lt),bt=cMix([42,30,92],[252,228,186],lt),sk=col('rgb('+tp.map(Math.round)+')').lerp(col('rgb('+bt.map(Math.round)+')'),.5);
  S.background=sk;S.fog.color.copy(sk);if(CITY.wild){const fe=Math.sqrt(RAD*RAD+view.dist*view.dist)*.97;S.fog.far=fe;S.fog.near=Math.min(view.dist*1.1,fe*.6)}else{const ff=Math.max(130,view.dist*2.4+GN*1.5);S.fog.far=ff;S.fog.near=ff*.45}
  sun.position.set(-Math.cos(ps*Math.PI)*34,Math.sin(ps*Math.PI)*30,14);moon.position.set(-Math.cos(pn*Math.PI)*34,Math.sin(pn*Math.PI)*28,14);
@@ -2233,10 +2278,11 @@ function draw3(t,dt){
  while(PP3.length>peds.length)root.remove(PP3.pop());
  peds.forEach((v,i)=>{v.t=(v.t+v.sp*dt)%1;const p=ringPt(v.t,.15,v.rev),m=PP3[i];m.material.color.set(v.col);m.position.set(p[0],.06+Math.abs(Math.sin(t*8+i))*.012,p[1])});
  pt-=dt;if(pt<=0){pt=1.8;const bs=[];for(let y=0;y<GN;y++)for(let x=0;x<GN;x++)if(cB(x,y)&&cInc(x,y)>0)bs.push([x,y]);if(bs.length){const q=bs[Math.floor(Math.random()*bs.length)];pops.push({x:q[0]+.5,y:hgt(cB(q[0],q[1]))+.5,z:q[1]+.5,a:1,v:cInc(q[0],q[1])*4/60})}}
+ {const sk=root.position.x.toFixed(2)+','+root.position.z.toFixed(2),nb=GBC,sn=nb>200?4:nb>80?3:2;if(sk!=SHK||++SHF>=sn){SHF=0;SHK=sk;R.shadowMap.needsUpdate=true}}
  R.render(S,CA);
  /* 2D overlay: stars for levels, emoji for custom buildings, "!" warnings, +$ pops */
  c.setTransform(cD,0,0,cD,0,0);c.clearRect(0,0,CW,CH);c.textAlign='center';
- for(let y=0;y<GN;y++)for(let x=0;x<GN;x++){const b=cB(x,y);if(!b)continue;const s=cS(b.t),p=pj(x+.5,hgt(b)+.5,y+.5);if(!p)continue;
+ for(let ii=0,GL=CITY.g.length;ii<GL;ii++){const b=CITY.g[ii];if(!b)continue;const x=ii%GN,y=(ii/GN)|0;const s=cS(b.t),p=pj(x+.5,hgt(b)+.5,y+.5);if(!p||p[0]<-40||p[0]>CW+40||p[1]<-60||p[1]>CH+40)continue;
   if(s.custom){c.font='15px system-ui';c.fillStyle='#fff';c.fillText(s.emoji,p[0],p[1])}
   if(b.l>1){c.fillStyle='#ffc61a';c.font='bold 11px system-ui';c.fillText('★'.repeat(b.l-1),p[0],p[1]-(s.custom?16:2))}
   if(!window.VIS&&(ECO.eff[y*GN+x]||0)<.5){const q=[p[0]+16,p[1]-4],pl=1+.12*Math.sin(t*5);c.fillStyle='#e53935';c.beginPath();c.arc(q[0],q[1],7*pl,0,7);c.fill();c.fillStyle='#fff';c.font='bold 10px system-ui';c.fillText('!',q[0],q[1]+3.5)}}
@@ -3551,6 +3597,197 @@ addEventListener('resize',function(){try{if(typeof cLayout=='function'&&document
 })();
 
 }catch(err){try{console.warn("Flio toolbar patch failed",err)}catch(_){}}
+/* ===== Flio 1.11.3: upgrade all same-level buildings, custom 🧱 amount, drag-to-build roads ===== */
+(function(){
+try{
+ const LM={m:''};
+ /* run many actions at once: no repeated saving / redrawing / sounds until the very end */
+ function bulk(fn){
+  const names=['cSave','cPanel','cStats','cPeds','beep'],sv={};
+  names.forEach(k=>{sv[k]=window[k];window[k]=function(){}});
+  const sm=window.cMsg;window.cMsg=function(m){LM.m=String(m||'')};
+  try{return fn()}finally{names.forEach(k=>{window[k]=sv[k]});window.cMsg=sm}
+ }
+
+ /* ---------- 1. upgrade every building of the same level with one tap ---------- */
+ function upCand(same){
+  const s=CITY&&CSEL&&cB(CSEL.x,CSEL.y);if(!s||s.l>=3)return[];
+  const out=[],g=CITY.g;
+  for(let i=0;i<g.length;i++){const b=g[i];if(!b||b.l!==s.l)continue;const sp=cS(b.t);if(!sp||sp.role=='road')continue;if(same&&b.t!==s.t)continue;out.push(i)}
+  return out};
+ const upCost=i=>{const b=CITY.g[i];return cS(b.t).cost*CUP[b.l+1]};
+ window.upAll=function(same){
+  if(!CITY||window.VIS||!CSEL)return;
+  const s=cB(CSEL.x,CSEL.y);if(!s||s.l>=3)return;
+  const L=s.l,list=upCand(!!same);if(!list.length)return;
+  list.sort((a,b)=>upCost(a)-upCost(b));
+  const sel0={x:CSEL.x,y:CSEL.y};let done=0,why='';
+  bulk(()=>{
+   for(const i of list){
+    const b=CITY.g[i];if(!b||b.l!==L)continue;
+    CSEL={x:i%GN,y:(i/GN)|0};LM.m='';
+    try{cUp()}catch(err){console.warn(err)}
+    if(b.l>L)done++;else{why=LM.m;if(/need|enough/i.test(why))break}
+   }
+   CSEL=sel0;
+  });
+  try{cSave();cPeds();cStats();cPanel();if(done)beep('flip')}catch(err){console.warn(err)}
+  if(done)cMsg('⬆ Upgraded '+done+' building'+(done==1?'':'s')+' to level '+(L+1)+(done<list.length?' · stopped: '+(why||'not enough cash or 🧱'):'')+'.');
+  else cMsg(why||'Could not upgrade.');
+ };
+
+ /* ---------- 2. buy any amount of 🧱 materials ---------- */
+ function bcPrice(){return 3+CITY.g.filter(Boolean).length*.12+1.5*Math.sin(Date.now()/36e5)}
+ function bcLimits(){
+  const d=new Date().toISOString().slice(0,10),used=(CITY.buy&&CITY.buy.d===d)?(CITY.buy.n||0):0,BL=Math.max(0,+CFG.buyMax||600),pr=bcPrice();
+  const dayLeft=Math.max(0,BL-used),room=Math.max(0,Math.floor(MATCAP()-(CITY.mat||0)));
+  let afford=Math.max(0,Math.floor(CITY.cash/pr));while(afford>0&&Math.round(afford*pr)>CITY.cash)afford--;
+  return{pr,dayLeft,room,afford,max:Math.max(0,Math.min(dayLeft,room,afford))}};
+ window.bcInfo=function(){
+  try{const el=document.getElementById('bcus'),inf=document.getElementById('bcinfo');if(!el||!inf||!CITY)return;
+   const L=bcLimits(),n=Math.floor(+el.value||0);
+   inf.textContent=(n>0?n+' 🧱 costs '+cMoney(Math.round(n*L.pr))+' · ':'')+'you can buy up to '+L.max+' 🧱 now ('+cMoney(L.pr)+' each)'}catch(e){}};
+ window.bcMax=function(){try{const el=document.getElementById('bcus');if(!el||!CITY)return;el.value=bcLimits().max||'';bcInfo()}catch(e){}};
+ window.bcBuy=function(){
+  if(!CITY||window.VIS)return;
+  const el=document.getElementById('bcus'),n=Math.floor(+(el&&el.value)||0);
+  if(!(n>=1)){cMsg('Type how many 🧱 you want to buy.');return}
+  const L=bcLimits();
+  if(n>L.dayLeft){cMsg('Daily market limit: you can still buy '+L.dayLeft+' 🧱 today.');return}
+  if(n>L.room){cMsg('Storage space: only '+L.room+' 🧱 more fit (max '+MATCAP()+').');return}
+  if(Math.round(n*L.pr)>CITY.cash){cMsg('You need '+cMoney(Math.round(n*L.pr))+' for '+n+' 🧱 (you can afford '+L.afford+').');return}
+  W_buy(n);
+ };
+
+ /* ---------- 3. extra buttons inside the city menu ---------- */
+ function extraUI(sv){
+  const pn=document.getElementById('cpn');if(!pn||!CITY||window.VIS)return;
+  /* upgrade all */
+  const ub=pn.querySelector('button[onclick="cUp()"]');
+  if(ub&&CSEL&&!pn.querySelector('#upall')){
+   const s=cB(CSEL.x,CSEL.y);
+   if(s&&s.l<3){
+    const a=upCand(1),b=upCand(0);
+    if(b.length>1){
+     const sum=l=>l.reduce((t,i)=>t+upCost(i),0),sp=cS(s.t);
+     let h='<div id="upall" class="row" style="flex-wrap:wrap;margin-top:4px">';
+     if(a.length>1)h+='<button class="p" onclick="upAll(1)">⬆ All level '+s.l+' '+esc(sp.name)+' ×'+a.length+' · '+cMoney(sum(a))+'</button>';
+     if(b.length>a.length)h+='<button onclick="upAll(0)">⬆ Every level '+s.l+' building ×'+b.length+' · '+cMoney(sum(b))+'</button>';
+     h+='</div>';
+     const row=ub.closest('.row')||ub.parentElement;row.insertAdjacentHTML('afterend',h);
+    }
+   }
+  }
+  /* custom buy */
+  const b200=pn.querySelector('button[onclick="W_buy(200)"]');
+  if(b200&&!pn.querySelector('#bcus')){
+   const row=b200.closest('.row')||b200.parentElement;
+   row.insertAdjacentHTML('afterend','<div class="row" style="margin-top:4px"><input id="bcus" type="number" inputmode="numeric" min="1" step="1" placeholder="Any amount 🧱" oninput="bcInfo()" onkeydown="if(event.key===\'Enter\')bcBuy()" style="flex:1;min-width:0"><button onclick="bcMax()">Max</button><button class="p" onclick="bcBuy()">Buy</button></div><div id="bcinfo" class="mut"></div>');
+   const el=document.getElementById('bcus');
+   if(el&&sv&&sv.v!=null){el.value=sv.v;if(sv.f){try{el.focus()}catch(e){}}}
+   bcInfo();
+  }
+ }
+ {const pp=window.cPanel;
+  window.cPanel=function(){
+   let sv=null;try{const i=document.getElementById('bcus');if(i)sv={v:i.value,f:document.activeElement===i}}catch(e){}
+   const r=pp.apply(this,arguments);
+   try{extraUI(sv)}catch(e){try{console.warn('Flio extra UI',e)}catch(_){}}
+   return r};}
+
+ /* ---------- 4. drag a finger to build roads ---------- */
+ let RD=null;window.RDDRAW=true;
+ const roadOn=()=>!!(CITY&&!window.VIS&&scr=='city'&&CTYPE=='road'&&window.RDDRAW&&cCan&&document.body.contains(cCan));
+ function cellOf(e){
+  try{
+   const r=cCan.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+   if(window.flio3&&window.flio3.on())return window.flio3.cell(x,y);
+   if(CITY.wild)return null;
+   const h=cHit(x,y);return h&&h.length?[h[0],h[1]]:null;
+  }catch(_){return null}}
+ /* 4-connected path (roads only join sideways), also works across the map edge */
+ function lineCells(a,b){
+  const N=GN;let dx=b[0]-a[0],dy=b[1]-a[1];
+  if(CITY.wild){if(dx>N/2)dx-=N;else if(dx<-N/2)dx+=N;if(dy>N/2)dy-=N;else if(dy<-N/2)dy+=N}
+  const sx=dx<0?-1:1,sy=dy<0?-1:1,ax=Math.abs(dx),ay=Math.abs(dy),out=[],tot=Math.min(ax+ay,80);
+  let x=0,y=0;
+  for(let k=0;k<tot;k++){
+   if(x<ax&&(y>=ay||(x+.5)*ay<=(y+.5)*ax))x++;else y++;
+   out.push([(((a[0]+sx*x)%N)+N)%N,(((a[1]+sy*y)%N)+N)%N]);
+  }
+  return out}
+ function stepTo(e){
+  if(!RD)return;
+  const c=cellOf(e);if(!c)return;
+  const L=RD.last,pts=L?lineCells(L,c):[c];
+  if(L&&(L[0]!==c[0]||L[1]!==c[1]))RD.moved=true;
+  if(L&&!pts.length)return;
+  RD.last=pts.length?pts[pts.length-1]:c;
+  bulk(()=>{
+   for(const p of pts){
+    if(cB(p[0],p[1]))continue;
+    if(RD.stop)continue;
+    const c0=CITY.cash;LM.m='';let ok=false;
+    try{ok=cBuild(p[0],p[1])}catch(err){console.warn(err)}
+    if(ok&&cB(p[0],p[1])){RD.n++;RD.spent+=Math.max(0,c0-CITY.cash)}
+    else{RD.why=LM.m;if(/not enough|need|costs/i.test(LM.m))RD.stop=1}
+   }
+  });
+ }
+ function finish(d){
+  try{
+   if(d.n>0){cSave();cPeds();cStats();cPanel();beep('flip');
+    cMsg('🛣 Built '+d.n+' road tile'+(d.n==1?'':'s')+' (−'+cMoney(d.spent)+')'+(d.stop?' · stopped: '+(d.why||'not enough cash or 🧱'):''))}
+   else if(!d.moved&&d.tap){CSEL={x:d.tap[0],y:d.tap[1]};cMsg('');cTogPanel(1);cPanel()}
+   else if(d.why)cMsg(d.why);
+  }catch(err){console.warn(err)}}
+ function down(e){
+  if(!cCan||e.target!==cCan)return;
+  if(RD){e.stopPropagation();return}
+  if(!roadOn()||!e.isPrimary)return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(window.flio3&&window.flio3.busy&&window.flio3.busy())return;
+  e.stopPropagation();e.preventDefault();
+  try{cCan.setPointerCapture(e.pointerId)}catch(_){}
+  RD={id:e.pointerId,last:null,n:0,spent:0,why:'',stop:0,moved:false,tap:null};
+  const c=cellOf(e);if(c&&cB(c[0],c[1]))RD.tap=c;
+  stepTo(e);
+ }
+ function move(e){
+  if(!RD||e.pointerId!==RD.id)return;
+  e.stopPropagation();e.preventDefault();
+  let list=[];try{list=(e.getCoalescedEvents&&e.getCoalescedEvents())||[]}catch(_){}
+  (list.length?list:[e]).forEach(stepTo);
+ }
+ function up(e){
+  if(!RD||e.pointerId!==RD.id)return;
+  e.stopPropagation();
+  try{cCan.releasePointerCapture(e.pointerId)}catch(_){}
+  const d=RD;RD=null;finish(d);
+ }
+ document.addEventListener('pointerdown',down,true);
+ document.addEventListener('pointermove',move,true);
+ document.addEventListener('pointerup',up,true);
+ document.addEventListener('pointercancel',up,true);
+
+ /* button: switch between drawing roads and moving the map */
+ function rdSync(){
+  try{
+   const v=document.getElementById('cvw');if(!v)return;
+   const on=!!(CITY&&CTYPE=='road'&&scr=='city'&&!window.VIS);
+   let b=document.getElementById('rdbtn');
+   if(!b){b=document.createElement('button');b.id='rdbtn';b.style.cssText='position:absolute;left:8px;bottom:34px;z-index:3;padding:5px 10px;font-size:12px;border-radius:10px';
+    b.onclick=function(){window.RDDRAW=!window.RDDRAW;rdSync()};v.appendChild(b)}
+   b.style.display=on?'block':'none';
+   b.textContent=window.RDDRAW?'✋ Move map':'🛣 Draw roads';
+   const ch=document.getElementById('cchip');
+   if(ch&&on&&window.RDDRAW){ch.textContent='🛣 Road · '+cMoney(cS(CTYPE).cost)+' — drag your finger to draw roads'}
+  }catch(e){}}
+ {const oc=window.cChip;
+  if(typeof oc=='function')window.cChip=function(){const r=oc.apply(this,arguments);rdSync();return r};}
+}catch(err){try{console.warn('Flio 1.11.3 features failed',err)}catch(_){}}
+})();
+
 </script>
 <script>
 /* Non-blocking library loader: the game starts even if a CDN is slow or blocked. */
